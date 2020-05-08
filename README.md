@@ -2,6 +2,7 @@
 # Messenger Translator
 
 [![Node.js CI](https://github.com/eidoriantan/messenger-translator/workflows/Node.js%20CI/badge.svg)](https://github.com/eidoriantan/messenger-translator/actions?query=workflow%3A%22Node.js+CI%22)
+[![Build Status](https://travis-ci.com/eidoriantan/messenger-translator.svg?token=Hk9gXA7HZjP174YVjdRu&branch=master)](https://travis-ci.com/eidoriantan/messenger-translator)
 
 Webhook that handles events for **Messenger Translator** using
 [Node.js](https://nodejs.org), [Express](https://expressjs.com), and
