@@ -6,13 +6,16 @@ const { addUser, getUser, setUser } = require('../src/user-database.js')
 
 const DB_ENDPOINT = 'https://translator-e0ea.restdb.io/rest/preferences'
 const DB_API_KEY = process.env.DB_API_KEY
+const TEST_USERID = process.env.TEST_USERID
 process.env.DEBUG = true
+
+if (!TEST_USERID) throw new Error('Test user ID was not defined')
 
 describe('User Database test', () => {
   let testUser
   it('Adds user', async () => {
-    const userData = await addUser('_test-psid')
-    userData.should.containEql({ psid: '_test-psid' })
+    const userData = await addUser(TEST_USERID)
+    userData.should.containEql({ psid: TEST_USERID })
     userData.should.containEql({ language: 'LANG_EN' })
     should.ok(userData._id)
     testUser = userData
