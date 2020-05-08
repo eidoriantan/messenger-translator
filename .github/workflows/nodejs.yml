@@ -33,3 +33,4 @@ jobs:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         DB_API_KEY: ${{ secrets.DB_API_KEY }}
         VALIDATION_TOKEN: ${{ secrets.VALIDATION_TOKEN }}
+        TEST_USERID: '_test-user-${{ matrix.node-version }}'
