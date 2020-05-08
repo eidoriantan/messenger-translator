@@ -22,5 +22,8 @@ describe('Bot test', () => {
       })
   })
 
-  after(() => server.close())
+  after(() => {
+    require('./database.js')
+    server.close()
+  })
 })
