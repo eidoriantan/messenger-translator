@@ -23,12 +23,12 @@ async function addUser (psid) {
     const response = await request('POST', DB_ENDPOINT, headers, userData)
     userData._id = response.body._id
 
-    if (response.status !== 200) {
+    if (response.status <= 400) {
       console.error('A non-"OK" status was returned but didn\'t throw an error')
       console.error(response)
     }
 
-    if (DEBUG && response.status === 200) {
+    if (DEBUG && response.status >= 200 && response.status < 300) {
       console.log('A new user was created: ')
       console.log(`PSID ---> ${response.body.psid}`)
       console.log(`Object ID ---> ${response.body._id}`)
@@ -62,7 +62,7 @@ async function getUser (psid) {
       console.log(userData)
     }
 
-    if (response.status !== 200) {
+    if (response.status <= 400) {
       console.error('A non-"OK" status was returned but didn\'t throw an error')
       console.error(response)
     }
@@ -91,12 +91,12 @@ async function setUser (psid, values) {
     for (const key in values) userData[key] = values[key]
     const response = await request('PATCH', url, headers, userData)
 
-    if (response.status !== 200) {
+    if (response.status <= 400) {
       console.error('A non-"OK" status was returned but didn\'t throw an error')
       console.error(response)
     }
 
-    if (DEBUG && response.status === 200) {
+    if (DEBUG && response.status >= 200 && response.status < 300) {
       console.log('A user was updated: ')
       console.log(`PSID ---> ${response.body.psid}`)
       console.log(`Object ID ---> ${response.body._id}`)
