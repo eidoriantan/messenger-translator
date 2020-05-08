@@ -5,8 +5,7 @@ node_js:
   - 13
 
 env:
-  - PORT=3000
-  - TEST_USERID=_test-user-travis
+  - PORT=3000 TEST_USERID=_test-user-travis
 
 git:
   quiet: true
