@@ -12,8 +12,8 @@
     "translate",
     "translator"
   ],
-  "homepage": "https://github.com/eidoriantan/messenger-translate#readme",
-  "bugs": "https://github.com/eidoriantan/messenger-translate/issues",
+  "homepage": "https://github.com/messenger-translator/messenger-translate#readme",
+  "bugs": "https://github.com/messenger-translator/messenger-translate/issues",
   "license": "UNLICENSED",
   "author": {
     "name": "Adriane Justine Tan",
@@ -29,7 +29,7 @@
   "directories": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eidoriantan/messenger-translate.git"
+    "url": "git+https://github.com/messenger-translator/messenger-translate.git"
   },
   "scripts": {
     "start": "node server.js",
