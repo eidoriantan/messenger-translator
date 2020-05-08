@@ -1,0 +1,55 @@
+{
+  "name": "messenger-translator",
+  "version": "0.1.0",
+  "description": "Webhook for Messenger translator using Express",
+  "keywords": [
+    "node",
+    "express",
+    "webhook",
+    "messenger",
+    "bot",
+    "app",
+    "translate",
+    "translator"
+  ],
+  "homepage": "https://github.com/eidoriantan/messenger-translate#readme",
+  "bugs": "https://github.com/eidoriantan/messenger-translate/issues",
+  "license": "UNLICENSED",
+  "author": {
+    "name": "Adriane Justine Tan",
+    "email": "eidoriantan@gmail.com",
+    "url": "https://eidoriantan.github.io"
+  },
+  "contributors": [],
+  "funding": {
+    "type": "patreon",
+    "url": "https://patreon.com/eidoriantan"
+  },
+  "main": "server.js",
+  "directories": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eidoriantan/messenger-translate.git"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "lint": "eslint -c .eslintrc.json . --ext .js,.mjs"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "google-translate-api-browser": "^1.1.71"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "mocha": "^7.1.2",
+    "should": "^13.2.3",
+    "standard": "^14.3.3",
+    "supertest": "^4.0.2"
+  },
+  "private": true
+}
