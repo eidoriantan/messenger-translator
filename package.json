@@ -33,7 +33,8 @@
   },
   "scripts": {
     "start": "node server.js",
-    "lint": "eslint -c .eslintrc.json . --ext .js,.mjs"
+    "lint": "eslint -c .eslintrc.json . --ext .js,.mjs",
+    "test": "npm run lint && npx mocha --colors"
   },
   "dependencies": {
     "express": "^4.17.1",
