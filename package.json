@@ -1,6 +1,6 @@
 {
   "name": "messenger-translator",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Webhook for Messenger translator using Express",
   "keywords": [
     "node",
@@ -12,7 +12,7 @@
     "translate",
     "translator"
   ],
-  "homepage": "https://github.com/messenger-translator/messenger-translate#readme",
+  "homepage": "https://messenger-translator.github.io",
   "bugs": "https://github.com/messenger-translator/messenger-translate/issues",
   "license": "UNLICENSED",
   "author": {
