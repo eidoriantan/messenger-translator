@@ -4,6 +4,9 @@
 [![Node.js CI](https://github.com/messenger-translator/messenger-translator/workflows/Node.js%20CI/badge.svg)](https://github.com/messenger-translator/messenger-translator/actions?query=workflow%3A%22Node.js+CI%22)
 [![Build Status](https://travis-ci.com/messenger-translator/messenger-translator.svg?token=Hk9gXA7HZjP174YVjdRu&branch=master)](https://travis-ci.com/messenger-translator/messenger-translator)
 
+Visit the [Facebook page](https://fb.com/msgr.translator) or chat the bot at
+[Messenger](https://m.me/msgr.translator)
+
 Webhook that handles events for **Messenger Translator** using
 [Node.js](https://nodejs.org), [Express](https://expressjs.com), and
 [Google Translate](https://npmjs.com/package/google-translate-api-browser) to
@@ -18,10 +21,10 @@ and to maintain the project easily. If you are a developer, please do not copy
 or distribute the source codes. Thank you!
 
 ## Features
+
 Currently supported services:
  * Able to translate everything to English, Japanese, and Korean
  * Interactive messaging
-
 
 Please refer to the repository's
 [project](https://github.com/messenger-translator/messenger-translator/projects)
