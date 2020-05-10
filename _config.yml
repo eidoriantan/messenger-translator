@@ -10,7 +10,7 @@ sass:
 author: Adriane Justine Tan
 email: eidoriantan@gmail.com
 
-tagline: Webhook for Messenger translator using Express
+tagline: A translator bot app built for Messenger
 color: "#2b594c"
 
 plugins:
