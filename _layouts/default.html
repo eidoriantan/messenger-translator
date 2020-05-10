@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <meta name="keywords" content="{{ page.keywords }}">
+  <meta name="theme-color" content="{{ site.color }}">
+  <meta name="msapplication-TileColor" content="{{ site.color }}">
+
+  <link href="{{ '/LICENSE' | relative_url }}" rel="license">
+  <link href="{{ '/site.webmanifest' | relative_url }}" rel="manifest">
+  <link href="{{ '/assets/apple-touch-icon.png' | relative_url }}" rel="apple-touch-icon" sizes="180x180">
+  <link href="{{ '/assets/favicon-32x32.png' | relative_url }}" rel="icon" type="image/png" sizes="32x32">
+  <link href="{{ '/assets/favicon-16x16.png' | relative_url }}" rel="icon" type="image/png" sizes="16x16">
+  <link href="{{ '/assets/safari-pinned-tab.svg' | relative_url }}" rel="mask-icon" color="{{ site.color }}">
+  <link href="{{ '/assets/css/default.css?v=' | append: site.github.build_revision | relative_url }}" rel="stylesheet">
+
+  {% seo title=false %}
+
+  <script>
+    window.fbAsyncInit = function () {
+      FB.init({
+        appId : '552177775495405',
+        cookie : true,
+        xfbml : true,
+        version : 'v7.0'
+      })
+
+      FB.AppEvents.logPageView()
+    }
+  </script>
+  <script src="https://connect.facebook.net/en_US/sdk.js" async></script>
+
+  <script src="https://www.googletagmanager.com/gtag/js?id=UA-161214318-5" async></script>
+  <script>
+    window.dataLayer = window.dataLayer || []
+    function gtag () { dataLayer.push(arguments) }
+
+    gtag('js', new Date())
+    gtag('config', 'UA-161214318-5', { 'anonymize_ip': true })
+  </script>
+
+  <title>Messenger Translator</title>
+</head>
+
+<body>
+  <header class="Header d-flex flex-justify-center">
+    <div class="Header-item mr-0">
+      <a href="{{ site.github.url }}" class="Header-link d-flex flex-items-center">
+        <img src="/assets/images/icon.png" alt="Messenger Translator Logo" width="64" height="64">
+      </a>
+    </div>
+  </header>
+
+  <main>
+    {{ content }}
+  </main>
+
+  <footer class="d-flex flex-wrap py-5">
+    <a href="/privacy-policy.html" class="text-gray mx-auto">Privacy Policy</a>
+    <span class="text-gray mx-auto">Copyright &copy; 2020, <a href="{{ site.github.owner_url }}">@{{ site.github.owner.login }}</a></span>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,20 @@
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+
+sass:
+  style: compressed
+
+author: Adriane Justine Tan
+email: eidoriantan@gmail.com
+
+tagline: Webhook for Messenger translator using Express
+color: "#2b594c"
+
+plugins:
+  - jekyll-github-metadata
+  - jekyll-octicons
+  - jekyll-seo-tag
+  - jekyll-sitemap
