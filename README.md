@@ -1,8 +1,8 @@
 
 # Messenger Translator
 
-[![Node.js CI](https://github.com/messenger-translator/messenger-translator/workflows/Node.js%20CI/badge.svg)](https://github.com/messenger-translator/messenger-translator/actions?query=workflow%3A%22Node.js+CI%22)
-[![Build Status](https://travis-ci.com/messenger-translator/messenger-translator.svg?token=Hk9gXA7HZjP174YVjdRu&branch=master)](https://travis-ci.com/messenger-translator/messenger-translator)
+[![Node.js CI](https://github.com/eidoriantan/messenger-translator/workflows/Node.js%20CI/badge.svg)](https://github.com/eidoriantan/messenger-translator/actions?query=workflow%3A%22Node.js+CI%22)
+[![Build Status](https://travis-ci.com/eidoriantan/messenger-translator.svg?token=Hk9gXA7HZjP174YVjdRu&branch=master)](https://travis-ci.com/eidoriantan/messenger-translator)
 
 Visit the [Facebook page](https://fb.com/msgr.translator) or chat the bot at
 [Messenger](https://m.me/msgr.translator)
@@ -27,7 +27,7 @@ Currently supported services:
  * Interactive messaging
 
 Please refer to the repository's
-[project](https://github.com/messenger-translator/messenger-translator/projects)
+[project](https://github.com/eidoriantan/messenger-translator/projects)
 and
-[issues](https://github.com/messenger-translator/messenger-translator/issues)
+[issues](https://github.com/messenger-eidoriantan/messenger-translator/issues)
 for more informations.

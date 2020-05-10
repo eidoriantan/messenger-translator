@@ -12,7 +12,7 @@
     "translate",
     "translator"
   ],
-  "homepage": "https://messenger-translator.github.io",
+  "homepage": "https://translator.eidoriantan.tech",
   "bugs": "https://github.com/messenger-translator/messenger-translate/issues",
   "license": "UNLICENSED",
   "author": {
@@ -29,7 +29,7 @@
   "directories": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/messenger-translator/messenger-translate.git"
+    "url": "git+https://github.com/eidoriantan/messenger-translate.git"
   },
   "scripts": {
     "start": "node server.js",
