@@ -14,6 +14,10 @@ const languageActions = [{
   type: 'postback',
   title: 'Switch language to Korean',
   payload: 'LANG_KO'
+}, {
+  type: 'postback',
+  title: 'Switch language to French',
+  payload: 'LANG_FR'
 }]
 
 /**

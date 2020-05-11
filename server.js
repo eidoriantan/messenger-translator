@@ -116,6 +116,7 @@ async function receivedPostback (event) {
     case 'LANG_EN':
     case 'LANG_JA':
     case 'LANG_KO':
+    case 'LANG_FR':
       if (DEBUG) console.log('Updating user database')
       await userDB.setUser(senderID, { language: payload })
       if (DEBUG) console.log('Updating user for new menu')
