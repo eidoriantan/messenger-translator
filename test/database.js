@@ -1,7 +1,7 @@
 
 const should = require('should')
 
-const request = require('../src/request.js')
+const request = require('../src/utils/request.js')
 const { addUser, getUser, setUser } = require('../src/user-database.js')
 
 const DB_ENDPOINT = 'https://translator-e0ea.restdb.io/rest/preferences'
