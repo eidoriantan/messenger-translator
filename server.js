@@ -2,7 +2,7 @@
 const express = require('express')
 const { translate } = require('google-translate-api-browser')
 
-const request = require('./src/request.js')
+const request = require('./src/utils/request.js')
 const { parseLang } = require('./src/language.js')
 const { createMenu } = require('./src/persistent-menu.js')
 const { addUser, getUser, setUser } = require('./src/user-database.js')

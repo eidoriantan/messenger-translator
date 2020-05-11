@@ -1,5 +1,5 @@
 
-const request = require('./request.js')
+const request = require('./utils/request.js')
 
 /**
  *  The bot is using `restdb.io` API to store the user's preferences/settings
