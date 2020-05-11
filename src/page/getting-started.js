@@ -1,5 +1,5 @@
 
-const request = require('../request.js')
+const request = require('../utils/request.js')
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
