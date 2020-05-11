@@ -1,5 +1,5 @@
 
-const request = require('../request.js')
+const request = require('../utils/request.js')
 
 const DB_ENDPOINT = 'https://translator-e0ea.restdb.io/rest/preferences'
 const DB_API_KEY = process.env.DB_API_KEY
