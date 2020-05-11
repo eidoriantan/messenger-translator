@@ -1,11 +1,11 @@
 
 const express = require('express')
-const { translate } = require('google-translate-api-browser')
 
 const request = require('./src/utils/request.js')
+const translator = require('./src/translate.js')
+const userDB = require('./src/user-database.js')
 const { parseLang } = require('./src/language.js')
 const { createMenu } = require('./src/persistent-menu.js')
-const { addUser, getUser, setUser } = require('./src/user-database.js')
 
 const app = express()
 
@@ -99,7 +99,7 @@ async function receivedPostback (event) {
    *  Get user who sent the event from the database or add the user if was not
    *  found.
    */
-  const user = await getUser(senderID) || await addUser(senderID)
+  const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
 
   if (DEBUG) {
     console.log('User Data: ')
@@ -117,7 +117,7 @@ async function receivedPostback (event) {
     case 'LANG_JA':
     case 'LANG_KO':
       if (DEBUG) console.log('Updating user database')
-      await setUser(senderID, { language: payload })
+      await userDB.setUser(senderID, { language: payload })
       if (DEBUG) console.log('Updating user for new menu')
       await sendNewMenu(senderID, payload)
       await sendMessage(senderID,
@@ -143,36 +143,15 @@ async function receivedMessage (event) {
   if (DEBUG) console.log(`Message was received with text: ${text}`)
   await sendTyping(senderID)
 
-  const user = await getUser(senderID) || await addUser(senderID)
+  const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
   if (DEBUG) {
     console.log('User Data: ')
     console.log(user)
   }
 
   // Translate the message with the user's prefered language
-  const translated = await translateText(text, user.language)
+  const translated = await translator.translate(text, user.language)
   await sendMessage(senderID, translated)
-}
-
-/**
- *  Translates the text by contacting Google's Translate API.
- *
- *    @param {string} text    The text to be translated
- *    @param {string} language    The language's payload defined, eg. LANG_EN
- *    @return {string} translated text
- */
-async function translateText (text, language) {
-  const { name, iso } = parseLang(language)
-
-  if (DEBUG) console.log('Calling Google Translate to translate the text')
-  const result = await translate(text, { to: iso })
-  let translated = `Translated to (${name}): ${result.text}\r\n`
-
-  if (result.from.text.didYouMean || result.from.text.autoCorrected) {
-    translated += `\r\nDid you mean, "${result.from.text.value}"?`
-  }
-
-  return translated
 }
 
 /**
