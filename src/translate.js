@@ -1,5 +1,5 @@
 
-const googleTranslate = require('google-translate-api-browser')
+const { translate } = require('google-translate-api-browser')
 const { parseLang } = require('./language.js')
 
 const DEBUG = process.env.DEBUG || false
@@ -28,11 +28,11 @@ function transformHTML (text) {
  *    @param {string} language    The language's payload defined, eg. LANG_EN
  *    @return {string} translated text
  */
-async function translate (text, language) {
+async function translateText (text, language) {
   const { name, iso } = parseLang(language)
 
   if (DEBUG) console.log('Calling Google Translate to translate the text')
-  const result = await googleTranslate(text, { to: iso })
+  const result = await translate(text, { to: iso })
   let translated = `Translated to (${name}): ${result.text}\r\n`
 
   if (result.from.text.didYouMean || result.from.text.autoCorrected) {
@@ -43,4 +43,4 @@ async function translate (text, language) {
   return translated
 }
 
-module.exports = { translate }
+module.exports = { translate: translateText }
