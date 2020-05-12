@@ -137,16 +137,23 @@ async function receivedMessage (event) {
   }
 
   const langRegex = /^(--lang(uage)? (\w+))$/i
+  const disable = /^(--disable-footer)$/i
+
   if (text === '--help') {
     response = '*Translator Help*:\r\n'
-    response += 'Type `--language [LANGUAGE_NAME]` to change the language'
+    response += 'Type `--language [LANGUAGE_NAME]` to change the language\r\n'
+    response += 'Type `--disable` to disable the help footer every messages\r\n'
+    response += 'Type `--enable` to re-enable the help footer'
   } else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[2].toLowerCase()
     response = await changeLanguage(senderID, language)
+  } else if (text.match(disable)) {
+    response = await disableFooter(senderID)
   } else {
     // Translate the message with the user's preferred language
-    const help = '\r\n*For help*, please type `--help`'
-    response = await translator.translate(text, user.language) + help
+    const { language, footer } = user
+    const help = footer === 'disabled' ? '' : '\r\n*For help*, type `--help`'
+    response = await translator.translate(text, language) + help
   }
 
   await sendMessage(senderID, response)
@@ -194,6 +201,17 @@ async function changeLanguage (psid, lang) {
     await userDB.setUser(psid, { language: code })
     return `Language was changed to ${proper}!`
   } else return `Unknown language: ${lang}`
+}
+
+/**
+ *  Disables the help footer every messages
+ *
+ *    @param {string} psid    User-scoped page ID
+ *    @return {string} message
+ */
+async function disableFooter (psid) {
+  await userDB.setUser(psid, { footer: 'disabled' })
+  return 'Footer was disabled'
 }
 
 /**
