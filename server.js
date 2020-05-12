@@ -107,7 +107,7 @@ async function receivedPostback (event) {
   switch (payload) {
     case 'get_started':
       await sendMessage(senderID, 'Hi there! Type anything and I\'ll ' +
-        'translate it to English. Type "--help" for help')
+        'translate it to English. Type `--help` for help')
       break
 
     default:
