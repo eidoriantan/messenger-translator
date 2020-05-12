@@ -143,7 +143,7 @@ async function receivedMessage (event) {
   const langRegex = /^(--lang(uage)? (\w+))$/i
   if (text === '--help') sendHelp(senderID)
   else if (text.match(langRegex) !== null) {
-    const language = langRegex.exec(text)[2].toLowerCase()
+    const language = langRegex.exec(text)[3].toLowerCase()
     response = await changeLanguage(senderID, language)
   } else if (text === '--disable') {
     response = await disableFooter(senderID)
