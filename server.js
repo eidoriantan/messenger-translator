@@ -136,7 +136,7 @@ async function receivedMessage (event) {
     console.log(user)
   }
 
-  const langRegex = /^(--language (\w+))$/i
+  const langRegex = /^(--lang(uage)? (\w+))$/i
   if (text === '--help') {
     response = '*Translator Help*:\r\n'
     response += 'Type `--language [LANGUAGE_NAME]` to change the language'
