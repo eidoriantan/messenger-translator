@@ -141,13 +141,16 @@ async function receivedMessage (event) {
   }
 
   const langRegex = /^(--lang(uage)? (\w+))$/i
+  const disable = /^(--disable)$/i
+  const enable = /^(--enable)$/i
+
   if (text === '--help') sendHelp(senderID)
   else if (text.match(langRegex) !== null) {
-    const language = langRegex.exec(text)[3].toLowerCase()
+    const language = langRegex.exec(text)[3]
     response = await changeLanguage(senderID, language)
-  } else if (text === '--disable') {
+  } else if (text.match(disable) !== null) {
     response = await disableFooter(senderID)
-  } else if (text === '--enable') {
+  } else if (text.match(enable) !== null) {
     response = await enableFooter(senderID)
   } else {
     // Translate the message with the user's preferred language
