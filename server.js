@@ -3,9 +3,8 @@ const express = require('express')
 
 const request = require('./src/utils/request.js')
 const translator = require('./src/translate.js')
+const languages = require('./src/languages.js')
 const userDB = require('./src/user-database.js')
-const { parseLang } = require('./src/language.js')
-const { createMenu } = require('./src/persistent-menu.js')
 
 const app = express()
 
@@ -100,7 +99,6 @@ async function receivedPostback (event) {
    *  found.
    */
   const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
-
   if (DEBUG) {
     console.log('User Data: ')
     console.log(user)
@@ -109,20 +107,7 @@ async function receivedPostback (event) {
   switch (payload) {
     case 'get_started':
       await sendMessage(senderID, 'Hi there! Type anything and I\'ll ' +
-        'translate it to English. You can also change the language by ' +
-        'accessing the menu.')
-      break
-
-    case 'LANG_EN':
-    case 'LANG_JA':
-    case 'LANG_KO':
-    case 'LANG_FR':
-      if (DEBUG) console.log('Updating user database')
-      await userDB.setUser(senderID, { language: payload })
-      if (DEBUG) console.log('Updating user for new menu')
-      await sendNewMenu(senderID, payload)
-      await sendMessage(senderID,
-        `Language was changed to ${parseLang(payload).name}!`)
+        'translate it to English. Type "--help" for help')
       break
 
     default:
@@ -140,6 +125,7 @@ async function receivedMessage (event) {
   const senderID = event.sender.id
   const message = event.message
   const text = message.text
+  let response = ''
 
   if (DEBUG) console.log(`Message was received with text: ${text}`)
   await sendTyping(senderID)
@@ -150,9 +136,21 @@ async function receivedMessage (event) {
     console.log(user)
   }
 
-  // Translate the message with the user's prefered language
-  const translated = await translator.translate(text, user.language)
-  await sendMessage(senderID, translated)
+  const langRegex = /^(--language (\w+))$/i
+  if (text === '--help') {
+    response = 'Translator Help:\r\n'
+    response += 'Type "--language [LANGUAGE_NAME]" to change the language\r\n'
+    response += 'where [LANGUAGE_NAME] is the name of language'
+  } else if (text.match(langRegex) !== null) {
+    const language = langRegex.exec(text)[2].toLowerCase()
+    response = changeLanguage(senderID, language)
+  } else {
+    // Translate the message with the user's preferred language
+    const help = '\r\n\r\nFor help, please type "--help"'
+    response = await translator.translate(text, user.language) + help
+  }
+
+  await sendMessage(senderID, response)
 }
 
 /**
@@ -174,21 +172,29 @@ async function sendMessage (psid, text) {
 }
 
 /**
- *  Sends a new persistent menu to user.
+ *  Changes the language of the user from the database if supported
  *
- *    @param {string} psid    User's page-scoped ID
- *    @param {string} text    Language's payload to exclude from the menu
+ *    @param {string} psid    User-scoped page ID
+ *    @param {string} lang    Name of the language
+ *    @return {string} message
  */
-async function sendNewMenu (psid, payload) {
-  const url = `${FB_ENDPOINT}/custom_user_settings?access_token=${ACCESS_TOKEN}`
-  const menu = { psid, persistent_menu: createMenu(payload) }
+async function changeLanguage (psid, lang) {
+  if (languages.includes(lang)) {
+    let proper, code
 
-  if (DEBUG) {
-    console.log(`Sending user new menu"${psid}"`)
-    console.log(menu)
-  }
+    Object.keys(languages).forEach(key => {
+      const language = languages[key]
+      const regex = new RegExp(language, 'i')
 
-  await request('POST', url, {}, menu)
+      if (regex.exec(lang) !== null) {
+        proper = language
+        code = key
+      }
+    })
+
+    await userDB.setUser(psid, { language: code })
+    return `Language was changed to ${proper}!`
+  } else return `Unknown language: ${lang}`
 }
 
 /**
