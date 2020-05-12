@@ -23,8 +23,10 @@ or distribute the source codes. Thank you!
 ## Features
 
 Currently supported services:
- * Able to translate everything to English, Japanese, and Korean
+ * Uses command to translate everything to any languages
+   (Big thanks to [Google Translate](https://translate.google.com))
  * Interactive messaging
+ * Can use commands to change the options
 
 Please refer to the repository's
 [project](https://github.com/eidoriantan/messenger-translator/projects)
