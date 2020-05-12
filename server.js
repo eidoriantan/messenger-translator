@@ -138,15 +138,14 @@ async function receivedMessage (event) {
 
   const langRegex = /^(--language (\w+))$/i
   if (text === '--help') {
-    response = 'Translator Help:\r\n'
-    response += 'Type "--language [LANGUAGE_NAME]" to change the language\r\n'
-    response += 'where [LANGUAGE_NAME] is the name of language'
+    response = '*Translator Help*:\r\n'
+    response += 'Type `--language [LANGUAGE_NAME]` to change the language'
   } else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[2].toLowerCase()
-    response = changeLanguage(senderID, language)
+    response = await changeLanguage(senderID, language)
   } else {
     // Translate the message with the user's preferred language
-    const help = '\r\n\r\nFor help, please type "--help"'
+    const help = '\r\n*For help*, please type `--help`'
     response = await translator.translate(text, user.language) + help
   }
 
