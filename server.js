@@ -173,7 +173,7 @@ async function receivedMessage (event) {
  */
 async function sendHelp (psid) {
   const message = '*Translator Help*:\r\n' +
-    'Type `--language [LANGUAGE_NAME]` to change the language\r\n' +
+    'Type `--language [LANGUAGE NAME]` to change the language\r\n' +
     'Type `--disable` to disable the help footer every messages\r\n' +
     'Type `--enable` to re-enable the help footer'
 
