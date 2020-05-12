@@ -137,7 +137,8 @@ async function receivedMessage (event) {
   }
 
   const langRegex = /^(--lang(uage)? (\w+))$/i
-  const disable = /^(--disable-footer)$/i
+  const disable = /^(--disable)$/i
+  const enable = /^(--enable)$/i
 
   if (text === '--help') {
     response = '*Translator Help*:\r\n'
@@ -149,6 +150,8 @@ async function receivedMessage (event) {
     response = await changeLanguage(senderID, language)
   } else if (text.match(disable)) {
     response = await disableFooter(senderID)
+  } else if (text.match(enable)) {
+    response = await enableFooter(senderID)
   } else {
     // Translate the message with the user's preferred language
     const { language, footer } = user
@@ -212,6 +215,17 @@ async function changeLanguage (psid, lang) {
 async function disableFooter (psid) {
   await userDB.setUser(psid, { footer: 'disabled' })
   return 'Footer was disabled'
+}
+
+/**
+ *  Re-enables the help footer every messages
+ *
+ *    @param {string} psid    User-scoped page ID
+ *    @return {string} message
+ */
+async function enableFooter (psid) {
+  await userDB.setUser(psid, { footer: 'enabled' })
+  return 'Footer was enabled'
 }
 
 /**
