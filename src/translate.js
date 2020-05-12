@@ -31,7 +31,9 @@ function transformHTML (text) {
 async function translateText (text, iso) {
   if (DEBUG) console.log('Calling Google Translate to translate the text')
   const result = await translate(text, { to: iso })
-  let translated = `Translated to (${languages[iso]}): ${result.text}\r\n`
+
+  const language = languages[iso].name
+  let translated = `Translated to (${language}): ${result.text}\r\n`
 
   if (result.from.text.didYouMean || result.from.text.autoCorrected) {
     result.from.text.value = transformHTML(result.from.text.value)

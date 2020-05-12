@@ -70,6 +70,7 @@ app.post('/webhook', (req, res) => {
  *  are executed asynchronously.
  *
  *    @param {object} event    Event object sent by Facebook
+ *    @return void
  */
 function handleEvent (event) {
   if (event.message) {
@@ -86,6 +87,7 @@ function handleEvent (event) {
  *  Handles postback events received.
  *
  *    @param {object} event    Event object sent by Facebook
+ *    @return void
  */
 async function receivedPostback (event) {
   const senderID = event.sender.id
@@ -124,6 +126,7 @@ async function receivedPostback (event) {
  *  Handles all messages received.
  *
  *    @param {object} event    Event object sent by Facebook
+ *    @return void
  */
 async function receivedMessage (event) {
   const senderID = event.sender.id
@@ -204,17 +207,20 @@ async function sendMessage (psid, text) {
  *    @return {string} message
  */
 async function changeLanguage (psid, lang) {
-  let code
+  let name, code
 
   Object.keys(languages).forEach(key => {
-    const regex = languages[key]
-    if (regex.exec(lang) !== null) code = key
+    const language = languages[key]
+    if (language.regex.exec(lang) !== null) {
+      name = language.name
+      code = key
+    }
   })
 
   if (code) {
     await userDB.setUser(psid, { language: code })
-    return `Language was changed to ${lang.toLowerCase()}!`
-  } else return `Unknown language: ${lang.toLowerCase()}`
+    return `Language was changed to ${name}!`
+  } else return `Unknown language: ${lang}`
 }
 
 /**
