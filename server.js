@@ -204,22 +204,17 @@ async function sendMessage (psid, text) {
  *    @return {string} message
  */
 async function changeLanguage (psid, lang) {
-  let proper, code
+  let code
 
   Object.keys(languages).forEach(key => {
-    const language = languages[key]
-    const regex = new RegExp(language, 'i')
-
-    if (regex.exec(lang) !== null) {
-      proper = language
-      code = key
-    }
+    const regex = languages[key]
+    if (regex.exec(lang) !== null) code = key
   })
 
-  if (proper && code) {
+  if (code) {
     await userDB.setUser(psid, { language: code })
-    return `Language was changed to ${proper}!`
-  } else return `Unknown language: ${lang}`
+    return `Language was changed to ${lang.toLowerCase()}!`
+  } else return `Unknown language: ${lang.toLowerCase()}`
 }
 
 /**
