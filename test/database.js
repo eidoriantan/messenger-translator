@@ -36,6 +36,7 @@ describe('User Database test', () => {
 
     should.notEqual(userData, null)
     testUser.language = 'ja'
+    testUser.footer = false
     userData.should.containDeep(testUser)
   })
 
