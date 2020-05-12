@@ -110,6 +110,10 @@ async function receivedPostback (event) {
         'translate it to English. Type `--help` for help')
       break
 
+    case 'get_help':
+      await sendHelp(senderID)
+      break
+
     default:
       console.error('Unknown/unsupported payload')
       console.error(payload)
@@ -137,12 +141,8 @@ async function receivedMessage (event) {
   }
 
   const langRegex = /^(--lang(uage)? (\w+))$/i
-  if (text === '--help') {
-    response = '*Translator Help*:\r\n'
-    response += 'Type `--language [LANGUAGE_NAME]` to change the language\r\n'
-    response += 'Type `--disable` to disable the help footer every messages\r\n'
-    response += 'Type `--enable` to re-enable the help footer'
-  } else if (text.match(langRegex) !== null) {
+  if (text === '--help') sendHelp(senderID)
+  else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[2].toLowerCase()
     response = await changeLanguage(senderID, language)
   } else if (text === '--disable') {
@@ -160,10 +160,26 @@ async function receivedMessage (event) {
 }
 
 /**
+ *  Simply sends the help message to the user
+ *
+ *    @param {string} psid    User's page-scoped ID
+ *    @return void
+ */
+async function sendHelp (psid) {
+  const message = '*Translator Help*:\r\n' +
+    'Type `--language [LANGUAGE_NAME]` to change the language\r\n' +
+    'Type `--disable` to disable the help footer every messages\r\n' +
+    'Type `--enable` to re-enable the help footer'
+
+  await sendMessage(psid, message)
+}
+
+/**
  *  Sends a message to user by calling Messenger's Send API.
  *
  *    @param {string} psid    User's page-scoped ID
  *    @param {string} text    The message to send
+ *    @return void
  */
 async function sendMessage (psid, text) {
   const url = `${FB_ENDPOINT}/messages?access_token=${ACCESS_TOKEN}`
