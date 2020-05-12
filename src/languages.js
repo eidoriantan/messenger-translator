@@ -6,7 +6,7 @@ module.exports = {
   af: /^(Afrikaans)$/i,
   sq: /^(Albanian)$/i,
   am: /^(Amharic)$/i,
-  ar: /^(Arabic)$/i,
+  ar: /^(Arab(ic)?)$/i,
   hy: /^(Armenian)$/i,
   az: /^(Azerbaijani)$/i,
   eu: /^(Basque)$/i,
