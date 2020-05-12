@@ -3,7 +3,6 @@
  *  Supported languages by Google Translate.
  */
 module.exports = {
-  auto: /^(Automatic)$/i,
   af: /^(Afrikaans)$/i,
   sq: /^(Albanian)$/i,
   am: /^(Amharic)$/i,
