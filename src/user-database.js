@@ -16,7 +16,7 @@ const DEBUG = process.env.DEBUG || false
  */
 async function addUser (psid) {
   // Default user data
-  const userData = { psid, language: 'en', footer: 'enabled' }
+  const userData = { psid, language: 'en', footer: true }
 
   try {
     const headers = { 'X-APIKEY': DB_API_KEY }

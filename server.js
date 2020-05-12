@@ -137,9 +137,6 @@ async function receivedMessage (event) {
   }
 
   const langRegex = /^(--lang(uage)? (\w+))$/i
-  const disable = /^(--disable)$/i
-  const enable = /^(--enable)$/i
-
   if (text === '--help') {
     response = '*Translator Help*:\r\n'
     response += 'Type `--language [LANGUAGE_NAME]` to change the language\r\n'
@@ -148,14 +145,14 @@ async function receivedMessage (event) {
   } else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[2].toLowerCase()
     response = await changeLanguage(senderID, language)
-  } else if (text.match(disable)) {
+  } else if (text === '--disable') {
     response = await disableFooter(senderID)
-  } else if (text.match(enable)) {
+  } else if (text === '--enable') {
     response = await enableFooter(senderID)
   } else {
     // Translate the message with the user's preferred language
     const { language, footer } = user
-    const help = footer === 'disabled' ? '' : '\r\n*For help*, type `--help`'
+    const help = footer ? '\r\n*For help*, type `--help`' : ''
     response = await translator.translate(text, language) + help
   }
 
@@ -213,7 +210,7 @@ async function changeLanguage (psid, lang) {
  *    @return {string} message
  */
 async function disableFooter (psid) {
-  await userDB.setUser(psid, { footer: 'disabled' })
+  await userDB.setUser(psid, { footer: false })
   return 'Footer was disabled'
 }
 
@@ -224,7 +221,7 @@ async function disableFooter (psid) {
  *    @return {string} message
  */
 async function enableFooter (psid) {
-  await userDB.setUser(psid, { footer: 'enabled' })
+  await userDB.setUser(psid, { footer: true })
   return 'Footer was enabled'
 }
 
