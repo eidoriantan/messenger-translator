@@ -4,8 +4,8 @@ const crypto = require('crypto')
 
 const request = require('./src/utils/request.js')
 const translator = require('./src/translate.js')
-const languages = require('./src/languages.js')
 const userDB = require('./src/user-database.js')
+const { changeLanguage } = require('./src/language.js')
 
 const app = express()
 
@@ -18,8 +18,8 @@ const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
 const PORT = process.env.PORT || 8080
 const DEBUG = process.env.DEBUG || false
 
-if (!ACCESS_TOKEN || !VALIDATION_TOKEN) {
-  throw new Error('Access and/or validation token was not defined')
+if (!ACCESS_TOKEN || !VALIDATION_TOKEN || !APP_SECRET) {
+  throw new Error('Access, App Secret and/or validation token was not defined')
 }
 
 app.use(express.json({
@@ -75,6 +75,17 @@ app.post('/webhook', (req, res) => {
   res.status(200).send('Success')
   return true
 })
+
+/**
+ *  Simple returns a hashed app secret proof to secure the Facebook API requests
+ *
+ *    @return {string} proof
+ */
+function getProof () {
+  return crypto.createHmac('sha256', APP_SECRET)
+    .update(ACCESS_TOKEN)
+    .digest('hex')
+}
 
 /**
  *  Handles all events that are received through webhook. All received events
@@ -200,7 +211,11 @@ async function sendHelp (psid) {
  *    @return void
  */
 async function sendMessage (psid, text) {
-  const url = `${FB_ENDPOINT}/messages?access_token=${ACCESS_TOKEN}`
+  const params = new URLSearchParams()
+  params.set('access_token', ACCESS_TOKEN)
+  params.set('appsecret_proof', getProof())
+
+  const url = `${FB_ENDPOINT}/messages?${params}`
   const data = {
     messaging_type: 'RESPONSE',
     recipient: { id: psid },
@@ -212,27 +227,20 @@ async function sendMessage (psid, text) {
 }
 
 /**
- *  Changes the language of the user from the database if supported
+ *  Sends user a typing on indicator.
  *
- *    @param {string} psid    User-scoped page ID
- *    @param {string} lang    Name of the language
- *    @return {string} message
+ *    @param {string} psid    User's page-scoped ID
  */
-async function changeLanguage (psid, lang) {
-  let name, code
+async function sendTyping (psid) {
+  const url = `${FB_ENDPOINT}/messages?access_token=${ACCESS_TOKEN}`
+  const data = {
+    messaging_type: 'RESPONSE',
+    recipient: { id: psid },
+    sender_action: 'typing_on'
+  }
 
-  Object.keys(languages).forEach(key => {
-    const language = languages[key]
-    if (language.regex.exec(lang) !== null) {
-      name = language.name
-      code = key
-    }
-  })
-
-  if (code) {
-    await userDB.setUser(psid, { language: code })
-    return `Language was changed to ${name}!`
-  } else return `Unknown language: ${lang}`
+  if (DEBUG) { console.debug('Sending user typing on action') }
+  await request('POST', url, {}, data)
 }
 
 /**
@@ -255,23 +263,6 @@ async function disableDetailed (psid) {
 async function enableDetailed (psid) {
   await userDB.setUser(psid, { detailed: true })
   return 'Footer was enabled'
-}
-
-/**
- *  Sends user a typing on indicator.
- *
- *    @param {string} psid    User's page-scoped ID
- */
-async function sendTyping (psid) {
-  const url = `${FB_ENDPOINT}/messages?access_token=${ACCESS_TOKEN}`
-  const data = {
-    messaging_type: 'RESPONSE',
-    recipient: { id: psid },
-    sender_action: 'typing_on'
-  }
-
-  if (DEBUG) { console.debug('Sending user typing on action') }
-  await request('POST', url, {}, data)
 }
 
 const server = app.listen(PORT, () => {
