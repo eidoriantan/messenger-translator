@@ -155,10 +155,11 @@ async function receivedMessage (event) {
   }
 
   const langRegex = /^(--lang(uage)? (.+))$/i
+  const help = /^(--help)$/i
   const disable = /^(--disable)$/i
   const enable = /^(--enable)$/i
 
-  if (text === '--help') sendHelp(senderID)
+  if (text.match(help) !== null) sendHelp(senderID)
   else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[3]
     response = await changeLanguage(senderID, language)
