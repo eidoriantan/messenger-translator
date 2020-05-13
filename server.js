@@ -20,11 +20,6 @@ if (!ACCESS_TOKEN || !VALIDATION_TOKEN) {
   throw new Error('Access and/or validation token was not defined')
 }
 
-/**
- *  @TODO: Validate requests integrity by verifying the 'X-HUB-SIGNATURE'
- *  with the app secret.
- */
-
 app.use(express.json())
 
 app.get('/webhook', (req, res) => {
@@ -152,14 +147,14 @@ async function receivedMessage (event) {
     const language = langRegex.exec(text)[3]
     response = await changeLanguage(senderID, language)
   } else if (text.match(disable) !== null) {
-    response = await disableFooter(senderID)
+    response = await disableDetailed(senderID)
   } else if (text.match(enable) !== null) {
-    response = await enableFooter(senderID)
+    response = await enableDetailed(senderID)
   } else {
     // Translate the message with the user's preferred language
-    const { language, footer } = user
-    const help = footer ? '\r\n*For help*, type `--help`' : ''
-    response = await translator.translate(text, language) + help
+    const { language, detailed } = user
+    const help = detailed ? '\r\n*For help*, type `--help`' : ''
+    response = await translator.translate(text, language, detailed) + help
   }
 
   await sendMessage(senderID, response)
@@ -174,8 +169,8 @@ async function receivedMessage (event) {
 async function sendHelp (psid) {
   const message = '*Translator Help*:\r\n' +
     'Type `--language [LANGUAGE]` to change the language\r\n' +
-    'Type `--disable` to disable the help footer every messages\r\n' +
-    'Type `--enable` to re-enable the help footer'
+    'Type `--disable` to disable the detailed mode\r\n' +
+    'Type `--enable` to re-enable the detailed mode'
 
   await sendMessage(psid, message)
 }
@@ -229,8 +224,8 @@ async function changeLanguage (psid, lang) {
  *    @param {string} psid    User-scoped page ID
  *    @return {string} message
  */
-async function disableFooter (psid) {
-  await userDB.setUser(psid, { footer: false })
+async function disableDetailed (psid) {
+  await userDB.setUser(psid, { detailed: false })
   return 'Footer was disabled'
 }
 
@@ -240,8 +235,8 @@ async function disableFooter (psid) {
  *    @param {string} psid    User-scoped page ID
  *    @return {string} message
  */
-async function enableFooter (psid) {
-  await userDB.setUser(psid, { footer: true })
+async function enableDetailed (psid) {
+  await userDB.setUser(psid, { detailed: true })
   return 'Footer was enabled'
 }
 

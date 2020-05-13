@@ -4,7 +4,7 @@ const request = require('./utils/request.js')
 /**
  *  The bot is using `restdb.io` API to store the user's preferences/settings
  */
-const DB_ENDPOINT = 'https://translator-e0ea.restdb.io/rest/preferences'
+const DB_ENDPOINT = 'https://translator-e0ea.restdb.io/rest/msgr-translator'
 const DB_API_KEY = process.env.DB_API_KEY
 const DEBUG = process.env.DEBUG || false
 
@@ -16,7 +16,7 @@ const DEBUG = process.env.DEBUG || false
  */
 async function addUser (psid) {
   // Default user data
-  const userData = { psid, language: 'en', footer: true }
+  const userData = { psid, language: 'en', detailed: true }
 
   try {
     const headers = { 'X-APIKEY': DB_API_KEY }

@@ -26,14 +26,22 @@ function transformHTML (text) {
  *
  *    @param {string} text    The text to be translated
  *    @param {string} iso    The language's ISO code, eg. en
+ *    @param {string} detailed    Detailed mode
  *    @return {string} translated text
  */
-async function translateText (text, iso) {
+async function translateText (text, iso, detailed) {
   if (DEBUG) console.log('Calling Google Translate to translate the text')
   const result = await translate(text, { to: iso })
 
   const language = languages[iso].name
-  let translated = `Translated to (${language}): ${result.text}\r\n`
+  const from = languages[result.from.language.iso].name
+
+  let translated = ''
+  if (detailed) {
+    translated += `Translated to: ${language}\r\n`
+    translated += `Translated from: ${from}\r\n\r\n`
+    translated += result.text
+  } else translated += result.text
 
   if (result.from.text.didYouMean || result.from.text.autoCorrected) {
     result.from.text.value = transformHTML(result.from.text.value)
