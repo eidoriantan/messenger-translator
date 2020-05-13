@@ -197,7 +197,7 @@ async function receivedMessage (event) {
 async function sendHelp (psid) {
   const message = 'Translator Help\r\n' +
     'Type --disable/--enable to toggle detailed mode\r\n' +
-    'Type --language [LANGUAGE] to change\r\n`' +
+    'Type --language [LANGUAGE] to change\r\n' +
     'Example:\r\n--language Japanese'
 
   await sendMessage(psid, message)
