@@ -4,7 +4,7 @@ const should = require('should')
 const request = require('../src/utils/request.js')
 const { addUser, getUser, setUser } = require('../src/user-database.js')
 
-const DB_ENDPOINT = 'https://translator-e0ea.restdb.io/rest/preferences'
+const DB_ENDPOINT = 'https://translator-e0ea.restdb.io/rest/msgr-translator'
 const DB_API_KEY = process.env.DB_API_KEY
 const TEST_USERID = process.env.TEST_USERID
 process.env.DEBUG = true
@@ -17,7 +17,7 @@ describe('User Database test', () => {
     const userData = await addUser(TEST_USERID)
     userData.should.containEql({ psid: TEST_USERID })
     userData.should.containEql({ language: 'en' })
-    userData.should.containEql({ footer: true })
+    userData.should.containEql({ detailed: true })
     should.ok(userData._id)
     testUser = userData
   })
@@ -31,12 +31,12 @@ describe('User Database test', () => {
   it('Sets user property', async () => {
     const userData = await setUser(testUser.psid, {
       language: 'ja',
-      footer: false
+      detailed: false
     })
 
     should.notEqual(userData, null)
     testUser.language = 'ja'
-    testUser.footer = false
+    testUser.detailed = false
     userData.should.containDeep(testUser)
   })
 
