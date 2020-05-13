@@ -20,7 +20,7 @@ async function changeLanguage (psid, lang) {
     }
   })
 
-  if (code) {
+  if (name && code) {
     await userDB.setUser(psid, { language: code })
     return `Language was changed to ${name}!`
   } else return `Unknown language: ${lang}`
