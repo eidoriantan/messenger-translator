@@ -1,5 +1,6 @@
 
 const express = require('express')
+const crypto = require('crypto')
 
 const request = require('./src/utils/request.js')
 const translator = require('./src/translate.js')
@@ -10,6 +11,7 @@ const app = express()
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
+const APP_SECRET = process.env.APP_SECRET
 
 const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
 
@@ -20,7 +22,21 @@ if (!ACCESS_TOKEN || !VALIDATION_TOKEN) {
   throw new Error('Access and/or validation token was not defined')
 }
 
-app.use(express.json())
+app.use(express.json({ verify: verifyToken }))
+
+function verifyToken (req, res, buf) {
+  const signature = req.headers['x-hub-signature']
+  if (signature) {
+    const hash = signature.split('=')[1]
+    const expected = crypto.createHmac('sha1', APP_SECRET)
+      .update(buf)
+      .digest('hex')
+
+    if (hash !== expected) throw new Error('Invalid signature')
+  } else {
+    throw new Error('No signature')
+  }
+}
 
 app.get('/webhook', (req, res) => {
   const mode = req.query['hub.mode']
