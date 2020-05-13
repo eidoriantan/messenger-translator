@@ -154,7 +154,7 @@ async function receivedMessage (event) {
     console.log(user)
   }
 
-  const langRegex = /^(--lang(uage)? (\w+))$/i
+  const langRegex = /^(--lang(uage)? (.+))$/i
   const disable = /^(--disable)$/i
   const enable = /^(--enable)$/i
 
