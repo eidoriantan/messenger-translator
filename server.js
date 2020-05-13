@@ -165,10 +165,10 @@ async function receivedMessage (event) {
     console.log(user)
   }
 
-  const langRegex = /^(--lang(uage)? (.+))$/i
-  const help = /^(--help)$/i
-  const disable = /^(--disable)$/i
-  const enable = /^(--enable)$/i
+  const langRegex = /^(-?-?lang(uage)? (.+))$/i
+  const help = /^(-?-?help)$/i
+  const disable = /^(--?disable)$/i
+  const enable = /^(--?enable)$/i
 
   if (text.match(help) !== null) sendHelp(senderID)
   else if (text.match(langRegex) !== null) {
@@ -195,10 +195,10 @@ async function receivedMessage (event) {
  *    @return void
  */
 async function sendHelp (psid) {
-  const message = '*Translator Help*:\r\n' +
-    'Type `--language [LANGUAGE]` to change the language\r\n' +
-    'Type `--disable` to disable the detailed mode\r\n' +
-    'Type `--enable` to re-enable the detailed mode'
+  const message = 'Translator Help\r\n' +
+    'Type --disable/--enable to toggle detailed mode\r\n' +
+    'Type --language [LANGUAGE] to change\r\n`' +
+    'Example:\r\n--language Japanese'
 
   await sendMessage(psid, message)
 }
