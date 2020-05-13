@@ -25,7 +25,7 @@ if (!ACCESS_TOKEN || !VALIDATION_TOKEN) {
 app.use(express.json({ verify: verifyToken }))
 
 function verifyToken (req, res, buf) {
-  const signature = req.headers['x-hub-signature']
+  const signature = req.get('x-hub-signature')
   if (signature) {
     const hash = signature.split('=')[1]
     const expected = crypto.createHmac('sha1', APP_SECRET)
