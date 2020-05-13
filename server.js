@@ -22,21 +22,21 @@ if (!ACCESS_TOKEN || !VALIDATION_TOKEN) {
   throw new Error('Access and/or validation token was not defined')
 }
 
-app.use(express.json({ verify: verifyToken }))
+app.use(express.json({
+  verify: (req, res, buf) => {
+    const signature = req.get('x-hub-signature')
+    if (!signature) throw new Error('No signature')
 
-function verifyToken (req, res, buf) {
-  const signature = req.get('x-hub-signature')
-  if (signature) {
-    const hash = signature.split('=')[1]
-    const expected = crypto.createHmac('sha1', APP_SECRET)
+    const elements = signature.split('=')
+    const method = elements[0]
+    const hash = elements[1]
+    const expected = crypto.createHmac(method, APP_SECRET)
       .update(buf)
       .digest('hex')
 
     if (hash !== expected) throw new Error('Invalid signature')
-  } else {
-    throw new Error('No signature')
   }
-}
+}))
 
 app.get('/webhook', (req, res) => {
   const mode = req.query['hub.mode']
