@@ -1,6 +1,6 @@
 {
   "name": "messenger-translator",
-  "version": "2.0.0-beta",
+  "version": "3.0.0-beta",
   "description": "Webhook for Messenger translator using Express",
   "keywords": [
     "node",
@@ -49,7 +49,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "mocha": "^7.1.2",
     "should": "^13.2.3",
-    "standard": "^14.3.3",
+    "standard": "^14.3.4",
     "supertest": "^4.0.2"
   },
   "private": true
