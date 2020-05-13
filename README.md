@@ -1,7 +1,9 @@
 
 # Messenger Translator
 
-[![Node.js CI](https://github.com/eidoriantan/messenger-translator/workflows/Node.js%20CI/badge.svg)](https://github.com/eidoriantan/messenger-translator/actions?query=workflow%3A%22Node.js+CI%22)
+[![Node.js v10.x CI](https://github.com/eidoriantan/messenger-translator/workflows/Node.js%20v10.x%20CI/badge.svg)](https://github.com/eidoriantan/messenger-translator/actions?query=workflow%3A%22Node.js+v10.x+CI%22)
+[![Node.js v12.x CI](https://github.com/eidoriantan/messenger-translator/workflows/Node.js%20v12.x%20CI/badge.svg)](https://github.com/eidoriantan/messenger-translator/actions?query=workflow%3A%22Node.js+v12.x+CI%22)
+[![Node.js v13.x CI](https://github.com/eidoriantan/messenger-translator/workflows/Node.js%20v13.x%20CI/badge.svg)](https://github.com/eidoriantan/messenger-translator/actions?query=workflow%3A%22Node.js+v13.x+CI%22)
 [![Build Status](https://travis-ci.com/eidoriantan/messenger-translator.svg?token=Hk9gXA7HZjP174YVjdRu&branch=master)](https://travis-ci.com/eidoriantan/messenger-translator)
 
 Visit the [Facebook page](https://fb.com/msgr.translator) or chat the bot at
