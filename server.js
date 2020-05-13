@@ -215,7 +215,7 @@ async function sendMessage (psid, text) {
   params.set('access_token', ACCESS_TOKEN)
   params.set('appsecret_proof', getProof())
 
-  const url = `${FB_ENDPOINT}/messages?${params}`
+  const url = `${FB_ENDPOINT}/messages?${params.toString()}`
   const data = {
     messaging_type: 'RESPONSE',
     recipient: { id: psid },
@@ -232,7 +232,10 @@ async function sendMessage (psid, text) {
  *    @param {string} psid    User's page-scoped ID
  */
 async function sendTyping (psid) {
-  const url = `${FB_ENDPOINT}/messages?access_token=${ACCESS_TOKEN}`
+  const params = new URLSearchParams()
+  params.set('access_token', ACCESS_TOKEN)
+  params.set('appsecret_proof', getProof())
+  const url = `${FB_ENDPOINT}/messages?${params.toString()}`
   const data = {
     messaging_type: 'RESPONSE',
     recipient: { id: psid },
