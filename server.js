@@ -120,12 +120,8 @@ async function receivedPostback (event) {
 
   switch (payload) {
     case 'get_started':
-      await sendMessage(senderID, 'Hi there! Type anything and I\'ll ' +
-        'translate it to English. Type `--help` for help')
-      break
-
     case 'get_help':
-      await sendHelp(senderID)
+      await sendHelp(senderID, user.locale)
       break
 
     default:
@@ -171,7 +167,7 @@ async function receivedMessage (event) {
   } else {
     // Translate the message with the user's preferred language
     const { language, detailed } = user
-    const help = detailed ? '\r\n\r\n*For help*, type `--help`' : ''
+    const help = detailed ? '\r\n\r\nFor help, type --help' : ''
     response = await translator.translate(text, language, detailed) + help
   }
 
@@ -182,15 +178,20 @@ async function receivedMessage (event) {
  *  Simply sends the help message to the user
  *
  *    @param {string} psid    User's page-scoped ID
+ *    @param {string} locale    User's locale
  *    @return void
  */
-async function sendHelp (psid) {
+async function sendHelp (psid, locale) {
   const message = 'Translator Help\r\n' +
     'Type --disable/--enable to toggle detailed mode\r\n' +
     'Type --language [LANGUAGE] to change\r\n' +
     'Example:\r\n--language Japanese'
 
-  await sendMessage(psid, message)
+  const language = locale ? locale.split('_')[0] : 'en'
+  const translated = locale === 'en' ? message
+    : await translator.translate(message, language, false)
+
+  await sendMessage(psid, translated)
 }
 
 /**

@@ -14,13 +14,11 @@ async function updateUsers () {
 
   console.log('All users was retrieved')
   response.body.forEach(async user => {
-    if (user.name) return
-
     console.log('Getting user: ' + user.psid)
-    const profile = getProfile(user.psid)
+    const profile = await getProfile(user.psid)
     await request('PATCH', `${DB_ENDPOINT}/${user._id}`, headers, {
       name: profile.name,
-      locale: profile.locale
+      locale: profile.locale || 'en_US'
     })
   })
 }
