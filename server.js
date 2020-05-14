@@ -5,6 +5,7 @@ const crypto = require('crypto')
 const request = require('./src/utils/request.js')
 const translator = require('./src/translate.js')
 const userDB = require('./src/user-database.js')
+const getProof = require('./src/proof.js')
 const { changeLanguage } = require('./src/language.js')
 
 const app = express()
@@ -75,17 +76,6 @@ app.post('/webhook', (req, res) => {
   res.status(200).send('Success')
   return true
 })
-
-/**
- *  Simple returns a hashed app secret proof to secure the Facebook API requests
- *
- *    @return {string} proof
- */
-function getProof () {
-  return crypto.createHmac('sha256', APP_SECRET)
-    .update(ACCESS_TOKEN)
-    .digest('hex')
-}
 
 /**
  *  Handles all events that are received through webhook. All received events
