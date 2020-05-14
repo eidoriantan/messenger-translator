@@ -1,5 +1,6 @@
 
 const request = require('./utils/request.js')
+const { getProfile } = require('./user-fb.js')
 
 /**
  *  The bot is using `restdb.io` API to store the user's preferences/settings
@@ -16,7 +17,14 @@ const DEBUG = process.env.DEBUG || false
  */
 async function addUser (psid) {
   // Default user data
-  const userData = { psid, language: 'en', detailed: true }
+  const profile = await getProfile(psid)
+  const userData = {
+    psid,
+    name: profile.name,
+    language: 'en',
+    detailed: true,
+    locale: profile.locale
+  }
 
   try {
     const headers = { 'X-APIKEY': DB_API_KEY }

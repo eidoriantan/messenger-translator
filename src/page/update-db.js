@@ -1,7 +1,8 @@
 
 const request = require('../utils/request.js')
+const { getProfile } = require('../user-fb.js')
 
-const DB_ENDPOINT = 'https://translator-e0ea.restdb.io/rest/preferences'
+const DB_ENDPOINT = 'https://translator-e0ea.restdb.io/rest/msgr-translator'
 const DB_API_KEY = process.env.DB_API_KEY
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
@@ -19,12 +20,10 @@ async function updateUsers () {
     if (user.name) return
 
     console.log('Getting user: ' + user.psid)
-    const url =
-      `${FB_ENDPOINT}/${user.psid}?fields=name&access_token=${ACCESS_TOKEN}`
-    const userResponse = await request('GET', url)
-    const profile = userResponse.body
+    const profile = await getProfile(user.psid)
     await request('PATCH', `${DB_ENDPOINT}/${user._id}`, headers, {
-      name: profile.name
+      name: profile.name,
+      locale: profile.locale || 'en_US'
     })
   })
 }

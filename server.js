@@ -5,15 +5,16 @@ const crypto = require('crypto')
 const request = require('./src/utils/request.js')
 const translator = require('./src/translate.js')
 const userDB = require('./src/user-database.js')
+const getProof = require('./src/proof.js')
 const { changeLanguage } = require('./src/language.js')
 
 const app = express()
 
+const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
+
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
 const APP_SECRET = process.env.APP_SECRET
-
-const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
 
 const PORT = process.env.PORT || 8080
 const DEBUG = process.env.DEBUG || false
@@ -130,12 +131,8 @@ async function receivedPostback (event) {
 
   switch (payload) {
     case 'get_started':
-      await sendMessage(senderID, 'Hi there! Type anything and I\'ll ' +
-        'translate it to English. Type `--help` for help')
-      break
-
     case 'get_help':
-      await sendHelp(senderID)
+      await sendHelp(senderID, user.locale)
       break
 
     default:
@@ -169,20 +166,19 @@ async function receivedMessage (event) {
   const help = /^(-?-?help)$/i
   const disable = /^(--?disable)$/i
   const enable = /^(--?enable)$/i
-
-  if (text.match(help) !== null) sendHelp(senderID)
+  if (text.match(help) !== null) sendHelp(user.psid)
   else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[3]
-    response = await changeLanguage(senderID, language)
+    response = await changeLanguage(user.psid, language)
   } else if (text.match(disable) !== null) {
-    response = await disableDetailed(senderID)
+    response = await disableDetailed(user.psid)
   } else if (text.match(enable) !== null) {
-    response = await enableDetailed(senderID)
+    response = await enableDetailed(user.psid)
   } else {
     // Translate the message with the user's preferred language
     const { language, detailed } = user
-    const help = detailed ? '\r\n\r\n*For help*, type `--help`' : ''
-    response = await translator.translate(text, language, detailed) + help
+    const help = detailed ? '\r\nFor help, type " --help "' : ''
+    response = await translator.translate(text + help, language, detailed)
   }
 
   await sendMessage(senderID, response)
@@ -192,15 +188,23 @@ async function receivedMessage (event) {
  *  Simply sends the help message to the user
  *
  *    @param {string} psid    User's page-scoped ID
+ *    @param {string} locale    User's locale
  *    @return void
  */
-async function sendHelp (psid) {
-  const message = 'Translator Help\r\n' +
-    'Type --disable/--enable to toggle detailed mode\r\n' +
-    'Type --language [LANGUAGE] to change\r\n' +
-    'Example:\r\n--language Japanese'
+async function sendHelp (psid, locale) {
+  let message = 'Translator Help\r\n'
+  message += 'Type " --disable / --enable " to toggle detailed mode\r\n'
+  message += 'Type " --language LANGUAGE " to change language\r\n'
+  message += 'For example:\r\n'
 
-  await sendMessage(psid, message)
+  const example = '--language japanese'
+  const language = locale ? locale.split('_')[0] : 'en'
+
+  if (language !== 'en') {
+    message = await translator.translate(message, language, false)
+  }
+
+  await sendMessage(psid, message + example)
 }
 
 /**
