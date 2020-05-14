@@ -21,7 +21,7 @@ describe('User Database test', () => {
     userData.should.containEql({ detailed: true })
     userData.should.containEql({ locale: 'en_US' })
     userData.should.containEql({ menu: ['en', 'ja', '_help'] })
-    userData.should.containEql({ stats: { count: 1 } })
+    userData.should.containEql({ stats: { en: { count: 1 } } })
     should.ok(userData._id)
     testUser = userData
   })
