@@ -1,7 +1,7 @@
 
 const languages = require('./languages.js')
 const request = require('./utils/request.js')
-const { getProof } = require('./proof.js')
+const getProof = require('./proof.js')
 
 const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
