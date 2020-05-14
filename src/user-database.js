@@ -20,10 +20,10 @@ async function addUser (psid) {
   const profile = await getProfile(psid)
   const userData = {
     psid,
-    name: profile.name,
+    name: profile.name || '',
     language: 'en',
     detailed: true,
-    locale: profile.locale,
+    locale: profile.locale || 'en_US',
     stats: { en: { count: 1 } },
     menu: ['en', 'ja', '_help']
   }
