@@ -4,6 +4,7 @@ const getProof = require('./proof.js')
 
 const FB_ENDPOINT = 'https://graph.facebook.com'
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
+const DEBUG = process.env.DEBUG
 
 /**
  *  Get user's Facebook profile.
@@ -12,6 +13,7 @@ const ACCESS_TOKEN = process.env.ACCESS_TOKEN
  *    @return {object} profile
  */
 async function getProfile (psid) {
+  if (DEBUG) console.log(`Getting profile with User ID: ${psid}`)
   const params = new URLSearchParams()
   params.set('fields', 'name,locale')
   params.set('access_token', ACCESS_TOKEN)

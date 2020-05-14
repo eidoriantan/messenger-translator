@@ -3,6 +3,8 @@ const languages = require('./languages.js')
 const userDB = require('./user-database.js')
 const { setUserMenu } = require('./menu.js')
 
+const DEBUG = process.env.DEBUG
+
 /**
  *  Changes the language of the user from the database if supported
  *
@@ -20,13 +22,15 @@ async function changeLanguage (user, lang) {
     }
   })
 
+  if (DEBUG) console.log(`Language requested: ${lang}`)
   if (!name || !code) return `Unknown language: ${lang}`
 
-  let menu
-  if (code !== user.menu[0]) {
-    menu = [code, user.menu[0], '_help']
+  let menu = user.menu
+  if (code !== menu[0]) {
+    menu = [code, menu[0], '_help']
     if (user.stats[code]) user.stats[code].count++
     else user.stats[code] = { count: 1 }
+
     await setUserMenu(user.psid, menu)
   }
 
