@@ -174,7 +174,7 @@ async function receivedMessage (event) {
   } else {
     // Translate the message with the user's preferred language
     const { language, detailed } = user
-    const help = detailed ? '\r\nFor help, type " --help "' : ''
+    const help = detailed ? '\r\n\r\nFor help, type " --help "' : ''
     response = await translator.translate(text + help, language, detailed)
   }
 
