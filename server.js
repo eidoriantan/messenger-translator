@@ -264,7 +264,7 @@ async function sendTyping (psid) {
  */
 async function disableDetailed (psid) {
   await userDB.setUser(psid, { detailed: false })
-  return 'Footer was disabled'
+  return 'Detailed mode was disabled'
 }
 
 /**
@@ -275,7 +275,7 @@ async function disableDetailed (psid) {
  */
 async function enableDetailed (psid) {
   await userDB.setUser(psid, { detailed: true })
-  return 'Footer was enabled'
+  return 'Detailed mode was enabled'
 }
 
 const server = app.listen(PORT, () => {
