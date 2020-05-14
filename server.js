@@ -10,11 +10,11 @@ const { changeLanguage } = require('./src/language.js')
 
 const app = express()
 
+const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
+
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
 const APP_SECRET = process.env.APP_SECRET
-
-const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
 
 const PORT = process.env.PORT || 8080
 const DEBUG = process.env.DEBUG || false
@@ -156,19 +156,19 @@ async function receivedMessage (event) {
   const disable = /^(--?disable)$/i
   const enable = /^(--?enable)$/i
 
-  if (text.match(help) !== null) sendHelp(senderID)
+  if (text.match(help) !== null) sendHelp(user.psid)
   else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[3]
-    response = await changeLanguage(senderID, language)
+    response = await changeLanguage(user.psid, language)
   } else if (text.match(disable) !== null) {
-    response = await disableDetailed(senderID)
+    response = await disableDetailed(user.psid)
   } else if (text.match(enable) !== null) {
-    response = await enableDetailed(senderID)
+    response = await enableDetailed(user.psid)
   } else {
     // Translate the message with the user's preferred language
     const { language, detailed } = user
-    const help = detailed ? '\r\n\r\nFor help, type --help' : ''
-    response = await translator.translate(text, language, detailed) + help
+    const help = detailed ? '\r\nFor help, type " --help "' : ''
+    response = await translator.translate(text + help, language, detailed)
   }
 
   await sendMessage(senderID, response)
