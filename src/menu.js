@@ -5,6 +5,7 @@ const getProof = require('./proof.js')
 
 const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
+const DEBUG = process.env.DEBUG
 
 /**
  *  Updates user's menu according to its currently used language
@@ -29,10 +30,15 @@ async function setUserMenu (psid, menu) {
     })
   })
 
+  if (DEBUG) {
+    console.log('Setting new persistent menu for user')
+    console.log(persistentMenu)
+  }
+
   const params = new URLSearchParams()
   params.set('access_token', ACCESS_TOKEN)
   params.set('appsecret_proof', getProof())
-  const url = `${FB_ENDPOINT}/customer_user_settings?${params.toString()}`
+  const url = `${FB_ENDPOINT}/custom_user_settings?${params.toString()}`
   const data = { psid, persistent_menu: persistentMenu }
 
   await request('POST', url, {}, data)
