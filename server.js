@@ -174,9 +174,17 @@ async function receivedMessage (event) {
     response = await enableDetailed(user.psid)
   } else {
     // Translate the message with the user's preferred language
-    const { language, detailed } = user
-    const help = detailed ? '\r\n\r\nFor help, type " --help "' : ''
-    response = await translator.translate(text + help, language, detailed)
+    const { language, detailed, locale } = user
+    const help = '\r\n\r\nFor help, type " --help "'
+    let footer = ''
+
+    if (detailed) {
+      footer = locale !== 'en'
+        ? await translator.translate(help, locale, false)
+        : help
+    }
+
+    response = await translator.translate(text, language, detailed) + footer
   }
 
   await sendMessage(senderID, response)
