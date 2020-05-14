@@ -121,7 +121,7 @@ async function receivedPostback (event) {
   switch (payload) {
     case 'get_started':
     case 'get_help':
-      await sendHelp(senderID, user.locale)
+      await sendHelp(user.psid, user.locale)
       break
 
     default:
