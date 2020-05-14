@@ -22,7 +22,7 @@ async function setUserMenu (psid, menu) {
 
   menu.forEach(menuitem => {
     const language = menuitem !== '_help' ? languages[menuitem].name : ''
-    persistentMenu.call_to_actions.push({
+    persistentMenu[0].call_to_actions.push({
       type: 'postback',
       title: menuitem === '_help' ? 'Get Help' : `--language ${language}`,
       payload: menuitem === '_help' ? 'get_help' : 'change_language'
