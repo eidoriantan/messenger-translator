@@ -182,16 +182,19 @@ async function receivedMessage (event) {
  *    @return void
  */
 async function sendHelp (psid, locale) {
-  const message = 'Translator Help\r\n' +
-    'Type --disable/--enable to toggle detailed mode\r\n' +
-    'Type --language [LANGUAGE] to change\r\n' +
-    'Example:\r\n--language Japanese'
+  let message = 'Translator Help\r\n'
+  message += 'Type " --disable / --enable " to toggle detailed mode\r\n'
+  message += 'Type " --language LANGUAGE " to change language\r\n'
+  message += 'For example:\r\n'
 
+  const example = '--language japanese'
   const language = locale ? locale.split('_')[0] : 'en'
-  const translated = locale === 'en' ? message
-    : await translator.translate(message, language, false)
 
-  await sendMessage(psid, translated)
+  if (language !== 'en') {
+    message = await translator.translate(message, language, false)
+  }
+
+  await sendMessage(psid, message + example)
 }
 
 /**
