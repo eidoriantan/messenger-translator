@@ -36,13 +36,13 @@ describe('User Database test', () => {
     const userData = await setUser(testUser.psid, {
       language: 'ja',
       detailed: false,
-      stats: { count: 2 }
+      stats: { en: { count: 2 } }
     })
 
     should.notEqual(userData, null)
     testUser.language = 'ja'
     testUser.detailed = false
-    testUser.stats.count = 2
+    testUser.stats.en.count = 2
     userData.should.containDeep(testUser)
   })
 
