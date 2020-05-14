@@ -179,8 +179,8 @@ async function receivedMessage (event) {
     let footer = ''
 
     if (detailed) {
-      footer = locale !== 'en'
-        ? await translator.translate(help, locale, false)
+      footer = locale !== 'en_US'
+        ? await translator.translate(help, locale.split('_')[0], false)
         : help
     }
 
