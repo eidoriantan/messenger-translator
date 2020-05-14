@@ -127,7 +127,8 @@ async function receivedPostback (event) {
 
     case 'change_language': {
       const language = postback.title.split('--language ')[1]
-      await changeLanguage(user, language)
+      const response = await changeLanguage(user, language)
+      await sendMessage(user.psid, response)
       break
     }
 
