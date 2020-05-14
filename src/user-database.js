@@ -23,7 +23,9 @@ async function addUser (psid) {
     name: profile.name,
     language: 'en',
     detailed: true,
-    locale: profile.locale
+    locale: profile.locale,
+    stats: { en: { count: 1 } },
+    menu: ['en', 'ja', '_help']
   }
 
   try {

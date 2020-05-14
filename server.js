@@ -103,7 +103,9 @@ function handleEvent (event) {
  */
 async function receivedPostback (event) {
   const senderID = event.sender.id
-  const payload = event.postback.payload
+  const postback = event.postback
+  const payload = postback.payload
+  const language = postback.title.split('--language ')[1]
 
   if (DEBUG) console.log(`Postback was called with payload: ${payload}`)
   await sendTyping(senderID)
@@ -122,6 +124,10 @@ async function receivedPostback (event) {
     case 'get_started':
     case 'get_help':
       await sendHelp(user.psid, user.locale)
+      break
+
+    case 'change_language':
+      await changeLanguage(user, language)
       break
 
     default:
@@ -159,7 +165,7 @@ async function receivedMessage (event) {
   if (text.match(help) !== null) sendHelp(user.psid)
   else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[3]
-    response = await changeLanguage(user.psid, language)
+    response = await changeLanguage(user, language)
   } else if (text.match(disable) !== null) {
     response = await disableDetailed(user.psid)
   } else if (text.match(enable) !== null) {
