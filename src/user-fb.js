@@ -5,6 +5,12 @@ const getProof = require('./proof.js')
 const FB_ENDPOINT = 'https://graph.facebook.com'
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 
+/**
+ *  Get user's Facebook profile.
+ *
+ *    @param {string} psid    User's page-scoped ID
+ *    @return {object} profile
+ */
 async function getProfile (psid) {
   const params = new URLSearchParams()
   params.set('fields', 'name,locale')
