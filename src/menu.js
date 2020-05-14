@@ -6,6 +6,13 @@ const { getProof } = require('./proof.js')
 const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 
+/**
+ *  Updates user's menu according to its currently used language
+ *
+ *    @param {string} psid    User's page-scoped ID
+ *    @param {string[]} menu    Array of menu item IDs
+ *    @return void
+ */
 async function setUserMenu (psid, menu) {
   const persistentMenu = [{
     locale: 'default',
