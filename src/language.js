@@ -27,11 +27,10 @@ async function changeLanguage (user, lang) {
     menu = [code, user.menu[0], '_help']
     if (user.stats[code]) user.stats[code].count++
     else user.stats[code] = { count: 1 }
+    await setUserMenu(user.psid, menu)
   }
 
   await userDB.setUser(user.psid, { language: code, menu, stats: user.stats })
-  await setUserMenu(user.psid, menu)
-
   return `Language was changed to ${name}!`
 }
 
