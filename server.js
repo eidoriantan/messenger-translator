@@ -105,7 +105,6 @@ async function receivedPostback (event) {
   const senderID = event.sender.id
   const postback = event.postback
   const payload = postback.payload
-  const language = postback.title.split('--language ')[1]
 
   if (DEBUG) console.log(`Postback was called with payload: ${payload}`)
   await sendTyping(senderID)
@@ -126,9 +125,11 @@ async function receivedPostback (event) {
       await sendHelp(user.psid, user.locale)
       break
 
-    case 'change_language':
+    case 'change_language': {
+      const language = postback.title.split('--language ')[1]
       await changeLanguage(user, language)
       break
+    }
 
     default:
       console.error('Unknown/unsupported payload')
