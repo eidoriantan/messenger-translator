@@ -31,7 +31,6 @@ Currently supported services:
  * Can use commands to change the options
 
 Please refer to the repository's
-[project](https://github.com/eidoriantan/messenger-translator/projects)
-and
-[issues](https://github.com/messenger-eidoriantan/messenger-translator/issues)
-for more informations.
+[project](https://github.com/eidoriantan/messenger-translator/projects) and
+[issues](https://github.com/eidoriantan/messenger-translator/issues) for more
+informations.
