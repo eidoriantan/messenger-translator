@@ -3,9 +3,9 @@ const express = require('express')
 const crypto = require('crypto')
 
 const request = require('./src/utils/request.js')
+const getProof = require('./src/utils/proof.js')
 const translator = require('./src/translate.js')
 const userDB = require('./src/user-database.js')
-const getProof = require('./src/proof.js')
 const { changeLanguage } = require('./src/language.js')
 
 const app = express()
