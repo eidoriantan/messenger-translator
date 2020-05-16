@@ -1,13 +1,49 @@
 
-const request = require('./utils/request.js')
+const sql = require('mssql')
 const { getProfile } = require('./user-fb.js')
 
 /**
- *  The bot is using `restdb.io` API to store the user's preferences/settings
+ *  This bot uses a SQL server for storing databases
  */
-const DB_ENDPOINT = 'https://translator-e0ea.restdb.io/rest/msgr-translator'
-const DB_API_KEY = process.env.DB_API_KEY
-const DEBUG = process.env.DEBUG || false
+const SERVER = process.env.SERVER
+const USERNAME = process.env.USERNAME
+const PASSWORD = process.env.PASSWORD
+const DATABASE = process.env.DATABASE
+
+const config = {
+  server: SERVER,
+  user: USERNAME,
+  password: PASSWORD,
+  database: DATABASE
+}
+
+/**
+ *  Returns the data type of the name in the database
+ *
+ *    @param {string} name    The name in the database
+ *    @return {SQLDataType} dataType
+ */
+function getDataType (name) {
+  let dataType
+  switch (name) {
+    case 'psid':
+    case 'language':
+    case 'locale':
+      dataType = sql.VarChar(16)
+      break
+
+    case 'name':
+    case 'menu':
+      dataType = sql.VarChar(255)
+      break
+
+    case 'detailed':
+      dataType = sql.Bit
+      break
+  }
+
+  return dataType
+}
 
 /**
  *  Asynchronous function that adds a user to the database.
@@ -16,38 +52,37 @@ const DEBUG = process.env.DEBUG || false
  *    @return {object} userData
  */
 async function addUser (psid) {
-  // Default user data
+  let pool
   const profile = await getProfile(psid)
   const userData = {
     psid,
-    name: profile.name || '',
+    name: profile.name,
     language: 'en',
     detailed: true,
-    locale: profile.locale || 'en_US',
-    stats: { en: { count: 1 } },
+    locale: profile.locale,
     menu: ['en', 'ja', '_help']
   }
 
   try {
-    const headers = { 'X-APIKEY': DB_API_KEY }
-    const response = await request('POST', DB_ENDPOINT, headers, userData)
-    userData._id = response.body._id
+    pool = await sql.connect(config)
+    const request = new sql.Request(pool)
+    let names = []
 
-    if (response.status >= 400) {
-      console.error('A non-"OK" status was returned but didn\'t throw an error')
-      console.error(response)
+    for (const name in userData) {
+      names.push(name)
+      request.input(name, getDataType(name), userData[name])
     }
 
-    if (DEBUG && response.status >= 200 && response.status < 300) {
-      console.log('A new user was created: ')
-      console.log(`PSID ---> ${response.body.psid}`)
-      console.log(`Object ID ---> ${response.body._id}`)
-    }
+    const values = names.map(name => `@${name}`).join()
+    names = names.join(', ')
+
+    await request.query(`INSERT INTO users (${names}) VALUES (${values})`)
   } catch (error) {
     console.error('An error had occured!')
     console.error(error)
   }
 
+  if (pool) pool.close()
   return userData
 }
 
@@ -58,29 +93,20 @@ async function addUser (psid) {
  *    @return {object} userData
  */
 async function getUser (psid) {
-  let userData
-
+  let pool, userData
   try {
-    const query = encodeURIComponent(JSON.stringify({ psid }))
-    const headers = { 'X-APIKEY': DB_API_KEY }
-    const url = `${DB_ENDPOINT}?q=${query}`
-    const response = await request('GET', url, headers)
-    userData = response.body.length > 0 ? response.body[0] : null
+    pool = await sql.connect(config)
+    const request = new sql.Request(pool)
+    request.input('psid', getDataType('psid'), psid)
+    const result = await request.query('SELECT * FROM users WHERE psid=@psid')
 
-    if (DEBUG) {
-      console.log(`Trying to get user with PSID "${psid}": `)
-      console.log(userData)
-    }
-
-    if (response.status >= 400) {
-      console.error('A non-"OK" status was returned but didn\'t throw an error')
-      console.error(response)
-    }
+    userData = result.recordset.length > 0 ? result.recordset[0] : null
   } catch (error) {
     console.error('An error had occured!')
     console.error(error)
   }
 
+  if (pool) pool.close()
   return userData
 }
 
@@ -89,34 +115,29 @@ async function getUser (psid) {
  *
  *    @param {string} psid    User's page-scoped ID
  *    @param {object[]} values    Array of { key: value } to update the database
- *    @return {object} userData
+ *    @return void
  */
 async function setUser (psid, values) {
-  let userData = null
-
+  let pool
   try {
-    userData = await getUser(psid) || await addUser(psid)
-    const headers = { 'X-APIKEY': DB_API_KEY }
-    const url = `${DB_ENDPOINT}/${userData._id}`
-    for (const key in values) userData[key] = values[key]
-    const response = await request('PATCH', url, headers, userData)
+    pool = await sql.connect(config)
+    const request = new sql.Request(pool)
+    request.input('psid', getDataType('psid'), psid)
+    const names = []
 
-    if (response.status >= 400) {
-      console.error('A non-"OK" status was returned but didn\'t throw an error')
-      console.error(response)
+    for (const name in values) {
+      names.push(name)
+      request.input(name, getDataType(name), values[name])
     }
 
-    if (DEBUG && response.status >= 200 && response.status < 300) {
-      console.log('A user was updated: ')
-      console.log(`PSID ---> ${response.body.psid}`)
-      console.log(`Object ID ---> ${response.body._id}`)
-    }
+    const columns = names.map(name => `${name}=@${name}`).join(', ')
+    await request.query(`UPDATE users SET ${columns} WHERE psid=@psid`)
   } catch (error) {
     console.error('An error had occured!')
     console.error(error)
   }
 
-  return userData
+  if (pool) pool.close()
 }
 
 module.exports = { addUser, getUser, setUser }
