@@ -34,7 +34,7 @@
   "scripts": {
     "start": "node server.js",
     "lint": "eslint -c .eslintrc.json . --ext .js,.mjs",
-    "test": "npm run lint && npx mocha --colors --timeout 20000"
+    "test": "npm run lint && mocha --colors --timeout 20000"
   },
   "dependencies": {
     "express": "^4.17.1",
