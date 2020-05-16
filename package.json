@@ -38,7 +38,8 @@
   },
   "dependencies": {
     "express": "^4.17.1",
-    "google-translate-api-browser": "^1.1.71"
+    "google-translate-api-browser": "^1.1.71",
+    "mssql": "^6.2.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
