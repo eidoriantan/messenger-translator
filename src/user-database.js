@@ -86,6 +86,21 @@ async function addUser (psid) {
   return userData
 }
 
+async function deleteUser (psid) {
+  let pool
+  try {
+    pool = await sql.connect(config)
+    const request = new sql.Request(pool)
+    request.input('psid', getDataType('psid'), psid)
+    await request.query('DELETE FROM users WHERE psid=@psid')
+  } catch (error) {
+    console.error('An error had occured!')
+    console.error(error)
+  }
+
+  if (pool) pool.close()
+}
+
 /**
  *  Asynchronous function that gets the user data from the database.
  *
@@ -140,4 +155,4 @@ async function setUser (psid, values) {
   if (pool) pool.close()
 }
 
-module.exports = { addUser, getUser, setUser }
+module.exports = { addUser, deleteUser, getUser, setUser }
