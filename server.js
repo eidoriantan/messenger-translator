@@ -165,7 +165,7 @@ async function receivedMessage (event) {
   const enable = /^(--?enable)$/i
 
   if (text.match(help) !== null) {
-    await sendHelp(user.psid)
+    await sendHelp(user.psid, user.locale)
     return true
   } else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[3]
