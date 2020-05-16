@@ -56,10 +56,10 @@ async function addUser (psid) {
   const profile = await getProfile(psid)
   const userData = {
     psid,
-    name: profile.name,
+    name: profile.name || '',
     language: 'en',
     detailed: true,
-    locale: profile.locale,
+    locale: profile.locale || 'en_US',
     menu: ['en', 'ja', '_help']
   }
 
@@ -114,8 +114,13 @@ async function getUser (psid) {
     const request = new sql.Request(pool)
     request.input('psid', getDataType('psid'), psid)
     const result = await request.query('SELECT * FROM users WHERE psid=@psid')
+    const parseUser = user => {
+      user.menu = user.menu.split(',')
+      return user
+    }
 
-    userData = result.recordset.length > 0 ? result.recordset[0] : null
+    userData = result.recordset.length > 0
+      ? parseUser(result.recordset[0]) : null
   } catch (error) {
     console.error('An error had occured!')
     console.error(error)
