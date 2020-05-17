@@ -15,8 +15,7 @@ Webhook that handles events for **Messenger Translator** using
 translate the messages.
 
 The webhook was hosted, built and served at [Heroku](https://heroku.com) and
-uses [restdb.io](https://restdb.io) to manage online database through their
-very helpful API.
+uses MySQL Server to manage user databases.
 
 **Note:** This is a close-sourced repository to provide secure services, backup,
 and to maintain the project easily. If you are a developer, please do not copy
