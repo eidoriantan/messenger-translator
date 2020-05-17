@@ -19,15 +19,18 @@ const config = {
   user: USERNAME,
   password: PASSWORD,
   database: DATABASE,
-  pool: {
-    min: 1
+  pool: { min: 1 },
+  options: {
+    enableArithAbort: true,
+    encrypt: true
   }
 }
 
-const pool = new sql.ConnectionPool(config).connect().then(pool => {
-  console.log('Connected to MySQL server!')
-  return pool
-}).catch(error => console.error(error))
+const poolAsync = (function () {
+  return new Promise(resolve => {
+    resolve(sql.connect(config))
+  })
+})()
 
 /**
  *  Returns the data type of the name in the database
@@ -75,7 +78,8 @@ async function addUser (psid) {
   }
 
   try {
-    const request = new sql.Request(pool)
+    const pool = await poolAsync
+    const request = pool.request()
     const names = []
 
     for (const name in userData) {
@@ -102,7 +106,8 @@ async function addUser (psid) {
  */
 async function deleteUser (psid) {
   try {
-    const request = new sql.Request(pool)
+    const pool = await poolAsync
+    const request = pool.request()
     request.input('psid', getDataType('psid'), psid)
     await request.query('DELETE FROM users WHERE psid=@psid')
   } catch (error) {
@@ -119,7 +124,8 @@ async function deleteUser (psid) {
  */
 async function getUser (psid) {
   try {
-    const request = new sql.Request(pool)
+    const pool = await poolAsync
+    const request = pool.request()
     request.input('psid', getDataType('psid'), psid)
     const result = await request.query('SELECT * FROM users WHERE psid=@psid')
     const parseUser = user => {
@@ -143,7 +149,8 @@ async function getUser (psid) {
  */
 async function setUser (psid, values) {
   try {
-    const request = new sql.Request(pool)
+    const pool = await poolAsync
+    const request = pool.request()
     request.input('psid', getDataType('psid'), psid)
     const names = []
 
@@ -160,4 +167,4 @@ async function setUser (psid, values) {
   }
 }
 
-module.exports = { pool, addUser, deleteUser, getUser, setUser }
+module.exports = { poolAsync, addUser, deleteUser, getUser, setUser }
