@@ -267,4 +267,11 @@ const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
 })
 
+server.on('close', async () => {
+  console.log('Server is closing...')
+  console.log('MySQL server is closing...')
+  const pool = await userDB.poolAsync
+  pool.close()
+})
+
 module.exports = { app, server }
