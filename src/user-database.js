@@ -9,6 +9,7 @@ const SERVER = process.env.SERVER
 const USERNAME = process.env.USERNAME
 const PASSWORD = process.env.PASSWORD
 const DATABASE = process.env.DATABASE
+const DEBUG = process.env.DEBUG
 
 if (!SERVER || !USERNAME || !PASSWORD || !DATABASE) {
   console.error('Server connection configuration was not defined')
@@ -26,6 +27,7 @@ const config = {
  */
 async function init () {
   try {
+    if (DEBUG) console.log('Connecting to SQL Server')
     return await sql.connect(config)
   } catch (error) {
     console.log(error)
@@ -38,6 +40,7 @@ async function init () {
  *    @param {SQLPool} pool    Connection to the MySQL server
  */
 async function close (pool) {
+  if (DEBUG) console.log('Closing the SQL Server')
   return await pool.close()
 }
 
@@ -154,7 +157,7 @@ async function getUser (pool, psid) {
  *
  *    @param {SQLPool} pool    Connection to the MySQL Server
  *    @param {string} psid    User's page-scoped ID
- *    @param {object[]} values    Array of { key: value } to update the database
+ *    @param {object} values    Array of { key: value } to update the database
  *    @return void
  */
 async function setUser (pool, psid, values) {
