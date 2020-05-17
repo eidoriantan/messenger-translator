@@ -109,13 +109,10 @@ async function receivedPostback (event) {
   if (DEBUG) console.log(`Postback was called with payload: ${payload}`)
 
   await sendTyping(senderID)
-  await userDB.init()
+  const pool = await userDB.init()
+  const user = await userDB.getUser(pool, senderID) ||
+    await userDB.addUser(pool, senderID)
 
-  /**
-   *  Get user who sent the event from the database or add the user if was not
-   *  found.
-   */
-  const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
   if (DEBUG) {
     console.log('User Data: ')
     console.log(user)
@@ -131,7 +128,7 @@ async function receivedPostback (event) {
       const language = postback.title.split('--language ')[1]
       const { name, code, menu } = await changeLanguage(user, language)
 
-      await userDB.setUser(user.psid, { language: code, menu })
+      await userDB.setUser(pool, user.psid, { language: code, menu })
       await sendMessage(user.psid, `Language was changed to ${name}!`)
       break
     }
@@ -141,7 +138,7 @@ async function receivedPostback (event) {
       console.error(payload)
   }
 
-  userDB.close()
+  await userDB.close(pool)
 }
 
 /**
@@ -158,9 +155,10 @@ async function receivedMessage (event) {
   if (DEBUG) console.log(`Message was received with text: ${text}`)
 
   await sendTyping(senderID)
-  await userDB.init()
+  const pool = await userDB.init()
+  const user = await userDB.getUser(pool, senderID) ||
+    await userDB.addUser(pool, senderID)
 
-  const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
   if (DEBUG) {
     console.log('User Data: ')
     console.log(user)
@@ -197,7 +195,7 @@ async function receivedMessage (event) {
     response = await translator.translate(text, language, detailed) + footer
   }
 
-  await userDB.close()
+  await userDB.close(pool)
   await sendMessage(user.psid, response)
 }
 

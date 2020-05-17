@@ -21,14 +21,12 @@ const config = {
   database: DATABASE
 }
 
-let pool = null
-
 /**
  *  Connects to the SQL server
  */
 async function init () {
   try {
-    pool = await sql.connect(config)
+    return await sql.connect(config)
   } catch (error) {
     console.log(error)
   }
@@ -36,9 +34,11 @@ async function init () {
 
 /**
  *  Closes a connection to the SQL server
+ *
+ *    @param {SQLPool} pool    Connection to the MySQL server
  */
-function close () {
-  if (pool !== null) return pool.close()
+async function close (pool) {
+  return await pool.close()
 }
 
 /**
@@ -72,15 +72,11 @@ function getDataType (name) {
 /**
  *  Asynchronous function that adds a user to the database.
  *
+ *    @param {SQLPool} pool    Connection to the MySQL Server
  *    @param {string} psid    User's page-scoped ID
  *    @return {object} userData
  */
-async function addUser (psid) {
-  if (pool === null) {
-    console.error('Database was not initialized!')
-    return false
-  }
-
+async function addUser (pool, psid) {
   const profile = await getProfile(psid)
   const userData = {
     psid,
@@ -112,12 +108,13 @@ async function addUser (psid) {
   return userData
 }
 
-async function deleteUser (psid) {
-  if (pool === null) {
-    console.error('Database was not initialized!')
-    return false
-  }
-
+/**
+ *  Deletes a user in the database
+ *
+ *    @param {SQLPool} pool    Connection to the MySQL Server
+ *    @param {string} psid    User's page-scoped ID
+ */
+async function deleteUser (pool, psid) {
   try {
     const request = new sql.Request(pool)
     request.input('psid', getDataType('psid'), psid)
@@ -131,15 +128,11 @@ async function deleteUser (psid) {
 /**
  *  Asynchronous function that gets the user data from the database.
  *
+ *    @param {SQLPool} pool    Connection to the MySQL Server
  *    @param {string} psid    User's page-scoped ID
  *    @return {object} userData
  */
-async function getUser (psid) {
-  if (pool === null) {
-    console.error('Database was not initialized!')
-    return false
-  }
-
+async function getUser (pool, psid) {
   try {
     const request = new sql.Request(pool)
     request.input('psid', getDataType('psid'), psid)
@@ -159,16 +152,12 @@ async function getUser (psid) {
 /**
  *  Asynchronous function that updates the user data to the database.
  *
+ *    @param {SQLPool} pool    Connection to the MySQL Server
  *    @param {string} psid    User's page-scoped ID
  *    @param {object[]} values    Array of { key: value } to update the database
  *    @return void
  */
-async function setUser (psid, values) {
-  if (pool === null) {
-    console.error('Database was not initialized!')
-    return false
-  }
-
+async function setUser (pool, psid, values) {
   try {
     const request = new sql.Request(pool)
     request.input('psid', getDataType('psid'), psid)

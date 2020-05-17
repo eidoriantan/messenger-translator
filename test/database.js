@@ -8,11 +8,11 @@ process.env.DEBUG = true
 if (!TEST_USERID) throw new Error('Test user ID was not defined')
 
 describe('User Database test', async () => {
-  await userDB.init()
+  const pool = await userDB.init()
   let testUser
 
   it('Adds user', async () => {
-    const userData = await userDB.addUser(TEST_USERID)
+    const userData = await userDB.addUser(pool, TEST_USERID)
     userData.should.containEql({ psid: TEST_USERID })
     userData.should.containEql({ name: '' })
     userData.should.containEql({ language: 'en' })
@@ -23,12 +23,12 @@ describe('User Database test', async () => {
   })
 
   it('Gets user', async () => {
-    const userData = await userDB.getUser(testUser.psid)
+    const userData = await userDB.getUser(pool, testUser.psid)
     userData.should.containDeep(testUser)
   })
 
   it('Sets user property', async () => {
-    await userDB.setUser(testUser.psid, {
+    await userDB.setUser(pool, testUser.psid, {
       language: 'ja',
       detailed: false
     })
@@ -40,7 +40,7 @@ describe('User Database test', async () => {
   })
 
   after(async () => {
-    await userDB.deleteUser(testUser.psid)
-    userDB.close()
+    await userDB.deleteUser(pool, testUser.psid)
+    await userDB.close(pool)
   })
 })

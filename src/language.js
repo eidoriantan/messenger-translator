@@ -9,7 +9,6 @@ const DEBUG = process.env.DEBUG
  *
  *    @param {string} user    User's object from the database
  *    @param {string} lang    Name of the language
- *    @param {SQLPool} database    Connection to the database
  *    @return {string} message
  */
 async function changeLanguage (user, lang) {
