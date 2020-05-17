@@ -67,31 +67,20 @@ app.post('/webhook', (req, res) => {
         console.log(event)
       }
 
-      handleEvent(event)
+      if (event.message) {
+        receivedMessage(event)
+      } else if (event.postback) {
+        receivedPostback(event)
+      } else {
+        console.error('Unknown/unsupported event:')
+        console.error(event)
+      }
     })
   })
 
   res.status(200).send('Success')
   return true
 })
-
-/**
- *  Handles all events that are received through webhook. All received events
- *  are executed asynchronously.
- *
- *    @param {object} event    Event object sent by Facebook
- *    @return void
- */
-function handleEvent (event) {
-  if (event.message) {
-    receivedMessage(event)
-  } else if (event.postback) {
-    receivedPostback(event)
-  } else {
-    console.error('Unknown/unsupported event:')
-    console.error(event)
-  }
-}
 
 /**
  *  Handles postback events received.
