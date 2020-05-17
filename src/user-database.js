@@ -29,12 +29,12 @@ function getDataType (name) {
     case 'psid':
     case 'language':
     case 'locale':
-      dataType = sql.VarChar(16)
+      dataType = sql.NVarChar(16)
       break
 
     case 'name':
     case 'menu':
-      dataType = sql.VarChar(255)
+      dataType = sql.NVarChar(255)
       break
 
     case 'detailed':
