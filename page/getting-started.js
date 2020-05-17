@@ -1,6 +1,6 @@
 
-const request = require('../utils/request.js')
-const getProof = require('../utils/proof.js')
+const request = require('../src/utils/request.js')
+const getProof = require('../src/utils/proof.js')
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
