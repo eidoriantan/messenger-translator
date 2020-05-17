@@ -40,7 +40,5 @@ describe('User Database test', async () => {
 
   after(async () => {
     await userDB.deleteUser(testUser.psid)
-    const pool = await userDB.poolAsync
-    pool.close()
   })
 })

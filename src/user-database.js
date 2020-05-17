@@ -28,13 +28,14 @@ const config = {
 
 const poolAsync = (function () {
   return new Promise((resolve, reject) => {
-    console.log('Connecting to MySQL servers...')
-    const pool = sql.connect(config, error => {
-      if (error) reject(error)
-      else console.log('Connected to MySQL servers!')
-    })
-
-    resolve(pool)
+    console.log('Connecting to MySQL server...')
+    try {
+      const pool = sql.connect(config)
+      console.log('Connected to MySQL server!')
+      resolve(pool)
+    } catch (error) {
+      reject(error)
+    }
   })
 })()
 
