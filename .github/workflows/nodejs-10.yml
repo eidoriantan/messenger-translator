@@ -33,6 +33,9 @@ jobs:
         DEBUG: true
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         APP_SECRET: ${{ secrets.APP_SECRET }}
-        DB_API_KEY: ${{ secrets.DB_API_KEY }}
         VALIDATION_TOKEN: ${{ secrets.VALIDATION_TOKEN }}
+        SERVER: ${{ secrets.SERVER }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+        DATABASE: ${{ secrets.DATABASE }}
         TEST_USERID: '0000000000000001'
