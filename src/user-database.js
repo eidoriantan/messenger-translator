@@ -9,7 +9,6 @@ const SERVER = process.env.SERVER
 const USERNAME = process.env.USERNAME
 const PASSWORD = process.env.PASSWORD
 const DATABASE = process.env.DATABASE
-const DEBUG = process.env.DEBUG
 
 if (!SERVER || !USERNAME || !PASSWORD || !DATABASE) {
   console.error('Server connection configuration was not defined')
@@ -19,11 +18,14 @@ const config = {
   server: SERVER,
   user: USERNAME,
   password: PASSWORD,
-  database: DATABASE
+  database: DATABASE,
+  pool: {
+    min: 1
+  }
 }
 
 const pool = new sql.ConnectionPool(config).connect().then(pool => {
-  if (DEBUG) console.log('Connected to MySQL server!')
+  console.log('Connected to MySQL server!')
   return pool
 }).catch(error => console.error(error))
 
