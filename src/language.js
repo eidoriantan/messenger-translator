@@ -1,5 +1,6 @@
 
 const languages = require('./languages.js')
+const userDB = require('./user-database.js')
 const { setUserMenu } = require('./menu.js')
 
 const DEBUG = process.env.DEBUG
@@ -7,11 +8,12 @@ const DEBUG = process.env.DEBUG
 /**
  *  Changes the language of the user from the database if supported
  *
+ *    @param {SQLPool} pool    Connection to the MySQL Server
  *    @param {string} user    User's object from the database
  *    @param {string} lang    Name of the language
  *    @return {string} message
  */
-async function changeLanguage (user, lang) {
+async function changeLanguage (pool, user, lang) {
   let name, code
   Object.keys(languages).forEach(key => {
     const language = languages[key]
@@ -30,7 +32,8 @@ async function changeLanguage (user, lang) {
     await setUserMenu(user.psid, menu)
   }
 
-  return { name, code, menu }
+  await userDB.setUser(pool, user.psid, { language: code, menu })
+  return `Language was changed to ${name}!`
 }
 
 module.exports = { changeLanguage }

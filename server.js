@@ -126,10 +126,8 @@ async function receivedPostback (event) {
 
     case 'change_language': {
       const language = postback.title.split('--language ')[1]
-      const { name, code, menu } = await changeLanguage(user, language)
-
-      await userDB.setUser(pool, user.psid, { language: code, menu })
-      await sendMessage(user.psid, `Language was changed to ${name}!`)
+      const response = await changeLanguage(pool, user, language)
+      await sendMessage(user.psid, response)
       break
     }
 
@@ -175,7 +173,7 @@ async function receivedMessage (event) {
     return true
   } else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[3]
-    response = await changeLanguage(user, language)
+    response = await changeLanguage(pool, user, language)
   } else if (text.match(disable) !== null) {
     response = await disableDetailed(user.psid)
   } else if (text.match(enable) !== null) {
