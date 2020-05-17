@@ -12,7 +12,7 @@ const DEBUG = process.env.DEBUG
  *
  *    @param {string} psid    User's page-scoped ID
  *    @param {string[]} menu    Array of menu item IDs
- *    @return void
+ *    @return {object} response
  */
 async function setUserMenu (psid, menu) {
   const persistentMenu = [{
@@ -41,7 +41,7 @@ async function setUserMenu (psid, menu) {
   const url = `${FB_ENDPOINT}/custom_user_settings?${params.toString()}`
   const data = { psid, persistent_menu: persistentMenu }
 
-  await request('POST', url, {}, data)
+  return await request('POST', url, {}, data)
 }
 
 module.exports = { setUserMenu }
