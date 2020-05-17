@@ -8,12 +8,11 @@ const DEBUG = process.env.DEBUG
 /**
  *  Changes the language of the user from the database if supported
  *
- *    @param {SQLPool} pool    Connection to the MySQL Server
  *    @param {string} user    User's object from the database
  *    @param {string} lang    Name of the language
  *    @return {string} message
  */
-async function changeLanguage (pool, user, lang) {
+async function changeLanguage (user, lang) {
   let name, code
   Object.keys(languages).forEach(key => {
     const language = languages[key]
@@ -32,7 +31,7 @@ async function changeLanguage (pool, user, lang) {
     await setUserMenu(user.psid, menu)
   }
 
-  await userDB.setUser(pool, user.psid, { language: code, menu })
+  await userDB.setUser(user.psid, { language: code, menu })
   return `Language was changed to ${name}!`
 }
 

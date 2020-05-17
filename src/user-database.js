@@ -22,27 +22,10 @@ const config = {
   database: DATABASE
 }
 
-/**
- *  Connects to the SQL server
- */
-async function init () {
-  try {
-    if (DEBUG) console.log('Connecting to SQL Server')
-    return await sql.connect(config)
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-/**
- *  Closes a connection to the SQL server
- *
- *    @param {SQLPool} pool    Connection to the MySQL server
- */
-async function close (pool) {
-  if (DEBUG) console.log('Closing the SQL Server')
-  return await pool.close()
-}
+const pool = new sql.ConnectionPool(config).connect().then(pool => {
+  if (DEBUG) console.log('Connected to MySQL server!')
+  return pool
+}).catch(error => console.error(error))
 
 /**
  *  Returns the data type of the name in the database
@@ -75,11 +58,10 @@ function getDataType (name) {
 /**
  *  Asynchronous function that adds a user to the database.
  *
- *    @param {SQLPool} pool    Connection to the MySQL Server
  *    @param {string} psid    User's page-scoped ID
  *    @return {object} userData
  */
-async function addUser (pool, psid) {
+async function addUser (psid) {
   const profile = await getProfile(psid)
   const userData = {
     psid,
@@ -114,10 +96,9 @@ async function addUser (pool, psid) {
 /**
  *  Deletes a user in the database
  *
- *    @param {SQLPool} pool    Connection to the MySQL Server
  *    @param {string} psid    User's page-scoped ID
  */
-async function deleteUser (pool, psid) {
+async function deleteUser (psid) {
   try {
     const request = new sql.Request(pool)
     request.input('psid', getDataType('psid'), psid)
@@ -131,11 +112,10 @@ async function deleteUser (pool, psid) {
 /**
  *  Asynchronous function that gets the user data from the database.
  *
- *    @param {SQLPool} pool    Connection to the MySQL Server
  *    @param {string} psid    User's page-scoped ID
  *    @return {object} userData
  */
-async function getUser (pool, psid) {
+async function getUser (psid) {
   try {
     const request = new sql.Request(pool)
     request.input('psid', getDataType('psid'), psid)
@@ -155,12 +135,11 @@ async function getUser (pool, psid) {
 /**
  *  Asynchronous function that updates the user data to the database.
  *
- *    @param {SQLPool} pool    Connection to the MySQL Server
  *    @param {string} psid    User's page-scoped ID
  *    @param {object} values    Array of { key: value } to update the database
  *    @return void
  */
-async function setUser (pool, psid, values) {
+async function setUser (psid, values) {
   try {
     const request = new sql.Request(pool)
     request.input('psid', getDataType('psid'), psid)
@@ -179,4 +158,4 @@ async function setUser (pool, psid, values) {
   }
 }
 
-module.exports = { init, close, addUser, deleteUser, getUser, setUser }
+module.exports = { pool, addUser, deleteUser, getUser, setUser }

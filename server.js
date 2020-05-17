@@ -9,13 +9,11 @@ const userDB = require('./src/user-database.js')
 const { changeLanguage } = require('./src/language.js')
 
 const app = express()
-
 const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
 const APP_SECRET = process.env.APP_SECRET
-
 const PORT = process.env.PORT || 8080
 const DEBUG = process.env.DEBUG || false
 
@@ -109,9 +107,7 @@ async function receivedPostback (event) {
   if (DEBUG) console.log(`Postback was called with payload: ${payload}`)
 
   await sendTyping(senderID)
-  const pool = await userDB.init()
-  const user = await userDB.getUser(pool, senderID) ||
-    await userDB.addUser(pool, senderID)
+  const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
 
   if (DEBUG) {
     console.log('User Data: ')
@@ -126,7 +122,7 @@ async function receivedPostback (event) {
 
     case 'change_language': {
       const language = postback.title.split('--language ')[1]
-      const response = await changeLanguage(pool, user, language)
+      const response = await changeLanguage(user, language)
       await sendMessage(user.psid, response)
       break
     }
@@ -135,8 +131,6 @@ async function receivedPostback (event) {
       console.error('Unknown/unsupported payload')
       console.error(payload)
   }
-
-  await userDB.close(pool)
 }
 
 /**
@@ -153,9 +147,7 @@ async function receivedMessage (event) {
   if (DEBUG) console.log(`Message was received with text: ${text}`)
 
   await sendTyping(senderID)
-  const pool = await userDB.init()
-  const user = await userDB.getUser(pool, senderID) ||
-    await userDB.addUser(pool, senderID)
+  const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
 
   if (DEBUG) {
     console.log('User Data: ')
@@ -173,7 +165,7 @@ async function receivedMessage (event) {
     return true
   } else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[3]
-    response = await changeLanguage(pool, user, language)
+    response = await changeLanguage(user, language)
   } else if (text.match(disable) !== null) {
     response = await disableDetailed(user.psid)
   } else if (text.match(enable) !== null) {
@@ -193,7 +185,6 @@ async function receivedMessage (event) {
     response = await translator.translate(text, language, detailed) + footer
   }
 
-  await userDB.close(pool)
   await sendMessage(user.psid, response)
 }
 
