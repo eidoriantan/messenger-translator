@@ -3,7 +3,7 @@ const sql = require('mssql')
 const { getProfile } = require('./user-fb.js')
 
 /**
- *  This bot uses a SQL server for storing databases
+ *  This bot uses a SQL server for storing data
  */
 const SERVER = process.env.SERVER
 const USERNAME = process.env.USERNAME
@@ -27,8 +27,14 @@ const config = {
 }
 
 const poolAsync = (function () {
-  return new Promise(resolve => {
-    resolve(sql.connect(config))
+  return new Promise((resolve, reject) => {
+    console.log('Connecting to MySQL servers...')
+    const pool = sql.connect(config, error => {
+      if (error) reject(error)
+      else console.log('Connected to MySQL servers!')
+    })
+
+    resolve(pool)
   })
 })()
 
@@ -36,7 +42,7 @@ const poolAsync = (function () {
  *  Returns the data type of the name in the database
  *
  *    @param {string} name    The name in the database
- *    @return {SQLDataType} dataType
+ *    @return {SQLDataType} data type
  */
 function getDataType (name) {
   let dataType
