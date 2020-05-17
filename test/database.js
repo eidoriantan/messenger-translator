@@ -1,7 +1,5 @@
 
-const {
-  addUser, deleteUser, getUser, setUser
-} = require('../src/user-database.js')
+const userDB = require('../src/user-database.js')
 require('should')
 
 const TEST_USERID = process.env.TEST_USERID
@@ -9,10 +7,12 @@ process.env.DEBUG = true
 
 if (!TEST_USERID) throw new Error('Test user ID was not defined')
 
-describe('User Database test', () => {
+describe('User Database test', async () => {
+  await userDB.init()
   let testUser
+
   it('Adds user', async () => {
-    const userData = await addUser(TEST_USERID)
+    const userData = await userDB.addUser(TEST_USERID)
     userData.should.containEql({ psid: TEST_USERID })
     userData.should.containEql({ name: '' })
     userData.should.containEql({ language: 'en' })
@@ -23,21 +23,24 @@ describe('User Database test', () => {
   })
 
   it('Gets user', async () => {
-    const userData = await getUser(testUser.psid)
+    const userData = await userDB.getUser(testUser.psid)
     userData.should.containDeep(testUser)
   })
 
   it('Sets user property', async () => {
-    await setUser(testUser.psid, {
+    await userDB.setUser(testUser.psid, {
       language: 'ja',
       detailed: false
     })
 
     testUser.language = 'ja'
     testUser.detailed = false
-    const userData = await getUser(testUser.psid)
+    const userData = await userDB.getUser(testUser.psid)
     userData.should.containDeep(testUser)
   })
 
-  after(async () => await deleteUser(testUser.psid))
+  after(async () => {
+    await userDB.deleteUser(testUser.psid)
+    userDB.close()
+  })
 })

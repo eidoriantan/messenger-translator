@@ -10,11 +10,35 @@ const USERNAME = process.env.USERNAME
 const PASSWORD = process.env.PASSWORD
 const DATABASE = process.env.DATABASE
 
+if (!SERVER || !USERNAME || !PASSWORD || !DATABASE) {
+  console.error('Server connection configuration was not defined')
+}
+
 const config = {
   server: SERVER,
   user: USERNAME,
   password: PASSWORD,
   database: DATABASE
+}
+
+let pool = null
+
+/**
+ *  Connects to the SQL server
+ */
+async function init () {
+  try {
+    pool = await sql.connect(config)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+/**
+ *  Closes a connection to the SQL server
+ */
+function close () {
+  if (pool !== null) return pool.close()
 }
 
 /**
@@ -52,7 +76,11 @@ function getDataType (name) {
  *    @return {object} userData
  */
 async function addUser (psid) {
-  let pool
+  if (pool === null) {
+    console.error('Database was not initialized!')
+    return false
+  }
+
   const profile = await getProfile(psid)
   const userData = {
     psid,
@@ -64,32 +92,33 @@ async function addUser (psid) {
   }
 
   try {
-    pool = await sql.connect(config)
     const request = new sql.Request(pool)
-    let names = []
+    const names = []
 
     for (const name in userData) {
       names.push(name)
       request.input(name, getDataType(name), userData[name])
     }
 
-    const values = names.map(name => `@${name}`).join()
-    names = names.join(', ')
-
-    await request.query(`INSERT INTO users (${names}) VALUES (${values})`)
+    const values = names.map(name => `@${name}`)
+    await request.query(
+      `INSERT INTO users (${names.join(', ')}) VALUES (${values.join(', ')})`
+    )
   } catch (error) {
     console.error('An error had occured!')
     console.error(error)
   }
 
-  if (pool) pool.close()
   return userData
 }
 
 async function deleteUser (psid) {
-  let pool
+  if (pool === null) {
+    console.error('Database was not initialized!')
+    return false
+  }
+
   try {
-    pool = await sql.connect(config)
     const request = new sql.Request(pool)
     request.input('psid', getDataType('psid'), psid)
     await request.query('DELETE FROM users WHERE psid=@psid')
@@ -97,8 +126,6 @@ async function deleteUser (psid) {
     console.error('An error had occured!')
     console.error(error)
   }
-
-  if (pool) pool.close()
 }
 
 /**
@@ -108,9 +135,12 @@ async function deleteUser (psid) {
  *    @return {object} userData
  */
 async function getUser (psid) {
-  let pool, userData
+  if (pool === null) {
+    console.error('Database was not initialized!')
+    return false
+  }
+
   try {
-    pool = await sql.connect(config)
     const request = new sql.Request(pool)
     request.input('psid', getDataType('psid'), psid)
     const result = await request.query('SELECT * FROM users WHERE psid=@psid')
@@ -119,15 +149,11 @@ async function getUser (psid) {
       return user
     }
 
-    userData = result.recordset.length > 0
-      ? parseUser(result.recordset[0]) : null
+    return result.recordset.length > 0 ? parseUser(result.recordset[0]) : null
   } catch (error) {
     console.error('An error had occured!')
     console.error(error)
   }
-
-  if (pool) pool.close()
-  return userData
 }
 
 /**
@@ -138,9 +164,12 @@ async function getUser (psid) {
  *    @return void
  */
 async function setUser (psid, values) {
-  let pool
+  if (pool === null) {
+    console.error('Database was not initialized!')
+    return false
+  }
+
   try {
-    pool = await sql.connect(config)
     const request = new sql.Request(pool)
     request.input('psid', getDataType('psid'), psid)
     const names = []
@@ -156,8 +185,6 @@ async function setUser (psid, values) {
     console.error('An error had occured!')
     console.error(error)
   }
-
-  if (pool) pool.close()
 }
 
-module.exports = { addUser, deleteUser, getUser, setUser }
+module.exports = { init, close, addUser, deleteUser, getUser, setUser }

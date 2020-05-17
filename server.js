@@ -107,7 +107,9 @@ async function receivedPostback (event) {
   const payload = postback.payload
 
   if (DEBUG) console.log(`Postback was called with payload: ${payload}`)
+
   await sendTyping(senderID)
+  await userDB.init()
 
   /**
    *  Get user who sent the event from the database or add the user if was not
@@ -127,8 +129,10 @@ async function receivedPostback (event) {
 
     case 'change_language': {
       const language = postback.title.split('--language ')[1]
-      const response = await changeLanguage(user, language)
-      await sendMessage(user.psid, response)
+      const { name, code, menu } = await changeLanguage(user, language)
+
+      await userDB.setUser(user.psid, { language: code, menu })
+      await sendMessage(user.psid, `Language was changed to ${name}!`)
       break
     }
 
@@ -136,6 +140,8 @@ async function receivedPostback (event) {
       console.error('Unknown/unsupported payload')
       console.error(payload)
   }
+
+  userDB.close()
 }
 
 /**
@@ -148,10 +154,11 @@ async function receivedMessage (event) {
   const senderID = event.sender.id
   const message = event.message
   const text = message.text
-  let response = ''
 
   if (DEBUG) console.log(`Message was received with text: ${text}`)
+
   await sendTyping(senderID)
+  await userDB.init()
 
   const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
   if (DEBUG) {
@@ -163,6 +170,7 @@ async function receivedMessage (event) {
   const help = /^(-?-?help)$/i
   const disable = /^(--?disable)$/i
   const enable = /^(--?enable)$/i
+  let response = ''
 
   if (text.match(help) !== null) {
     await sendHelp(user.psid, user.locale)
@@ -189,7 +197,8 @@ async function receivedMessage (event) {
     response = await translator.translate(text, language, detailed) + footer
   }
 
-  await sendMessage(senderID, response)
+  await userDB.close()
+  await sendMessage(user.psid, response)
 }
 
 /**
