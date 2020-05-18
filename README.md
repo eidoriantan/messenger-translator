@@ -14,22 +14,29 @@ Webhook that handles events for **Messenger Translator** using
 [Google Translate](https://npmjs.com/package/google-translate-api-browser) to
 translate the messages.
 
-The webhook was hosted, built and served at [Heroku](https://heroku.com) and
-uses MySQL Server to manage user databases.
-
-**Note:** This is a close-sourced repository to provide secure services, backup,
-and to maintain the project easily. If you are a developer, please do not copy
-or distribute the source codes. Thank you!
+The webhook was built and served at [Heroku](https://heroku.com) and uses MySQL
+Server to manage user databases.
 
 ## Features
 
 Currently supported services:
  * Uses command to translate everything to any languages
-   (Big thanks to [Google Translate](https://translate.google.com))
  * Interactive messaging
- * Can use commands to change the options
+ * Detailed mode
 
 Please refer to the repository's
 [project](https://github.com/eidoriantan/messenger-translator/projects) and
 [issues](https://github.com/eidoriantan/messenger-translator/issues) for more
 informations.
+
+### Support
+If you had found a bug or any unexpected behavior, you can submit an issue
+through
+[GitHub issues](https://github.com/eidoriantan/messenger-translator/issues) or
+post at the [Facebook page](https://fb.com/msgr.translator). If you wanted to
+contribute to this repository, please refer to
+[CONTRIBUTING.md](https://github.com/eidoriantan/messenger-translator/blob/master/CONTRIBUTING.md).
+
+You can also show your support by becoming a patron!
+
+[![Patreon](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/eidoriantan)
