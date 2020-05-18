@@ -13,7 +13,7 @@
     "translator"
   ],
   "homepage": "https://translator.eidoriantan.tech",
-  "bugs": "https://github.com/messenger-translator/messenger-translate/issues",
+  "bugs": "https://github.com/eidoriantan/messenger-translator/issues",
   "license": "Apache-2.0",
   "author": {
     "name": "Adriane Justine Tan",
@@ -29,7 +29,7 @@
   "directories": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eidoriantan/messenger-translate.git"
+    "url": "git+https://github.com/eidoriantan/messenger-translator.git"
   },
   "scripts": {
     "start": "node server.js",
