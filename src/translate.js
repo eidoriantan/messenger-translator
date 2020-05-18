@@ -56,7 +56,7 @@ async function translateText (text, iso, detailed) {
 
   const language = languages[iso].name
   const from = languages[result.from.language.iso]
-    ? languages[result.from.language].name : null
+    ? languages[result.from.language.iso].name : null
 
   let translated = ''
   if (detailed) {
