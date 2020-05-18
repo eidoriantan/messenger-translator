@@ -1,8 +1,8 @@
 ---
 ---
 {
-    "name": "{{ site.title }}",
-    "short_name": "{{ site.title }}",
+    "name": "Messenger Translator",
+    "short_name": "Messenger Translator",
     "display": "standalone",
     "icons": [{
         "src": "/assets/android-chrome-192x192.png",
