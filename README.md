@@ -11,11 +11,9 @@ translate everything with the help of Google Translate. Visit the
 [Facebook page](https://fb.com/msgr.translator) or send a message through
 [Messenger](https://m.me/msgr.translator).
 
-This project uses [Node.js](https://nodejs.org),
-[Express](https://expressjs.com), and
+This project uses [Express](https://expressjs.com),
 [Google Translate API](https://npmjs.com/package/google-translate-api-browser)
-to translate the messages, MySQL Server to manage the user's databases and
-served at [Heroku](https://heroku.com)
+to translate the messages, and a MySQL Server to manage the user's databases
 
 ## Features
  * Uses command to translate
