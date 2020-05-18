@@ -34,7 +34,12 @@ function transformHTML (text) {
 
   const regexStr = `</?(${Object.keys(tags).join('|')})>`
   const regex = new RegExp(regexStr, 'g')
-  return text.replace(regex, ($0, $1) => tags[$1])
+  text = text.replace(regex, ($0, $1) => tags[$1])
+
+  const regexEscaped = /&#([0-9]+);/g
+  text = text.replace(regexEscaped, ($0, $1) => String.fromCharCode($1))
+
+  return text
 }
 
 /**
