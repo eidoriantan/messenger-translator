@@ -1,9 +1,7 @@
 
 # Messenger Translator
 
-[![Node.js v10](https://github.com/eidoriantan/messenger-translator/workflows/Node.js%20v10.x%20CI/badge.svg)](https://github.com/eidoriantan/messenger-translator/actions?query=workflow%3A%22Node.js+v10.x+CI%22)
-[![Node.js v12](https://github.com/eidoriantan/messenger-translator/workflows/Node.js%20v12.x%20CI/badge.svg)](https://github.com/eidoriantan/messenger-translator/actions?query=workflow%3A%22Node.js+v12.x+CI%22)
-[![Node.js v13](https://github.com/eidoriantan/messenger-translator/workflows/Node.js%20v13.x%20CI/badge.svg)](https://github.com/eidoriantan/messenger-translator/actions?query=workflow%3A%22Node.js+v13.x+CI%22)
+[![Node.js CI](https://github.com/eidoriantan/messenger-translator/workflows/Node.js%20CI/badge.svg)](https://github.com/eidoriantan/messenger-translator/actions?query=workflow%3A%22Node.js+CI%22)
 [![Build Status](https://travis-ci.com/eidoriantan/messenger-translator.svg?branch=master)](https://travis-ci.com/eidoriantan/messenger-translator)
 
 Translator bot app built for [Facebook Messenger](https://messenger.com)! It can
