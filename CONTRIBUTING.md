@@ -10,6 +10,9 @@ make sure that you are following these guidelines:
    email to [eidoriantan@gmail.com](mailto:eidoriantan@gmail.com) then wait for
    further instructions;
 
+   **Note:** Please include your Facebook name and/or ID when sending me an
+   email.
+
  * When editting JavaScript (`*.js`, `*.mjs`) files, please follow the
    [standard.js styleguide](https://standardjs.com/rules.html);
 
