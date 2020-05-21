@@ -109,6 +109,7 @@ async function receivedPostback (event) {
 
   if (DEBUG) console.log(`Postback was called with payload: ${payload}`)
 
+  await send(senderID, null, 'mark_seen')
   await send(senderID, null, 'typing_on')
   const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
 
@@ -149,6 +150,7 @@ async function receivedMessage (event) {
 
   if (DEBUG) console.log(`Message was received with text: ${text}`)
 
+  await send(senderID, null, 'mark_seen')
   await send(senderID, null, 'typing_on')
   const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
 
