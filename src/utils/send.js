@@ -44,6 +44,6 @@ module.exports = async function (psid, text, type = 'message') {
   if (type === 'message') data.message = { text }
   else data.sender_action = type
 
-  if (DEBUG) console.log(`Sending user "${psid}": ${text}`)
+  if (DEBUG) console.log(`Sending user "${psid}" (${type}): ${text}`)
   await request('POST', url, {}, data)
 }
