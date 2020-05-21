@@ -18,14 +18,12 @@
 const express = require('express')
 const crypto = require('crypto')
 
-const request = require('./src/utils/request.js')
-const getProof = require('./src/utils/proof.js')
+const send = require('./src/utils/send.js')
 const translator = require('./src/translate.js')
 const userDB = require('./src/user-database.js')
 const { changeLanguage } = require('./src/language.js')
 
 const app = express()
-const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
@@ -111,7 +109,7 @@ async function receivedPostback (event) {
 
   if (DEBUG) console.log(`Postback was called with payload: ${payload}`)
 
-  await sendTyping(senderID)
+  await send(senderID, null, 'typing_on')
   const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
 
   if (DEBUG) {
@@ -128,7 +126,7 @@ async function receivedPostback (event) {
     case 'change_language': {
       const language = postback.title.split('--language ')[1]
       const response = await changeLanguage(user, language)
-      await sendMessage(user.psid, response)
+      await send(user.psid, response)
       break
     }
 
@@ -151,7 +149,7 @@ async function receivedMessage (event) {
 
   if (DEBUG) console.log(`Message was received with text: ${text}`)
 
-  await sendTyping(senderID)
+  await send(senderID, null, 'typing_on')
   const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
 
   if (DEBUG) {
@@ -188,7 +186,7 @@ async function receivedMessage (event) {
     response = await translator.translate(text, language, detailed) + footer
   }
 
-  await sendMessage(user.psid, response)
+  await send(user.psid, response)
 }
 
 /**
@@ -211,50 +209,7 @@ async function sendHelp (psid, locale) {
     message = await translator.translate(message, language, false)
   }
 
-  await sendMessage(psid, message + example)
-}
-
-/**
- *  Sends a message to user by calling Messenger's Send API.
- *
- *    @param {string} psid    User's page-scoped ID
- *    @param {string} text    The message to send
- *    @return void
- */
-async function sendMessage (psid, text) {
-  const params = new URLSearchParams()
-  params.set('access_token', ACCESS_TOKEN)
-  params.set('appsecret_proof', getProof())
-
-  const url = `${FB_ENDPOINT}/messages?${params.toString()}`
-  const data = {
-    messaging_type: 'RESPONSE',
-    recipient: { id: psid },
-    message: { text }
-  }
-
-  if (DEBUG) console.log(`Sending user "${psid}": ${text}`)
-  await request('POST', url, {}, data)
-}
-
-/**
- *  Sends user a typing on indicator.
- *
- *    @param {string} psid    User's page-scoped ID
- */
-async function sendTyping (psid) {
-  const params = new URLSearchParams()
-  params.set('access_token', ACCESS_TOKEN)
-  params.set('appsecret_proof', getProof())
-  const url = `${FB_ENDPOINT}/messages?${params.toString()}`
-  const data = {
-    messaging_type: 'RESPONSE',
-    recipient: { id: psid },
-    sender_action: 'typing_on'
-  }
-
-  if (DEBUG) { console.debug('Sending user typing on action') }
-  await request('POST', url, {}, data)
+  await send(psid, message + example)
 }
 
 /**
