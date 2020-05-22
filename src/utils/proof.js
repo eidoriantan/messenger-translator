@@ -21,7 +21,7 @@ const APP_SECRET = process.env.APP_SECRET
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 
 /**
- *  Simple returns a hashed app secret proof to secure the Facebook API requests
+ *  Simply returns a hashed app secret proof for Facebook API requests
  *
  *    @return {string} proof
  */
