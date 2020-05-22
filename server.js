@@ -29,7 +29,7 @@ const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
 const APP_SECRET = process.env.APP_SECRET
 const PORT = process.env.PORT || 8080
-const DEBUG = process.env.DEBUG || false
+const DEBUG = process.env.DEBUG
 
 if (!ACCESS_TOKEN || !VALIDATION_TOKEN || !APP_SECRET) {
   throw new Error('Access, App Secret and/or validation token was not defined')
