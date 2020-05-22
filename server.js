@@ -174,7 +174,6 @@ async function receivedMessage (event) {
   } else if (text.match(enable) !== null) {
     response = await enableDetailed(user.psid)
   } else {
-    // Translate the message with the user's preferred language
     const { language, detailed, locale } = user
     const help = '\r\n\r\nFor help, type " --help "'
     let footer = ''
