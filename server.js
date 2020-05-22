@@ -215,7 +215,8 @@ async function sendHelp (psid, locale) {
 }
 
 /**
- *  Disables the help footer every messages
+ *  Removes the details such as "Translated To:", "Translated From", etc. in
+ *  every messages.
  *
  *    @param {string} psid    User-scoped page ID
  *    @return {string} message
@@ -226,7 +227,7 @@ async function disableDetailed (psid) {
 }
 
 /**
- *  Re-enables the help footer every messages
+ *  Re-enables the details in every messages.
  *
  *    @param {string} psid    User-scoped page ID
  *    @return {string} message
