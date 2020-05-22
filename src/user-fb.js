@@ -36,8 +36,16 @@ async function getProfile (psid) {
   params.set('appsecret_proof', getProof())
   const url = `${FB_ENDPOINT}/${psid}?${params.toString()}`
   const response = await request('GET', url)
+  const { body } = response
 
-  return response.body
+  if (body.error) {
+    console.error('Error occured!')
+    console.error(`Error: ${body.error.message}`)
+    console.error(`Error Code: ${body.error.code}`)
+    console.error(`URL: ${url}`)
+  }
+
+  return body
 }
 
 module.exports = { getProfile }

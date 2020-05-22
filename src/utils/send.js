@@ -45,5 +45,14 @@ module.exports = async function (psid, text, type = 'message') {
   else data.sender_action = type
 
   if (DEBUG) console.log(`Sending user "${psid}" (${type}): ${text}`)
-  await request('POST', url, {}, data)
+  const response = await request('POST', url, {}, data)
+  const { body } = response
+
+  if (body.error) {
+    console.error('Error occured!')
+    console.error(`Error: ${body.error.message}`)
+    console.error(`Error Code: ${body.error.code}`)
+    console.error(`URL: ${url}`)
+    console.error(`Data: ${JSON.stringify(data)}`)
+  }
 }
