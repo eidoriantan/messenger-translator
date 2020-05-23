@@ -17,6 +17,18 @@
 
   {% seo title=false %}
 
+  <script src="https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js" defer></script>
+  <script>
+    window.fbAsyncInit = function () {
+      FB.init({
+        appId: '552177775495405',
+        autoLogAppEvents : true,
+        xfbml: true,
+        version: 'v7.0'
+      })
+    }
+  </script>
+
   <script src="https://www.googletagmanager.com/gtag/js?id=UA-161214318-5" async></script>
   <script>
     window.dataLayer = window.dataLayer || []
