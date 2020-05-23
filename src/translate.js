@@ -61,8 +61,8 @@ async function translateText (text, iso, detailed) {
   let translated = ''
   if (detailed) {
     translated += `Translated to: ${language}\r\n`
-    translated += from !== null ? `Translated from: ${from}\r\n\r\n` : ''
-    translated += result.text
+    translated += from !== null ? `Translated from: ${from}\r\n` : ''
+    translated += '\r\n' + result.text
   } else translated += result.text
 
   if (result.from.text.didYouMean || result.from.text.autoCorrected) {
@@ -70,7 +70,7 @@ async function translateText (text, iso, detailed) {
     translated += `\r\nDid you mean, "${result.from.text.value}"?`
   }
 
-  return translated
+  return translated.trim()
 }
 
 module.exports = { translate: translateText }
