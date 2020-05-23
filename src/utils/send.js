@@ -38,6 +38,7 @@ module.exports = async function (psid, text, type = 'message') {
   const url = `${FB_ENDPOINT}/messages?${params.toString()}`
   const data = {
     messaging_type: 'RESPONSE',
+    notification_type: 'SILENT_PUSH',
     recipient: { id: psid }
   }
 
