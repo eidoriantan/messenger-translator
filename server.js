@@ -148,6 +148,14 @@ async function receivedMessage (event) {
   const message = event.message
   const text = message.text
 
+  if (message.attachments) {
+    await send(senderID, 'We don\'t currently support handling attachments ' +
+      'but thanks for using our services! Please give us a review at our ' +
+      'Facebook page to motivate us!')
+
+    return
+  }
+
   if (DEBUG) console.log(`Message was received with text: ${text}`)
 
   await send(senderID, null, 'mark_seen')
