@@ -18,6 +18,7 @@
 const { translate } = require('google-translate-api-browser')
 const Kuroshiro = require('kuroshiro')
 const Kuromoji = require('kuroshiro-analyzer-kuromoji')
+const hangulRomanization = require('hangul-romanization')
 const languages = require('./languages.js')
 
 const DEBUG = process.env.DEBUG || false
@@ -63,6 +64,9 @@ async function translateText (text, iso, detailed) {
   if (iso === 'ja') {
     await kuroinit
     const romaji = await kuroshiro.convert(result.text, { to: 'romaji' })
+    result.text += `\r\n*romaji*: ${romaji}`
+  } else if (iso === 'ko') {
+    const romaji = hangulRomanization.convert(result.text)
     result.text += `\r\n*romaji*: ${romaji}`
   }
 
