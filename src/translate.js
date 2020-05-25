@@ -55,8 +55,9 @@ async function translateText (text, iso, detailed) {
   const result = await translate(text, { to: iso })
 
   if (iso === 'ja') {
-    const kuroshiro = require('kuroshiro')
+    const Kuroshiro = require('kuroshiro')
     const Kuromoji = require('kuroshiro-analyzer-kuromoji')
+    const kuroshiro = new Kuroshiro()
     const analyzer = new Kuromoji()
     await kuroshiro.init(analyzer)
     const romaji = await kuroshiro.convert(result.text, { to: 'romaji' })
