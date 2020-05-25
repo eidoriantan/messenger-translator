@@ -54,6 +54,15 @@ async function translateText (text, iso, detailed) {
   if (DEBUG) console.log('Calling Google Translate to translate the text')
   const result = await translate(text, { to: iso })
 
+  if (iso === 'ja') {
+    const kuroshiro = require('kuroshiro')
+    const Kuromoji = require('kuroshiro-analyzer-kuromoji')
+    const analyzer = new Kuromoji()
+    await kuroshiro.init(analyzer)
+    const romaji = await kuroshiro.convert(result.text, { to: 'romaji' })
+    result.text += `\r\n*romaji*: ${romaji})`
+  }
+
   const language = languages[iso].name
   const from = languages[result.from.language.iso]
     ? languages[result.from.language.iso].name : null

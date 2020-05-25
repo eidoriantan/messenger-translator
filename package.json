@@ -1,6 +1,6 @@
 {
   "name": "messenger-translator",
-  "version": "3.2.4",
+  "version": "3.3.0",
   "description": "Webhook for Messenger translator using Express",
   "keywords": [
     "node",
@@ -39,6 +39,8 @@
   "dependencies": {
     "express": "^4.17.1",
     "google-translate-api-browser": "^1.1.71",
+    "kuroshiro": "^1.1.2",
+    "kuroshiro-analyzer-kuromoji": "^1.1.0",
     "mssql": "^6.2.0"
   },
   "devDependencies": {
