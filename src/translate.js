@@ -16,9 +16,15 @@
  */
 
 const { translate } = require('google-translate-api-browser')
+const Kuroshiro = require('kuroshiro')
+const Kuromoji = require('kuroshiro-analyzer-kuromoji')
 const languages = require('./languages.js')
 
 const DEBUG = process.env.DEBUG || false
+
+const kuroshiro = new Kuroshiro()
+const analyzer = new Kuromoji()
+const kuroinit = kuroshiro.init(analyzer)
 
 /**
  *  Transforms HTML markups to its respective Messenger format
@@ -55,13 +61,9 @@ async function translateText (text, iso, detailed) {
   const result = await translate(text, { to: iso })
 
   if (iso === 'ja') {
-    const Kuroshiro = require('kuroshiro')
-    const Kuromoji = require('kuroshiro-analyzer-kuromoji')
-    const kuroshiro = new Kuroshiro()
-    const analyzer = new Kuromoji()
-    await kuroshiro.init(analyzer)
+    await kuroinit
     const romaji = await kuroshiro.convert(result.text, { to: 'romaji' })
-    result.text += `\r\n*romaji*: ${romaji})`
+    result.text += `\r\n*romaji*: ${romaji}`
   }
 
   const language = languages[iso].name
