@@ -52,6 +52,9 @@
         })
 
         FB.XFBML.parse(parent, function () {
+          $.each(element.attrs(), function (attr) {
+            if (attr.match(/^(fb-)/)) fbmls.push(attr)
+          })
           $.each(fbmls, function (i, attr) { element.removeAttr(attr) })
         })
       })
