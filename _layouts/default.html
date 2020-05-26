@@ -43,7 +43,7 @@
         const fbmls = []
 
         $.each(attributes, function (attr, value) {
-          if (!attr.match(/^(data-fbml)/)) return
+          if (!attr.match(/^(data-fbml-)/)) return true
 
           const fbml = attr.split('data-fbml-')[1]
           fbmls.push(fbml)
