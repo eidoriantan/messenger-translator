@@ -39,7 +39,7 @@
         })
 
         FB.Event.subscribe('xfbml.render', function () {
-          const fbmlAttr = /^(page|theme|logged|fb)/
+          const fbmlAttr = /^(page|theme|logged|fb|messenger|color|size)/
           $('[class|="fb"]').each(function () {
             const attributes = $(this).attrs()
             for (const attr in attributes) {
