@@ -38,8 +38,9 @@
       FB.AppEvents.setAppVersion('3.3.0')
 
       $('[data-fbml]').each(function () {
-        const element = $(this)[0]
-        const attributes = $(element).attrs()
+        const element = $(this)
+        const parent = element.parent()[0]
+        const attributes = element.attrs()
         const fbmls = []
 
         $.each(attributes, function (attr, value) {
@@ -47,11 +48,11 @@
 
           const fbml = attr.split('data-fbml-')[1]
           fbmls.push(fbml)
-          $(element).attr(fbml, value)
+          element.attr(fbml, value)
         })
 
-        FB.XFBML.parse(element, function () {
-          $.each(fbmls, function (i, attr) { $(element).removeAttr(attr) })
+        FB.XFBML.parse(parent, function () {
+          $.each(fbmls, function (i, attr) { element.removeAttr(attr) })
         })
       })
     }
