@@ -28,27 +28,37 @@
       return obj
     }
 
-    $(document).ready(function () {
-      $.ajaxSetup({ cache: true })
-      $.getScript('https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js', function () {
-        FB.init({
-          appId: '552177775495405',
-          autoLogAppEvents: true,
-          xfbml: true,
-          version: 'v7.0'
+    window.fbAsyncInit = function () {
+      FB.init({
+        appId: '552177775495405',
+        autoLogAppEvents: true,
+        version: 'v7.0'
+      })
+
+      FB.AppEvents.setAppVersion('3.3.0')
+
+      $('[data-fbml]').each(function () {
+        const element = $(this)[0]
+        const attributes = $(element).attrs()
+        const fbmls = []
+
+        $.each(attributes, function (attr, value) {
+          if (!attr.match(/^(data-fbml)/)) continue
+
+          const fbml = attr.split('data-fbml-')[1]
+          fbmls.push(fbml)
+          $(element).attr(fbml, value)
         })
 
-        FB.AppEvents.setAppVersion('3.3.0')
-        FB.Event.subscribe('xfbml.render', function () {
-          const fbmlAttr = /^(page|theme|logged|fb|messenger|color|size)/
-          $('[class|="fb"]').each(function () {
-            const attributes = $(this).attrs()
-            for (const attr in attributes) {
-              if (attr.match(fbmlAttr)) $(this).removeAttr(attr)
-            }
-          })
+        FB.XFBML.parse(element, function () {
+          $.each(fbmls, function (i, attr) { $(element).removeAttr(attr) })
         })
       })
+    }
+
+    $(document).ready(function () {
+      $.ajaxSetup({ cache: true })
+      $.getScript('https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js')
     })
   </script>
 

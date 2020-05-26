@@ -1,7 +1,7 @@
 ---
 layout: default
 keywords: webhook, messenger, bot, app, translate, translator, homepage
-last_modified_at: 2020-05-27T02:18:00+08:00
+last_modified_at: 2020-05-27T03:38:00+08:00
 ---
 <div class="blankslate my-6 my-md-12 anim-fade-in" itemscope itemtype="http://schema.org/SoftwareSourceCode">
   <h1 class="h00-mktg" itemprop="name">Messenger Translator</h1>
@@ -53,16 +53,22 @@ last_modified_at: 2020-05-27T02:18:00+08:00
   <h1 class="h0 mb-5">Send Us a Message!</h1>
   <div class="d-flex flex-content-center flex-justify-center mx-auto">
     <button type="button" class="btn btn-primary mx-2" onclick="FB.CustomerChat.showDialog()">Send a message now</button>
-    <div class="fb-messengermessageus mx-2" messenger_app_id="552177775495405" page_id="107657330940924" color="blue" size="xlarge"></div>
+    <div class="fb-messengermessageus mx-2"
+      data-fbml="true"
+      data-fbml-messenger_app_id="552177775495405"
+      data-fbml-page_id="107657330940924"
+      data-fbml-color="blue"
+      data-fbml-size="xlarge">
+    </div>
   </div>
 </div>
 
 <hr class="col-6 mx-auto">
 
 <div class="fb-customerchat"
-  page_id="107657330940924"
-  theme_color="#24292e"
-  logged_in_greeting="Send a message for the bot to translate."
-  logged_out_greeting="Log in to Facebook then send a message for the bot to translate"
-  >
+  data-fbml="true"
+  data-fbml-page_id="107657330940924"
+  data-fbml-theme_color="#24292e"
+  data-fbml-logged_in_greeting="Send a message for the bot to translate."
+  data-fbml-logged_out_greeting="Log in to Facebook then send a message for the bot to translate">
 </div>
