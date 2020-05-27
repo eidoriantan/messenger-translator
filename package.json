@@ -33,7 +33,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "commitlint": "commitlint -c commitlint.config.js -e",
+    "commitlint": "git log -1 --format=%B | commitlint",
     "lint": "eslint -c .eslintrc.json . --ext .js,.mjs && npm run commitlint",
     "test": "npm run lint && mocha --colors --timeout 20000"
   },
