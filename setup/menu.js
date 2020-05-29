@@ -52,7 +52,9 @@ async function setMenu () {
   console.log('Setting `Persistent Menu`')
   console.log(data)
   const response = await request('POST', url, {}, data)
-  console.log(response)
+  console.log(`Result: ${response}`)
 }
 
-setMenu()
+setMenu().then(() => {
+  console.log('Operation completed')
+})

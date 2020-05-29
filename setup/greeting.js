@@ -41,7 +41,9 @@ async function sendGreeting () {
   console.log('Setting greeting: ')
   console.log(data)
   const response = await request('POST', url, {}, data)
-  console.log(response)
+  console.log(`Result: ${response.body}`)
 }
 
-sendGreeting()
+sendGreeting().then(() => {
+  console.log('Operation completed')
+})

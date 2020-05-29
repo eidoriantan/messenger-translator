@@ -36,7 +36,9 @@ async function sendGettingStarted () {
   console.log('Setting `Getting Started` screen: ')
   console.log(data)
   const response = await request('POST', url, {}, data)
-  console.log(response)
+  console.log(`Result: ${response.body}`)
 }
 
-sendGettingStarted()
+sendGettingStarted().then(() => {
+  console.log('Operation completed')
+})
