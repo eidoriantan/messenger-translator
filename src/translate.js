@@ -21,11 +21,11 @@ const Kuromoji = require('kuroshiro-analyzer-kuromoji')
 const hangulRomanization = require('hangul-romanization')
 const languages = require('./languages.js')
 
-const DEBUG = process.env.DEBUG || false
-
 const kuroshiro = new Kuroshiro()
 const analyzer = new Kuromoji()
 const kuroinit = kuroshiro.init(analyzer)
+
+const DEBUG = process.env.DEBUG || false
 
 /**
  *  Transforms HTML markups to its respective Messenger format
@@ -63,7 +63,11 @@ async function translateText (text, iso, detailed) {
 
   if (iso === 'ja') {
     await kuroinit
-    const romaji = await kuroshiro.convert(result.text, { to: 'romaji' })
+    const romaji = await kuroshiro.convert(result.text, {
+      to: 'romaji',
+      mode: 'spaced'
+    })
+
     result.text += `\r\n*romaji*: ${romaji}`
   } else if (iso === 'ko') {
     const romaji = hangulRomanization.convert(result.text)
