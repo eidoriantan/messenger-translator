@@ -19,6 +19,7 @@ const { translate } = require('google-translate-api-browser')
 const Kuroshiro = require('kuroshiro')
 const Kuromoji = require('kuroshiro-analyzer-kuromoji')
 const hangulRomanization = require('hangul-romanization')
+const pinyin = require('chinese-to-pinyin')
 const languages = require('./languages.js')
 
 const kuroshiro = new Kuroshiro()
@@ -60,19 +61,21 @@ function transformHTML (text) {
 async function translateText (text, iso, detailed) {
   if (DEBUG) console.log('Calling Google Translate to translate the text')
   const result = await translate(text, { to: iso })
+  let romaji = ''
 
   if (iso === 'ja') {
     await kuroinit
-    const romaji = await kuroshiro.convert(result.text, {
+    romaji = await kuroshiro.convert(result.text, {
       to: 'romaji',
       mode: 'spaced'
     })
-
-    result.text += `\r\n*romaji*: ${romaji}`
   } else if (iso === 'ko') {
-    const romaji = hangulRomanization.convert(result.text)
-    result.text += `\r\n*romaji*: ${romaji}`
+    romaji = hangulRomanization.convert(result.text)
+  } else if (iso === 'zh-cn' || iso === 'zh-tw') {
+    romaji = pinyin(result.text, { keepRest: true, removeTone: true })
   }
+
+  if (romaji !== '') result.text += `\r\n*romaji*: ${romaji}`
 
   const language = languages[iso].name
   const from = languages[result.from.language.iso]
