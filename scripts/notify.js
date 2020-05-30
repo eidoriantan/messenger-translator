@@ -15,9 +15,9 @@
  *  limitations under the License.
  */
 
+const sql = require('mssql')
 const request = require('../src/utils/request.js')
 const getProof = require('../src/utils/proof.js')
-const sql = require('mssql')
 
 const SERVER = process.env.SERVER
 const USERNAME = process.env.USERNAME
