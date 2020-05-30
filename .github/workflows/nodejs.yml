@@ -38,6 +38,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
+    - run: npm run commitlint
     - run: npm test
       env:
         TEST_USERID: '0000000000000001'
@@ -58,6 +59,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
+    - run: npm run commitlint
     - run: npm test
       env:
         TEST_USERID: '0000000000000002'
