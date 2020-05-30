@@ -22,7 +22,8 @@ make sure that you are following these guidelines:
  * Extending the styleguide, please limit the rowlength to 80 characters;
 
  * When committing, the commit message should follow the
-   [Convential Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+   [Convential Commits](https://www.conventionalcommits.org/en/v1.0.0/). You can
+   run `npm run commitlint` to test your commit message.
 
 You can also take a look at the repository's
 [projects](https://github.com/eidoriantan/messenger-translator/projects) to
