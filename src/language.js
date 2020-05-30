@@ -15,6 +15,7 @@
  *  limitations under the License.
  */
 
+const FuzzySet = require('fuzzyset.js')
 const languages = require('./languages.js')
 const userDB = require('./user-database.js')
 const { setUserMenu } = require('./menu.js')
@@ -39,7 +40,17 @@ async function changeLanguage (user, lang) {
   })
 
   if (DEBUG) console.log(`Language requested: ${lang}`)
-  if (!name || !code) return `Unknown language: ${lang}`
+  if (!name || !code) {
+    const langNames = Object.entries(languages).map(langObj => langObj[1].name)
+    const fuzzy = FuzzySet(langNames).get(lang, null, 0.50)
+    let result = `Unknown language: ${lang}`
+
+    if (fuzzy !== null) {
+      result = 'Did you mean: ' + fuzzy.map(match => match[1]).join(', ')
+    }
+
+    return result
+  }
 
   let menu = user.menu
   if (code !== menu[0]) {
