@@ -27,10 +27,8 @@ const ACCESS_TOKEN = process.env.ACCESS_TOKEN
  *
  *    @return {string} proof
  */
-function getProof () {
+module.exports = function () {
   return crypto.createHmac('sha256', APP_SECRET)
     .update(ACCESS_TOKEN)
     .digest('hex')
 }
-
-module.exports = getProof
