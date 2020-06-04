@@ -33,7 +33,6 @@ describe('User Database test', async () => {
     userData.should.containEql({ psid: TEST_USERID })
     userData.should.containEql({ name: '' })
     userData.should.containEql({ language: 'en' })
-    userData.should.containEql({ detailed: true })
     userData.should.containEql({ locale: 'en_US' })
     userData.should.containEql({ menu: ['en', 'ja', '_help'] })
     testUser = userData
@@ -45,13 +44,9 @@ describe('User Database test', async () => {
   })
 
   it('Sets user property', async () => {
-    await userDB.setUser(testUser.psid, {
-      language: 'ja',
-      detailed: false
-    })
+    await userDB.setUser(testUser.psid, { language: 'ja' })
 
     testUser.language = 'ja'
-    testUser.detailed = false
     const userData = await userDB.getUser(testUser.psid)
     userData.should.containDeep(testUser)
   })
