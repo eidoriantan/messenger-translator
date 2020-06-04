@@ -15,7 +15,7 @@ window.fbAsyncInit = function () {
     version: 'v7.0'
   })
 
-  FB.AppEvents.setAppVersion('3.3.0')
+  FB.AppEvents.setAppVersion('3.6.0')
 
   $('[data-fbml]').each(function () {
     const element = $(this)
@@ -35,14 +35,14 @@ window.fbAsyncInit = function () {
       const attributes = element.attrs()
 
       $.each(attributes, function (attr, value) {
-        if (attr.match(/^(data-fbml)/) || attr.match(/^(fb-)/)) {
-          if (attr !== 'data-fbml') {
-            const xfbml = attr.split('data-fbml-')[1]
-            element.removeAttr(xfbml)
-          }
+        if (!attr.match(/^(data-fbml)/) && !attr.match(/^(fb-)/)) return true
 
-          element.removeAttr(attr)
+        if (attr.startsWith('data-fbml-')) {
+          const xfbml = attr.split('data-fbml-')[1]
+          element.removeAttr(xfbml)
         }
+
+        element.removeAttr(attr)
       })
     })
   })
