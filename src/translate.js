@@ -62,21 +62,31 @@ function transformHTML (text) {
 async function translateText (text, iso) {
   if (DEBUG) console.log('Calling Google Translate to translate the text')
   const result = await translate(text, { to: iso })
-  let romaji = ''
+  let romaji
 
-  if (iso === 'ja') {
-    await kuroinit
-    romaji = await kuroshiro.convert(result.text, {
-      to: 'romaji',
-      mode: 'spaced'
-    })
-  } else if (iso === 'ko') {
-    romaji = hangulRomanization.convert(result.text)
-  } else if (iso === 'zh-cn' || iso === 'zh-tw') {
-    romaji = pinyin(result.text, { keepRest: true, removeTone: true })
+  switch (iso) {
+    case 'ja':
+      await kuroinit
+      romaji = await kuroshiro.convert(result.text, {
+        to: 'romaji',
+        mode: 'spaced'
+      })
+      break
+
+    case 'ko':
+      romaji = hangulRomanization.convert(result.text)
+      break
+
+    case 'zh-cn':
+    case 'zh-tw':
+      romaji = pinyin(result.text, { keepRest: true, removeTone: true })
+      break
+
+    default:
+      romaji = null
   }
 
-  if (romaji !== '') result.text += `\r\n*romaji*: ${romaji}`
+  if (romaji) result.text += `\r\n*romaji*: ${romaji}`
 
   const language = languages[iso].name
   const from = languages[result.from.language.iso]
