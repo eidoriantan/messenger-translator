@@ -76,10 +76,6 @@ function getDataType (name) {
     case 'menu':
       dataType = sql.NVarChar(255)
       break
-
-    case 'detailed':
-      dataType = sql.Bit
-      break
   }
 
   return dataType
@@ -97,7 +93,6 @@ async function addUser (psid) {
     psid,
     name: profile.name || '',
     language: 'en',
-    detailed: true,
     locale: profile.locale || 'en_US',
     menu: ['en', 'ja', '_help']
   }

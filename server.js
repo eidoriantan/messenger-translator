@@ -171,34 +171,21 @@ async function receivedMessage (event) {
 
   const langRegex = /^(-?-?lang(uage)? (.+))$/i
   const help = /^(-?-?help)$/i
-  const disable = /^(--?disable)$/i
-  const enable = /^(--?enable)$/i
   let response = ''
 
   if (text.match(help) !== null) return await sendHelp(user.psid, user.locale)
   else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[3]
     response = await changeLanguage(user, language)
-  } else if (text.match(disable) !== null) {
-    response = await disableDetailed(user.psid)
-  } else if (text.match(enable) !== null) {
-    response = await enableDetailed(user.psid)
   } else {
-    const { language, detailed, locale } = user
+    const { language, detailed } = user
     const help = 'For help, type " --help "'
-    let footer = ''
-
-    if (detailed) {
-      footer = locale !== 'en_US'
-        ? await translator.translate(help, locale.split('_')[0], false)
-        : help
-    }
 
     response = await translator.translate(text, language, detailed) +
-      '\r\n\r\n' + footer
+      '\r\n\r\n' + help
   }
 
-  await send(user.psid, response.trim())
+  await send(user.psid, response)
 }
 
 /**
@@ -209,42 +196,12 @@ async function receivedMessage (event) {
  *    @return void
  */
 async function sendHelp (psid, locale) {
-  let message = 'Translator Help\r\n'
-  message += 'Type " --disable / --enable " to toggle detailed mode\r\n'
-  message += 'Type " --language LANGUAGE " to change language\r\n'
-  message += 'For example:\r\n'
+  // @TODO: Translate the help message through native speakers
+  const message = '*Translator Help*:\r\n' +
+    'Type "--language LANGUAGE_NAME" to change language\r\n' +
+    'For example:\r\n--language japanese'
 
-  const example = '--language japanese'
-  const language = locale ? locale.split('_')[0] : 'en'
-
-  if (language !== 'en') {
-    message = await translator.translate(message, language, false)
-  }
-
-  await send(psid, message + example)
-}
-
-/**
- *  Removes the details such as "Translated To:", "Translated From", etc. in
- *  every messages.
- *
- *    @param {string} psid    User-scoped page ID
- *    @return {string} message
- */
-async function disableDetailed (psid) {
-  await userDB.setUser(psid, { detailed: false })
-  return 'Detailed mode was disabled'
-}
-
-/**
- *  Re-enables the details in every messages.
- *
- *    @param {string} psid    User-scoped page ID
- *    @return {string} message
- */
-async function enableDetailed (psid) {
-  await userDB.setUser(psid, { detailed: true })
-  return 'Detailed mode was enabled'
+  await send(psid, message)
 }
 
 const server = app.listen(PORT, () => {
