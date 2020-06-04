@@ -44,18 +44,16 @@ const config = {
   }
 }
 
-const poolAsync = (function () {
-  return new Promise((resolve, reject) => {
-    console.log('Connecting to MySQL server...')
-    try {
-      const pool = sql.connect(config)
-      console.log('Connected to MySQL server!')
-      resolve(pool)
-    } catch (error) {
-      reject(error)
-    }
-  })
-})()
+const poolAsync = new Promise((resolve, reject) => {
+  console.log('Connecting to MySQL server...')
+  try {
+    const pool = sql.connect(config)
+    console.log('Connected to MySQL server!')
+    resolve(pool)
+  } catch (error) {
+    reject(error)
+  }
+})
 
 /**
  *  Returns the data type of the name in the database
