@@ -8,9 +8,8 @@
 An open-sourced Translator bot app built for Facebook's [Messenger], powered by
 [Google Translate].
 
-Visit the [Facebook page] and send a message through [Messenger][Chat] to try
-out the bot and if you liked it, please give the page a like and/or give it a
-review.
+Visit the [Facebook page] and send a message through [Messenger Chat] to try out
+the bot and if you liked it, please give the page a like and/or review.
 
 This project uses [Express], [Google Translate API] to translate the messages,
 and a SQL Server to manage the user's database.
@@ -39,7 +38,7 @@ You can also show your support by becoming a patron!
 [![Patreon](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/eidoriantan)
 
 [Facebook page]: https://fb.me/msgr.translator
-[Chat]: https://m.me/msgr.translator
+[Messenger Chat]: https://m.me/msgr.translator
 [Messenger]: https://m.me
 [Google Translate]: https://translate.google.com
 [Express]: https://expressjs.com
