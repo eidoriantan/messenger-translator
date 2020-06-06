@@ -9,7 +9,6 @@ group :jekyll_plugins do
   gem "jekyll-octicons"
   gem "jekyll-seo-tag", "~> 2.6.1"
   gem "jekyll-sitemap", "~> 1.4.0"
-  gem "jemoji", "~> 0.11.1"
 end
 
 gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
