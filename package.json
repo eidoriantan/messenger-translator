@@ -35,7 +35,7 @@
     "start": "node server.js",
     "lint": "eslint -c .eslintrc.json . --ext .js,.mjs",
     "commitlint": "git log -1 --format=%B | commitlint",
-    "test": "npm run lint && mocha --colors --timeout 20000"
+    "test": "npm run lint && mocha"
   },
   "dependencies": {
     "chinese-to-pinyin": "^1.3.1",
