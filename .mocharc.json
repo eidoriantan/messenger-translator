@@ -1,5 +1,4 @@
 {
-  "extension": ["js", "mjs"],
   "timeout": 20000,
   "colors": true
 }
