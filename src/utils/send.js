@@ -55,7 +55,6 @@ module.exports = async function (psid, text, type = 'message') {
   if (body.error) {
     logger.write(`Error when trying to send message: ${psid}`)
     logger.write(`Error(${body.error.code}): ${body.error.message}`)
-    logger.write(`URL: ${url}`)
     logger.write('Data:')
     logger.write(data)
   }

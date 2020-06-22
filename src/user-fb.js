@@ -44,7 +44,6 @@ async function getProfile (psid) {
   if (body.error) {
     logger.write(`Unable to get user FB profile: ${psid}`)
     logger.write(`Error(${body.error.code}): ${body.error.message}`)
-    logger.write(`URL: ${url}`)
   }
 
   return body
