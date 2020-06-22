@@ -17,6 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+const logger = require('./log.js')
 const request = require('./request.js')
 const getProof = require('./proof.js')
 
@@ -52,10 +53,10 @@ module.exports = async function (psid, text, type = 'message') {
   const { body } = response
 
   if (body.error) {
-    console.error('Error occured!')
-    console.error(`Error: ${body.error.message}`)
-    console.error(`Error Code: ${body.error.code}`)
-    console.error(`URL: ${url}`)
-    console.error(`Data: ${JSON.stringify(data)}`)
+    logger.write(`Error when trying to send message: ${psid}`)
+    logger.write(`Error(${body.error.code}): ${body.error.message}`)
+    logger.write(`URL: ${url}`)
+    logger.write('Data:')
+    logger.write(data)
   }
 }

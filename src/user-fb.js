@@ -17,6 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+const logger = require('./utils/log.js')
 const request = require('./utils/request.js')
 const getProof = require('./utils/proof.js')
 
@@ -41,10 +42,9 @@ async function getProfile (psid) {
   const { body } = response
 
   if (body.error) {
-    console.error('Error occured!')
-    console.error(`Error: ${body.error.message}`)
-    console.error(`Error Code: ${body.error.code}`)
-    console.error(`URL: ${url}`)
+    logger.write(`Unable to get user FB profile: ${psid}`)
+    logger.write(`Error(${body.error.code}): ${body.error.message}`)
+    logger.write(`URL: ${url}`)
   }
 
   return body

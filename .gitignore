@@ -3,3 +3,6 @@
 
 # Ignore Node-generated files
 node_modules/
+
+# App-generated files
+logs/

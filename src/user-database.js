@@ -18,6 +18,8 @@
  */
 
 const sql = require('mssql')
+
+const logger = require('./utils/log.js')
 const { getProfile } = require('./user-fb.js')
 
 /**
@@ -110,8 +112,13 @@ async function addUser (psid) {
       `INSERT INTO users (${names.join(', ')}) VALUES (${values.join(', ')})`
     )
   } catch (error) {
-    console.error('An error had occured!')
-    console.error(error)
+    logger.write(`Unable to add user to database: ${psid}`)
+    logger.write(`Error: ${error.message}`)
+    logger.write(`Stack: ${error.stack}`)
+    logger.write('Profile:')
+    logger.write(profile)
+    logger.write('User Data:')
+    logger.write(userData)
   }
 
   return userData
@@ -129,8 +136,9 @@ async function deleteUser (psid) {
     request.input('psid', getDataType('psid'), psid)
     await request.query('DELETE FROM users WHERE psid=@psid')
   } catch (error) {
-    console.error('An error had occured!')
-    console.error(error)
+    logger.write(`Unable to delete user from database: ${psid}`)
+    logger.write(`Error: ${error.message}`)
+    logger.write(`Stack: ${error.stack}`)
   }
 }
 
@@ -153,8 +161,9 @@ async function getUser (psid) {
 
     return result.recordset.length > 0 ? parseUser(result.recordset[0]) : null
   } catch (error) {
-    console.error('An error had occured!')
-    console.error(error)
+    logger.write(`Unable to get user information: ${psid}`)
+    logger.write(`Error: ${error.message}`)
+    logger.write(`Stack: ${error.stack}`)
   }
 }
 
@@ -180,8 +189,9 @@ async function setUser (psid, values) {
     const columns = names.map(name => `${name}=@${name}`).join(', ')
     await request.query(`UPDATE users SET ${columns} WHERE psid=@psid`)
   } catch (error) {
-    console.error('An error had occured!')
-    console.error(error)
+    logger.write(`Unable to update user information: ${psid}`)
+    logger.write(`Error: ${error.message}`)
+    logger.write(`Stack: ${error.stack}`)
   }
 }
 

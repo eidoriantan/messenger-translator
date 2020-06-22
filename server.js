@@ -18,14 +18,14 @@
  */
 
 const express = require('express')
+const serveIndex = require('serve-index')
 const crypto = require('crypto')
 
+const logger = require('./src/utils/log.js')
 const send = require('./src/utils/send.js')
 const translator = require('./src/translate.js')
 const userDB = require('./src/user-database.js')
 const { changeLanguage } = require('./src/language.js')
-
-const app = express()
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
@@ -33,8 +33,10 @@ const APP_SECRET = process.env.APP_SECRET
 const PORT = process.env.PORT || 8080
 const DEBUG = process.env.DEBUG
 
+const app = express()
+
 if (!ACCESS_TOKEN || !VALIDATION_TOKEN || !APP_SECRET) {
-  throw new Error('Access, App Secret and/or validation token was not defined')
+  throw new Error('Access, App Secret and/or validation token is not defined')
 }
 
 app.use((req, res, next) => {
@@ -51,12 +53,25 @@ app.use(express.json({
     const elements = signature.split('=')
     const method = elements[0]
     const hash = elements[1]
-    const expected = crypto.createHmac(method, APP_SECRET)
-      .update(buf)
-      .digest('hex')
+    const hmac = crypto.createHmac(method, APP_SECRET)
+    const expected = hmac.update(buf).digest('hex')
 
-    if (hash !== expected) throw new Error('Invalid signature')
+    if (hash !== expected) {
+      logger.write('Invalid signature')
+      logger.write(`Signature: ${signature}`)
+      logger.write('Body:')
+      logger.write(req.body)
+
+      res.status(403).send('Invalid signature')
+      throw new Error('Invalid signature')
+    }
   }
+}))
+
+const logs = logger.directory
+app.use('/logs', express.static(logs), serveIndex(logs, {
+  icons: true,
+  view: 'details'
 }))
 
 app.get('/webhook', (req, res) => {
@@ -68,7 +83,11 @@ app.get('/webhook', (req, res) => {
     res.status(200).send(challenge)
     return true
   } else {
-    res.status(403).send('Verification token does not match!')
+    logger.write('Mode/verification token doesn\'t match')
+    logger.write('Parameters:')
+    logger.write({ mode, verifyToken, challenge })
+
+    res.status(403).send('Mode/verification token doesn\'t match')
     return false
   }
 })
@@ -76,9 +95,11 @@ app.get('/webhook', (req, res) => {
 app.post('/webhook', (req, res) => {
   const data = req.body
   if (data.object !== 'page') {
-    console.error('Object is not a page: ')
-    console.error(data)
-    res.status(403).send('Object is not a page')
+    logger.write('Object is not a page')
+    logger.write('Data:')
+    logger.write(data)
+
+    res.status(403).send('An error has occurred')
     return false
   }
 
@@ -94,8 +115,12 @@ app.post('/webhook', (req, res) => {
       } else if (event.postback) {
         receivedPostback(event)
       } else {
-        console.error('Unknown/unsupported event:')
-        console.error(event)
+        logger.write('Unknown/unsupported event')
+        logger.write('Event:')
+        logger.write(event)
+
+        res.status(403).send('Unknown/unsupported event')
+        return false
       }
     })
   })
@@ -129,7 +154,7 @@ async function receivedPostback (event) {
   switch (payload) {
     case 'get_started':
     case 'get_help':
-      await sendHelp(user.psid, user.locale)
+      await send(user.psid, getHelp(user.locale))
       break
 
     case 'change_language': {
@@ -140,8 +165,9 @@ async function receivedPostback (event) {
     }
 
     default:
-      console.error('Unknown/unsupported payload')
-      console.error(payload)
+      logger.write('Unknown/unsupported payload')
+      logger.write('Event:')
+      logger.write(event)
   }
 }
 
@@ -179,16 +205,13 @@ async function receivedMessage (event) {
   const help = /^(-?-?help)$/i
   let response = ''
 
-  if (text.match(help) !== null) return await sendHelp(user.psid, user.locale)
-  else if (text.match(langRegex) !== null) {
-    const language = langRegex.exec(text)[3]
-    response = await changeLanguage(user, language)
+  if (text.match(help) !== null) {
+    response = getHelp(user.locale)
+  } else if (text.match(langRegex) !== null) {
+    response = await changeLanguage(user, langRegex.exec(text)[3])
   } else {
-    const { language, detailed } = user
-    const help = 'For help, type " --help "'
-
-    response = await translator.translate(text, language, detailed) +
-      '\r\n\r\n' + help
+    response = await translator.translate(text, user.language) +
+      '\r\n\r\nFor help, type "--help"'
   }
 
   await send(user.psid, response)
@@ -197,17 +220,14 @@ async function receivedMessage (event) {
 /**
  *  Simply sends the help message to the user
  *
- *    @param {string} psid    User's page-scoped ID
  *    @param {string} locale    User's locale
  *    @return void
  */
-async function sendHelp (psid, locale) {
+async function getHelp (locale) {
   // @TODO: Translate the help message through native speakers
-  const message = '*Translator Help*:\r\n' +
+  return '*Translator Help*:\r\n' +
     'Type "--language LANGUAGE_NAME" to change language\r\n' +
     'For example:\r\n--language japanese'
-
-  await send(psid, message)
 }
 
 const server = app.listen(PORT, () => {
@@ -224,8 +244,10 @@ process.on('SIGINT', () => {
 server.on('close', async () => {
   console.log('Server is closing...')
   console.log('MySQL server is closing...')
+
   const pool = await userDB.poolAsync
   pool.close()
+  logger.close()
 })
 
 module.exports = { app, server }
