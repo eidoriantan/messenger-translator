@@ -29,7 +29,7 @@ const PASSWORD = process.env.PASSWORD
 const DATABASE = process.env.DATABASE
 
 if (!SERVER || !USERNAME || !PASSWORD || !DATABASE) {
-  console.error('Server connection configuration was not defined')
+  throw new Error('Server connection configuration was not defined')
 }
 
 const config = {
