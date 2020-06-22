@@ -221,9 +221,9 @@ async function receivedMessage (event) {
  *  Simply sends the help message to the user
  *
  *    @param {string} locale    User's locale
- *    @return void
+ *    @return {string} message
  */
-async function getHelp (locale) {
+function getHelp (locale) {
   // @TODO: Translate the help message through native speakers
   return '*Translator Help*:\r\n' +
     'Type "--language LANGUAGE_NAME" to change language\r\n' +
