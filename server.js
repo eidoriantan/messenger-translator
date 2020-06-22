@@ -37,6 +37,12 @@ if (!ACCESS_TOKEN || !VALIDATION_TOKEN || !APP_SECRET) {
   throw new Error('Access, App Secret and/or validation token was not defined')
 }
 
+app.use((req, res, next) => {
+  res.set('Content-Type', 'text/plain')
+  res.set('Content-Language', 'en')
+  next()
+})
+
 app.use(express.json({
   verify: (req, res, buf) => {
     const signature = req.get('x-hub-signature')
