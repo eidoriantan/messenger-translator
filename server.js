@@ -183,10 +183,7 @@ async function receivedMessage (event) {
   const text = message.text
 
   if (message.attachments) {
-    await send(senderID, 'We don\'t currently support handling attachments ' +
-      'but thanks for using our services! Please give us a review at our ' +
-      'Facebook page to motivate us!')
-
+    await send(senderID, 'We don\'t currently support handling attachments')
     return
   }
 
