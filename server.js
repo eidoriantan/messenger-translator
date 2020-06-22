@@ -208,6 +208,13 @@ const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
 })
 
+process.on('SIGINT', () => {
+  server.close(() => {
+    console.log('Exiting process...')
+    process.exit(1)
+  })
+})
+
 server.on('close', async () => {
   console.log('Server is closing...')
   console.log('MySQL server is closing...')
