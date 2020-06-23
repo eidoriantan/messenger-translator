@@ -18,6 +18,9 @@
  */
 
 const FuzzySet = require('fuzzyset.js')
+
+const localeStrings = require('./locale/')
+const replacer = require('./utils/replacer.js')
 const languages = require('./languages.js')
 const userDB = require('./user-database.js')
 const { setUserMenu } = require('./menu.js')
@@ -28,10 +31,11 @@ const DEBUG = process.env.DEBUG
  *  Changes the language of the user from the database if supported
  *
  *    @param {string} user    User's object from the database
- *    @param {string} lang    Name of the language
+ *    @param {string} lang    Name of the languag
+ *    @param {string} locale    User's locale for response messages
  *    @return {string} message
  */
-async function changeLanguage (user, lang) {
+async function changeLanguage (user, lang, locale) {
   let name, code
   Object.keys(languages).forEach(key => {
     const language = languages[key]
@@ -45,13 +49,13 @@ async function changeLanguage (user, lang) {
   if (!name || !code) {
     const langNames = Object.entries(languages).map(langObj => langObj[1].name)
     const fuzzy = FuzzySet(langNames).get(lang, null, 0.50)
-    let result = `Unknown language: ${lang}`
-
-    if (fuzzy !== null) {
-      result = 'Did you mean: ' + fuzzy.map(match => match[1]).join(', ')
+    const template = localeStrings(locale, 'unknown_language')
+    const replace = {
+      TEXT: lang,
+      MEAN: fuzzy !== null ? fuzzy.map(match => match[1]).join(',') : 'English'
     }
 
-    return result
+    return replacer(template, replace)
   }
 
   let menu = user.menu
@@ -61,7 +65,9 @@ async function changeLanguage (user, lang) {
   }
 
   await userDB.setUser(user.psid, { language: code, menu })
-  return `Language was changed to ${name}!`
+  const template = localeStrings(locale, 'language_change')
+  const replace = { LANG: name }
+  return replacer(template, replace)
 }
 
 module.exports = { changeLanguage }

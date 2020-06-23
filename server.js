@@ -21,6 +21,7 @@ const express = require('express')
 const serveIndex = require('serve-index')
 const crypto = require('crypto')
 
+const localeStrings = require('./src/locale/')
 const logger = require('./src/utils/log.js')
 const send = require('./src/utils/send.js')
 const translator = require('./src/translate.js')
@@ -159,7 +160,7 @@ async function receivedPostback (event) {
 
     case 'change_language': {
       const language = postback.title.split('--language ')[1]
-      const response = await changeLanguage(user, language)
+      const response = await changeLanguage(user, language, user.locale)
       await send(user.psid, response)
       break
     }
@@ -182,16 +183,17 @@ async function receivedMessage (event) {
   const message = event.message
   const text = message.text
 
-  if (message.attachments) {
-    await send(senderID, 'We don\'t currently support handling attachments')
-    return
-  }
-
   if (DEBUG) console.log(`Message was received with text: ${text}`)
 
   await send(senderID, null, 'mark_seen')
   await send(senderID, null, 'typing_on')
   const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
+
+  if (message.attachments) {
+    const message = localeStrings(user.locale, 'attachments')
+    await send(senderID, message)
+    return
+  }
 
   if (DEBUG) {
     console.log('User Data: ')
@@ -205,10 +207,9 @@ async function receivedMessage (event) {
   if (text.match(help) !== null) {
     response = getHelp(user.locale)
   } else if (text.match(langRegex) !== null) {
-    response = await changeLanguage(user, langRegex.exec(text)[3])
+    response = await changeLanguage(user, langRegex.exec(text)[3], user.locale)
   } else {
-    response = await translator.translate(text, user.language) +
-      '\r\n\r\nFor help, type "--help"'
+    response = await translator.translate(text, user.language)
   }
 
   await send(user.psid, response)
@@ -221,10 +222,7 @@ async function receivedMessage (event) {
  *    @return {string} message
  */
 function getHelp (locale) {
-  // @TODO: Translate the help message through native speakers
-  return '*Translator Help*:\r\n' +
-    'Type "--language LANGUAGE_NAME" to change language\r\n' +
-    'For example:\r\n--language japanese'
+  return localeStrings(locale, 'help')
 }
 
 const server = app.listen(PORT, () => {

@@ -43,6 +43,7 @@
     "fuzzyset.js": "^1.0.5",
     "google-translate-api-browser": "^1.1.71",
     "hangul-romanization": "^1.0.0",
+    "ini": "^1.3.5",
     "kuroshiro": "^1.1.2",
     "kuroshiro-analyzer-kuromoji": "^1.1.0",
     "mssql": "^6.2.0",

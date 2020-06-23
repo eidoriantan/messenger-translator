@@ -22,6 +22,9 @@ const Kuroshiro = require('kuroshiro')
 const Kuromoji = require('kuroshiro-analyzer-kuromoji')
 const hangulRomanization = require('hangul-romanization')
 const pinyin = require('chinese-to-pinyin')
+
+const localeStrings = require('./locale/')
+const replacer = require('./utils/replacer.js')
 const languages = require('./languages.js')
 
 const kuroshiro = new Kuroshiro()
@@ -57,9 +60,10 @@ function transformHTML (text) {
  *
  *    @param {string} text    The text to be translated
  *    @param {string} iso    The language's ISO code, eg. en
+ *    @param {string} locale    User's locale for response messages
  *    @return {string} translated text
  */
-async function translateText (text, iso) {
+async function translateText (text, iso, locale) {
   if (DEBUG) console.log('Calling Google Translate to translate the text')
   const result = await translate(text, { to: iso })
   let romaji
@@ -90,18 +94,18 @@ async function translateText (text, iso) {
 
   const language = languages[iso].name
   const from = languages[result.from.language.iso]
-    ? languages[result.from.language.iso].name : null
+    ? languages[result.from.language.iso].name : 'Unknown'
 
-  let translated = `Translated to: ${language}\r\n` +
-    (from !== null ? `Translated from: ${from}\r\n` : '') + '\r\n' +
-    result.text
-
-  if (result.from.text.didYouMean || result.from.text.autoCorrected) {
-    result.from.text.value = transformHTML(result.from.text.value)
-    translated += `\r\nDid you mean, "${result.from.text.value}"?`
+  const template = localeStrings(locale, 'body')
+  const replace = {
+    TO: language,
+    FROM: from,
+    TEXT: result.text,
+    DYM: (result.from.text.didYouMean || result.from.text.autoCorrected)
+      ? `Did you mean, ${transformHTML(result.from.text.value)}?` : ''
   }
 
-  return translated
+  return replacer(template, replace).trim()
 }
 
 module.exports = { translate: translateText }
