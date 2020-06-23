@@ -34,28 +34,6 @@ const kuroinit = kuroshiro.init(analyzer)
 const DEBUG = process.env.DEBUG || false
 
 /**
- *  Transforms HTML markups to its respective Messenger format
- *
- *    @param {string} text    The text to transform from
- *    @return {string} transformed
- */
-function transformHTML (text) {
-  const tags = {
-    em: '_',
-    b: '*'
-  }
-
-  const regexStr = `</?(${Object.keys(tags).join('|')})>`
-  const regex = new RegExp(regexStr, 'g')
-  text = text.replace(regex, ($0, $1) => tags[$1])
-
-  const regexEscaped = /&#([0-9]+);/g
-  text = text.replace(regexEscaped, ($0, $1) => String.fromCharCode($1))
-
-  return text
-}
-
-/**
  *  Translates the text by contacting Google's Translate API.
  *
  *    @param {string} text    The text to be translated
@@ -100,9 +78,7 @@ async function translateText (text, iso, locale) {
   const replace = {
     TO: language,
     FROM: from,
-    TEXT: result.text,
-    DYM: (result.from.text.didYouMean || result.from.text.autoCorrected)
-      ? `Did you mean, ${transformHTML(result.from.text.value)}?` : ''
+    TEXT: result.text
   }
 
   return replacer(template, replace).trim()
