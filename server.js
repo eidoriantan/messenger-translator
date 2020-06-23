@@ -209,7 +209,7 @@ async function receivedMessage (event) {
   } else if (text.match(langRegex) !== null) {
     response = await changeLanguage(user, langRegex.exec(text)[3], user.locale)
   } else {
-    response = await translator.translate(text, user.language)
+    response = await translator.translate(text, user.language, user.locale)
   }
 
   await send(user.psid, response)
