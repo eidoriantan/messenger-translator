@@ -254,7 +254,6 @@ server.on('close', async () => {
 
   const pool = await userDB.poolAsync
   pool.close()
-  logger.close()
 })
 
 module.exports = { app, server }
