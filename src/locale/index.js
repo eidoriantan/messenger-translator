@@ -57,6 +57,7 @@ translations.forEach(file => {
  *    @return {string} text
  */
 module.exports = function (locale, name) {
+  locale = locale.split('_')[0]
   const text = strings[locale] || strings.en
   return text[name]
 }
