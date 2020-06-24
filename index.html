@@ -1,7 +1,7 @@
 ---
 layout: default
 keywords: webhook, messenger, bot, app, translate, translator, homepage
-last_modified_at: 2020-05-27T03:38:00+08:00
+last_modified_at: 2020-06-24T12:59:00+08:00
 ---
 <div class="blankslate my-6 my-md-12 anim-fade-in" itemscope itemtype="http://schema.org/SoftwareSourceCode">
   <h1 class="h00-mktg" itemprop="name">Messenger Translator</h1>
@@ -52,7 +52,10 @@ last_modified_at: 2020-05-27T03:38:00+08:00
 <div class="col-9 text-center mx-auto my-8">
   <h1 class="h0 mb-5">Send Us a Message!</h1>
   <div class="d-flex flex-content-center flex-justify-center mx-auto">
-    <button type="button" class="btn btn-primary mx-2" onclick="FB.CustomerChat.showDialog()">Send a message now</button>
+    <button type="button" class="btn btn-primary mx-2" onclick="FB.CustomerChat.showDialog()">
+      {% octicon comment height:20 aria-hidden:true %} Send a message now
+    </button>
+
     <div class="fb-messengermessageus mx-2"
       data-fbml="true"
       data-fbml-messenger_app_id="552177775495405"
