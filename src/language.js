@@ -30,8 +30,8 @@ const DEBUG = process.env.DEBUG
 /**
  *  Changes the language of the user from the database if supported
  *
- *    @param {string} user    User's object from the database
- *    @param {string} lang    Name of the languag
+ *    @param {string} user      User's object from the database
+ *    @param {string} lang      Name of the languag
  *    @param {string} locale    User's locale for response messages
  *    @return {string} message
  */

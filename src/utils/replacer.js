@@ -20,8 +20,9 @@
 /**
  *  Replaces all strings in a format `{{ KEY }}` in a string.
  *
- *    @param {string} string    Template string
+ *    @param {string} string     Template string
  *    @param {object} replace    Object with key-value pair
+ *
  *    @example
  *    const template = "I am {{ name }}"
  *    replace(template, { name: "Groot" }) // Returns "I am Groot"

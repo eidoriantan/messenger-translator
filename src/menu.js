@@ -28,7 +28,7 @@ const DEBUG = process.env.DEBUG
 /**
  *  Updates user's menu according to its currently used language
  *
- *    @param {string} psid    User's page-scoped ID
+ *    @param {string} psid      User's page-scoped ID
  *    @param {string[]} menu    Array of menu item IDs
  *    @return {object} response
  */

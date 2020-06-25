@@ -22,9 +22,9 @@ const https = require('https')
 /**
  *  Sends a HTTPS request. Used specifically for sending/receiving JSON data
  *
- *    @param {string} method    Supports all HTTP methods
- *    @param {string} url    Target URL
- *    @param {object} headers    Custom headers to include with the request
+ *    @param {string} method           Supports all HTTP methods
+ *    @param {string} url              Target URL
+ *    @param {object} headers          Custom headers to include
  *    @param {object|object[]} data    Data to send along with the request
  *    @return {Promise} resolves the response
  */

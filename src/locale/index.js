@@ -53,7 +53,7 @@ translations.forEach(file => {
  *  Get locale string
  *
  *    @param {string} locale    String locale
- *    @param {string} name    String name
+ *    @param {string} name      String name
  *    @return {string} text
  */
 module.exports = function (locale, name) {

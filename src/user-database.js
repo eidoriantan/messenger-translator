@@ -170,7 +170,7 @@ async function getUser (psid) {
 /**
  *  Asynchronous function that updates the user data to the database.
  *
- *    @param {string} psid    User's page-scoped ID
+ *    @param {string} psid      User's page-scoped ID
  *    @param {object} values    Array of { key: value } to update the database
  *    @return void
  */

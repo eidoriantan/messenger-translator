@@ -36,8 +36,8 @@ const DEBUG = process.env.DEBUG || false
 /**
  *  Translates the text by contacting Google's Translate API.
  *
- *    @param {string} text    The text to be translated
- *    @param {string} iso    The language's ISO code, eg. en
+ *    @param {string} text      The text to be translated
+ *    @param {string} iso       The language's ISO code, eg. en
  *    @param {string} locale    User's locale for response messages
  *    @return {string} translated text
  */
