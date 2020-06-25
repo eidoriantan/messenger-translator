@@ -41,7 +41,7 @@ const DEBUG = process.env.DEBUG || false
  *    @param {string} locale    User's locale for response messages
  *    @return {string} translated text
  */
-async function translateText (text, iso, locale) {
+module.exports = async function (text, iso, locale) {
   if (DEBUG) console.log('Calling Google Translate to translate the text')
   const result = await translate(text, { to: iso })
   let romaji
@@ -83,5 +83,3 @@ async function translateText (text, iso, locale) {
 
   return replacer(template, replace).trim()
 }
-
-module.exports = { translate: translateText }

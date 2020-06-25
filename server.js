@@ -25,7 +25,7 @@ const crypto = require('crypto')
 const localeStrings = require('./src/locale/')
 const logger = require('./src/utils/log.js')
 const send = require('./src/utils/send.js')
-const translator = require('./src/translate.js')
+const translate = require('./src/translate.js')
 const userDB = require('./src/user-database.js')
 const { changeLanguage } = require('./src/language.js')
 
@@ -210,7 +210,7 @@ async function receivedMessage (event) {
   } else if (text.match(langRegex) !== null) {
     response = await changeLanguage(user, langRegex.exec(text)[3], user.locale)
   } else {
-    response = await translator.translate(text, user.language, user.locale)
+    response = await translate(text, user.language, user.locale)
   }
 
   await send(user.psid, response)
