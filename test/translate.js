@@ -17,17 +17,17 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const translator = require('../src/translate.js')
+const translate = require('../src/translate.js')
 require('should')
 
 describe('Translator test', () => {
   it('Translate text', async () => {
-    const result = await translator.translate('hello', 'ja', 'en')
+    const result = await translate('hello', 'ja', 'en')
     result.includes('こんにちは').should.be.true()
   })
 
   it('Change locale', async () => {
-    const result = await translator.translate('hello', 'ja', 'tl')
+    const result = await translate('hello', 'ja', 'tl')
     result.should.endWith('Para sa tulong, i-type "--help"')
   })
 })
