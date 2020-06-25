@@ -17,6 +17,17 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ *  Replaces all strings in a format `{{ KEY }}` in a string.
+ *
+ *    @param {string} string    Template string
+ *    @param {object} replace    Object with key-value pair
+ *    @example
+ *    const template = "I am {{ name }}"
+ *    replace(template, { name: "Groot" }) // Returns "I am Groot"
+ *
+ *    @return {string} replaced string
+ */
 module.exports = function (string, replace) {
   for (const key in replace) {
     const regex = new RegExp(`{{ ?${key} ?}}`, 'g')
