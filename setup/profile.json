@@ -1,0 +1,26 @@
+{
+    "get_started": {
+        "payload": "get_started"
+    },
+    "greeting": [{
+        "locale": "default",
+        "text": "Translate messages through Messenger bot"
+    }],
+    "persistent_menu": [{
+        "locale": "default",
+        "composer_input_disabled": false,
+        "call_to_actions": [{
+            "type": "postback",
+            "title": "--language English",
+            "payload": "change_language"
+        }, {
+            "type": "postback",
+            "title": "--language Japanese",
+            "payload": "change_language"
+        }, {
+            "type": "postback",
+            "title": "Get Help",
+            "payload": "get_help"
+        }]
+    }]
+}
