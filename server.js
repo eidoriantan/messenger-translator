@@ -24,10 +24,11 @@ const crypto = require('crypto')
 
 const localeStrings = require('./src/locale/')
 const logger = require('./src/utils/log.js')
-const send = require('./src/utils/send.js')
+
+const { changeLanguage } = require('./src/language.js')
+const send = require('./src/send.js')
 const translate = require('./src/translate.js')
 const userDB = require('./src/user-database.js')
-const { changeLanguage } = require('./src/language.js')
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN

@@ -17,9 +17,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const logger = require('./log.js')
-const request = require('./request.js')
-const getProof = require('./proof.js')
+const logger = require('./utils/log.js')
+const request = require('./utils/request.js')
+const getProof = require('./utils/proof.js')
 
 const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
