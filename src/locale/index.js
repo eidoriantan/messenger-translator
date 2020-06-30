@@ -52,9 +52,10 @@ translations.forEach(file => {
 /**
  *  Get locale string
  *
- *    @param {string} locale    String locale
- *    @param {string} name      String name
- *    @return {string} text
+ *  @param {string} locale    String locale
+ *  @param {string} name      String name
+ *
+ *  @return {string} text
  */
 module.exports = function (locale, name) {
   locale = locale ? locale.split('_')[0] : 'en'

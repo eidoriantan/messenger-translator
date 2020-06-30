@@ -226,7 +226,11 @@ async function receivedMessage (event) {
     response = await translate(text, user.language, user.locale)
   }
 
-  await send(user.psid, response)
+  const result = await send(user.psid, response)
+  if (!result) {
+    const longMessage = localeStrings(user.locale, 'long_message')
+    await send(user.psid, longMessage)
+  }
 }
 
 const server = app.listen(PORT, () => {
