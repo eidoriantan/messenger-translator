@@ -20,19 +20,19 @@
 const express = require('express')
 const serveIndex = require('serve-index')
 const cors = require('cors')
-const crypto = require('crypto')
 
 const localeStrings = require('./src/locale/')
+const hash = require('./src/utils/hash.js')
 const logger = require('./src/utils/log.js')
 
-const { changeLanguage } = require('./src/language.js')
+const database = require('./src/database.js')
+const profile = require('./src/profile.js')
 const send = require('./src/send.js')
 const translate = require('./src/translate.js')
-const userDB = require('./src/user-database.js')
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
-const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
 const APP_SECRET = process.env.APP_SECRET
+const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
 const PORT = process.env.PORT || 8080
 const DEBUG = process.env.DEBUG
 
@@ -54,12 +54,11 @@ app.use(express.json({
     if (!signature) throw new Error('No signature')
 
     const elements = signature.split('=')
-    const method = elements[0]
-    const hash = elements[1]
-    const hmac = crypto.createHmac(method, APP_SECRET)
-    const expected = hmac.update(buf).digest('hex')
+    const algo = elements[0]
+    const defined = elements[1]
+    const expected = hash(algo, buf, APP_SECRET)
 
-    if (hash !== expected) {
+    if (defined !== expected) {
       logger.write('Invalid signature')
       logger.write(`Signature: ${signature}`)
       logger.write('Body:')
@@ -133,10 +132,10 @@ app.post('/webhook', (req, res) => {
 })
 
 /**
- *  Handles postback events received.
+ *  Handles received postback events.
  *
- *    @param {object} event    Event object sent by Facebook
- *    @return void
+ *  @param {object} event    Event object sent by Facebook
+ *  @return void
  */
 async function receivedPostback (event) {
   const senderID = event.sender.id
@@ -147,7 +146,9 @@ async function receivedPostback (event) {
 
   await send(senderID, null, 'mark_seen')
   await send(senderID, null, 'typing_on')
-  const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
+
+  let user = await database.getUser(senderID)
+  if (user === null) user = await database.addUser(senderID)
 
   if (DEBUG) {
     console.log('User Data: ')
@@ -156,13 +157,15 @@ async function receivedPostback (event) {
 
   switch (payload) {
     case 'get_started':
-    case 'get_help':
-      await send(user.psid, getHelp(user.locale))
+    case 'get_help': {
+      const helpMessage = localeStrings(user.locale, 'help')
+      await send(user.psid, helpMessage)
       break
+    }
 
     case 'change_language': {
       const language = postback.title.split('--language ')[1]
-      const response = await changeLanguage(user, language, user.locale)
+      const response = await profile.changeLanguage(user, language, user.locale)
       await send(user.psid, response)
       break
     }
@@ -177,8 +180,8 @@ async function receivedPostback (event) {
 /**
  *  Handles all messages received.
  *
- *    @param {object} event    Event object sent by Facebook
- *    @return void
+ *  @param {object} event    Event object sent by Facebook
+ *  @return void
  */
 async function receivedMessage (event) {
   const senderID = event.sender.id
@@ -189,7 +192,9 @@ async function receivedMessage (event) {
 
   await send(senderID, null, 'mark_seen')
   await send(senderID, null, 'typing_on')
-  const user = await userDB.getUser(senderID) || await userDB.addUser(senderID)
+
+  let user = await database.getUser(senderID)
+  if (user === null) user = await database.addUser(senderID)
 
   if (message.attachments) {
     const message = localeStrings(user.locale, 'attachments')
@@ -207,24 +212,15 @@ async function receivedMessage (event) {
   let response = ''
 
   if (text.match(help) !== null) {
-    response = getHelp(user.locale)
+    response = localeStrings(user.locale, 'help')
   } else if (text.match(langRegex) !== null) {
-    response = await changeLanguage(user, langRegex.exec(text)[3], user.locale)
+    const language = langRegex.exec(text)[3]
+    response = await profile.changeLanguage(user, language, user.locale)
   } else {
     response = await translate(text, user.language, user.locale)
   }
 
   await send(user.psid, response)
-}
-
-/**
- *  Simply sends the help message to the user
- *
- *    @param {string} locale    User's locale
- *    @return {string} message
- */
-function getHelp (locale) {
-  return localeStrings(locale, 'help')
 }
 
 const server = app.listen(PORT, () => {
@@ -254,7 +250,7 @@ server.on('close', async () => {
   console.log('Server is closing...')
   console.log('MySQL server is closing...')
 
-  const pool = await userDB.poolAsync
+  const pool = await database.poolAsync
   pool.close()
 })
 

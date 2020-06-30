@@ -22,11 +22,11 @@ const crypto = require('crypto')
 /**
  *  Simply hashes a data with private key with HMAC
  *
- *    @param {string} algo    Algorithm to use
- *    @param {string} data    Data to be hashed
- *    @param {string} pkey    Private key
+ *  @param {string} algo    Algorithm to use
+ *  @param {string} data    Data to be hashed
+ *  @param {string} pkey    Private key
  *
- *    @return {string} hashed data in hex format
+ *  @return {string} hashed data in hex format
  */
 module.exports = function (algo, data, pkey) {
   const hmac = crypto.createHmac(algo, pkey)

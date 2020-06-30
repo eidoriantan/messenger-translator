@@ -20,11 +20,8 @@
 const sql = require('mssql')
 
 const logger = require('./utils/log.js')
-const { getProfile } = require('./user-fb.js')
+const profile = require('./profile.js')
 
-/**
- *  This bot uses a SQL server for storing data
- */
 const SERVER = process.env.SERVER
 const USERNAME = process.env.USERNAME
 const PASSWORD = process.env.PASSWORD
@@ -60,8 +57,8 @@ const poolAsync = new Promise((resolve, reject) => {
 /**
  *  Returns the data type of the name in the database
  *
- *    @param {string} name    The name in the database
- *    @return {SQLDataType} data type
+ *  @param {string} name    The name in the database
+ *  @return {SQLDataType} data type
  */
 function getDataType (name) {
   let dataType
@@ -84,16 +81,16 @@ function getDataType (name) {
 /**
  *  Asynchronous function that adds a user to the database.
  *
- *    @param {string} psid    User's page-scoped ID
- *    @return {object} userData
+ *  @param {string} psid    User's page-scoped ID
+ *  @return {object} userData
  */
 async function addUser (psid) {
-  const profile = await getProfile(psid)
+  const fbProfile = await profile.getProfile(psid)
   const userData = {
     psid,
-    name: profile.name || '',
+    name: fbProfile.name || '',
     language: 'en',
-    locale: profile.locale || 'en_US',
+    locale: fbProfile.locale || 'en_US',
     menu: ['en', 'ja', '_help']
   }
 
@@ -103,20 +100,22 @@ async function addUser (psid) {
     const names = []
 
     for (const name in userData) {
+      const dataType = getDataType(name)
+      const value = userData[name]
+
       names.push(name)
-      request.input(name, getDataType(name), userData[name])
+      request.input(name, dataType, value)
     }
 
-    const values = names.map(name => `@${name}`)
-    await request.query(
-      `INSERT INTO users (${names.join(', ')}) VALUES (${values.join(', ')})`
-    )
+    const values = names.map(name => `@${name}`).join(', ')
+    const query = `INSERT INTO users (${names.join(', ')}) VALUES (${values})`
+    await request.query(query)
   } catch (error) {
     logger.write(`Unable to add user to database: ${psid}`)
     logger.write(`Error: ${error.message}`)
     logger.write(`Stack: ${error.stack}`)
     logger.write('Profile:')
-    logger.write(profile)
+    logger.write(fbProfile)
     logger.write('User Data:')
     logger.write(userData)
   }
@@ -127,7 +126,7 @@ async function addUser (psid) {
 /**
  *  Deletes a user in the database
  *
- *    @param {string} psid    User's page-scoped ID
+ *  @param {string} psid    User's page-scoped ID
  */
 async function deleteUser (psid) {
   try {
@@ -145,14 +144,15 @@ async function deleteUser (psid) {
 /**
  *  Asynchronous function that gets the user data from the database.
  *
- *    @param {string} psid    User's page-scoped ID
- *    @return {object} userData
+ *  @param {string} psid    User's page-scoped ID
+ *  @return {object} userData
  */
 async function getUser (psid) {
   try {
     const pool = await poolAsync
     const request = pool.request()
     request.input('psid', getDataType('psid'), psid)
+
     const result = await request.query('SELECT * FROM users WHERE psid=@psid')
     const parseUser = user => {
       user.menu = user.menu.split(',')
@@ -165,14 +165,17 @@ async function getUser (psid) {
     logger.write(`Error: ${error.message}`)
     logger.write(`Stack: ${error.stack}`)
   }
+
+  return null
 }
 
 /**
  *  Asynchronous function that updates the user data to the database.
  *
- *    @param {string} psid      User's page-scoped ID
- *    @param {object} values    Array of { key: value } to update the database
- *    @return void
+ *  @param {string} psid      User's page-scoped ID
+ *  @param {object} values    Array of { key: value } to update the database
+ *
+ *  @return void
  */
 async function setUser (psid, values) {
   try {
@@ -182,8 +185,11 @@ async function setUser (psid, values) {
     const names = []
 
     for (const name in values) {
+      const dataType = getDataType(name)
+      const value = values[name]
+
       names.push(name)
-      request.input(name, getDataType(name), values[name])
+      request.input(name, dataType, value)
     }
 
     const columns = names.map(name => `${name}=@${name}`).join(', ')

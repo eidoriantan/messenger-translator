@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const userDB = require('../src/user-database.js')
+const database = require('../src/database.js')
 require('should')
 
 const TEST_USERID = process.env.TEST_USERID
@@ -29,7 +29,7 @@ describe('User Database test', async () => {
   let testUser
 
   it('Adds user', async () => {
-    const userData = await userDB.addUser(TEST_USERID)
+    const userData = await database.addUser(TEST_USERID)
     userData.should.containEql({ psid: TEST_USERID })
     userData.should.containEql({ name: '' })
     userData.should.containEql({ language: 'en' })
@@ -39,19 +39,19 @@ describe('User Database test', async () => {
   })
 
   it('Gets user', async () => {
-    const userData = await userDB.getUser(testUser.psid)
+    const userData = await database.getUser(testUser.psid)
     userData.should.containDeep(testUser)
   })
 
   it('Sets user property', async () => {
-    await userDB.setUser(testUser.psid, { language: 'ja' })
+    await database.setUser(testUser.psid, { language: 'ja' })
 
     testUser.language = 'ja'
-    const userData = await userDB.getUser(testUser.psid)
+    const userData = await database.getUser(testUser.psid)
     userData.should.containDeep(testUser)
   })
 
   after(async () => {
-    await userDB.deleteUser(testUser.psid)
+    await database.deleteUser(testUser.psid)
   })
 })

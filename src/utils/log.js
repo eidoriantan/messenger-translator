@@ -29,8 +29,8 @@ const stream = fs.createWriteStream(errorlog, { flags: 'a' })
 /**
  *  Writes data to `error.log`
  *
- *    @param {mixed} data    Data to log
- *    @return {string} chunk
+ *  @param {mixed} data    Data to log
+ *  @return {string} chunk
  */
 function write (data) {
   const date = new Date().toISOString()

@@ -29,10 +29,11 @@ const DEBUG = process.env.DEBUG
 /**
  *  Sends a message to user by calling Messenger's Send API.
  *
- *    @param {string} psid    User's page-scoped ID
- *    @param {string} text    The message to send
- *    @param {string} type    Send message type
- *    @return void
+ *  @param {string} psid    User's page-scoped ID
+ *  @param {string} text    The message to send
+ *  @param {string} type    Send message type
+ *
+ *  @return void
  */
 module.exports = async function (psid, text, type = 'message') {
   const params = new URLSearchParams()

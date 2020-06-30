@@ -34,15 +34,17 @@ const kuroinit = kuroshiro.init(analyzer)
 const DEBUG = process.env.DEBUG || false
 
 /**
- *  Translates the text by contacting Google's Translate API.
+ *  Translates the text.
  *
  *    @param {string} text      The text to be translated
  *    @param {string} iso       The language's ISO code, eg. en
  *    @param {string} locale    User's locale for response messages
+ *
  *    @return {string} translated text
  */
 module.exports = async function (text, iso, locale) {
   if (DEBUG) console.log('Calling Google Translate to translate the text')
+
   const result = await translate(text, { to: iso })
   let romaji
 
