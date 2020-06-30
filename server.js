@@ -148,7 +148,10 @@ async function receivedPostback (event) {
   await send(senderID, null, 'typing_on')
 
   let user = await database.getUser(senderID)
-  if (user === null) user = await database.addUser(senderID)
+  if (user === null) {
+    const fbProfile = await profile.getProfile(senderID)
+    user = await database.addUser(senderID, fbProfile)
+  }
 
   if (DEBUG) {
     console.log('User Data: ')
@@ -194,7 +197,10 @@ async function receivedMessage (event) {
   await send(senderID, null, 'typing_on')
 
   let user = await database.getUser(senderID)
-  if (user === null) user = await database.addUser(senderID)
+  if (user === null) {
+    const fbProfile = await profile.getProfile(senderID)
+    user = await database.addUser(senderID, fbProfile)
+  }
 
   if (message.attachments) {
     const message = localeStrings(user.locale, 'attachments')

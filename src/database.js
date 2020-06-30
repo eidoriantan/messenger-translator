@@ -18,9 +18,7 @@
  */
 
 const sql = require('mssql')
-
 const logger = require('./utils/log.js')
-const profile = require('./profile.js')
 
 const SERVER = process.env.SERVER
 const USERNAME = process.env.USERNAME
@@ -84,13 +82,12 @@ function getDataType (name) {
  *  @param {string} psid    User's page-scoped ID
  *  @return {object} userData
  */
-async function addUser (psid) {
-  const fbProfile = await profile.getProfile(psid)
+async function addUser (psid, profile) {
   const userData = {
     psid,
-    name: fbProfile.name || '',
+    name: profile.name || '',
     language: 'en',
-    locale: fbProfile.locale || 'en_US',
+    locale: profile.locale || 'en_US',
     menu: ['en', 'ja', '_help']
   }
 
@@ -115,7 +112,7 @@ async function addUser (psid) {
     logger.write(`Error: ${error.message}`)
     logger.write(`Stack: ${error.stack}`)
     logger.write('Profile:')
-    logger.write(fbProfile)
+    logger.write(profile)
     logger.write('User Data:')
     logger.write(userData)
   }
