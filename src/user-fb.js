@@ -17,12 +17,12 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+const hash = require('./utils/hash.js')
 const logger = require('./utils/log.js')
 const request = require('./utils/request.js')
-const getProof = require('./utils/proof.js')
 
-const FB_ENDPOINT = 'https://graph.facebook.com'
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
+const APP_SECRET = process.env.APP_SECRET
 const DEBUG = process.env.DEBUG
 
 /**
@@ -33,16 +33,19 @@ const DEBUG = process.env.DEBUG
  */
 async function getProfile (psid) {
   if (DEBUG) console.log(`Getting profile with User ID: ${psid}`)
+
   const params = new URLSearchParams()
+  const proof = hash('sha256', ACCESS_TOKEN, APP_SECRET)
   params.set('fields', 'name,locale')
   params.set('access_token', ACCESS_TOKEN)
-  params.set('appsecret_proof', getProof())
-  const url = `${FB_ENDPOINT}/${psid}?${params.toString()}`
+  params.set('appsecret_proof', proof)
+
+  const url = `https://graph.facebook.com/${psid}?${params.toString()}`
   const response = await request('GET', url)
-  const { body } = response
+  const body = response.body
 
   if (body.error) {
-    logger.write(`Unable to get user FB profile: ${psid}`)
+    logger.write(`Unable to get user's FB profile: ${psid}`)
     logger.write(`Error(${body.error.code}): ${body.error.message}`)
   }
 

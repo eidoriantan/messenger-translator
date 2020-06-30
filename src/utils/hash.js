@@ -19,15 +19,16 @@
 
 const crypto = require('crypto')
 
-const APP_SECRET = process.env.APP_SECRET
-const ACCESS_TOKEN = process.env.ACCESS_TOKEN
-
 /**
- *  Simply returns a hashed app secret proof for Facebook API requests
+ *  Simply hashes a data with private key with HMAC
  *
- *    @return {string} proof
+ *    @param {string} algo    Algorithm to use
+ *    @param {string} data    Data to be hashed
+ *    @param {string} pkey    Private key
+ *
+ *    @return {string} hashed data in hex format
  */
-module.exports = function () {
-  const hmac = crypto.createHmac('sha256', APP_SECRET)
-  return hmac.update(ACCESS_TOKEN).digest('hex')
+module.exports = function (algo, data, pkey) {
+  const hmac = crypto.createHmac(algo, pkey)
+  return hmac.update(data).digest('hex')
 }

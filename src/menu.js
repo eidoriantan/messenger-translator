@@ -17,12 +17,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const languages = require('./languages.js')
+const hash = require('./utils/hash.js')
 const request = require('./utils/request.js')
-const getProof = require('./utils/proof.js')
+const languages = require('./languages.js')
 
-const FB_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
+const ME_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
+const APP_SECRET = process.env.APP_SECRET
 const DEBUG = process.env.DEBUG
 
 /**
@@ -54,9 +55,11 @@ async function setUserMenu (psid, menu) {
   }
 
   const params = new URLSearchParams()
+  const proof = hash('sha256', ACCESS_TOKEN, APP_SECRET)
   params.set('access_token', ACCESS_TOKEN)
-  params.set('appsecret_proof', getProof())
-  const url = `${FB_ENDPOINT}/custom_user_settings?${params.toString()}`
+  params.set('appsecret_proof', proof)
+
+  const url = `${ME_ENDPOINT}/custom_user_settings?${params.toString()}`
   const data = { psid, persistent_menu: persistentMenu }
 
   return await request('POST', url, {}, data)
