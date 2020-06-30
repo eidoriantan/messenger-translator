@@ -17,9 +17,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const hash = require('./utils/hash.js')
-const logger = require('./utils/log.js')
-const request = require('./utils/request.js')
+const hash = require('./hash.js')
+const logger = require('./log.js')
+const request = require('./request.js')
 
 const ME_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
@@ -33,7 +33,7 @@ const DEBUG = process.env.DEBUG
  *  @param {string} text    The message to send
  *  @param {string} type    Send message type
  *
- *  @return void
+ *  @return {boolean}
  */
 module.exports = async function (psid, text, type = 'message') {
   const params = new URLSearchParams()
@@ -48,8 +48,10 @@ module.exports = async function (psid, text, type = 'message') {
     recipient: { id: psid }
   }
 
-  if (type === 'message') data.message = { text }
-  else data.sender_action = type
+  if (type === 'message') {
+    if (text.length <= 2000) data.message = { text }
+    else return false
+  } else data.sender_action = type
 
   if (DEBUG) console.log(`Sending user "${psid}" (${type}): ${text}`)
   const response = await request('POST', url, {}, data)
@@ -60,5 +62,8 @@ module.exports = async function (psid, text, type = 'message') {
     logger.write(`Error(${body.error.code}): ${body.error.message}`)
     logger.write('Data:')
     logger.write(data)
+    return false
   }
+
+  return true
 }

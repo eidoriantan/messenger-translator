@@ -24,10 +24,10 @@ const cors = require('cors')
 const localeStrings = require('./src/locale/')
 const hash = require('./src/utils/hash.js')
 const logger = require('./src/utils/log.js')
+const send = require('./src/utils/send.js')
 
 const database = require('./src/database.js')
 const profile = require('./src/profile.js')
-const send = require('./src/send.js')
 const translate = require('./src/translate.js')
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
