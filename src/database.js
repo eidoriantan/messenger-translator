@@ -79,7 +79,9 @@ function getDataType (name) {
 /**
  *  Asynchronous function that adds a user to the database.
  *
- *  @param {string} psid    User's page-scoped ID
+ *  @param {string} psid       User's page-scoped ID
+ *  @param {object} profile    User's profile object
+ *
  *  @return {object} userData
  */
 async function addUser (psid, profile) {
