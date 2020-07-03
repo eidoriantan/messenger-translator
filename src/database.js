@@ -163,9 +163,8 @@ async function getUser (psid) {
     logger.write(`Unable to get user information: ${psid}`)
     logger.write(`Error: ${error.message}`)
     logger.write(`Stack: ${error.stack}`)
+    return null
   }
-
-  return null
 }
 
 /**
