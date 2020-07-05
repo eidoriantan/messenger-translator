@@ -191,11 +191,6 @@ async function receivedMessage (event) {
   const message = event.message
   const text = message.text
 
-  if (DEBUG) console.log(`Message was received with text: ${text}`)
-
-  await send(senderID, null, 'mark_seen')
-  await send(senderID, null, 'typing_on')
-
   let user = await database.getUser(senderID)
   if (user === null) {
     const fbProfile = await profile.getProfile(senderID)
@@ -212,6 +207,11 @@ async function receivedMessage (event) {
 
     return
   }
+
+  if (DEBUG) console.log(`Message was received with text: ${text}`)
+
+  await send(senderID, null, 'mark_seen')
+  await send(senderID, null, 'typing_on')
 
   if (DEBUG) {
     console.log('User Data: ')
