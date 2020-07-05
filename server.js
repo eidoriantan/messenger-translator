@@ -202,9 +202,14 @@ async function receivedMessage (event) {
     user = await database.addUser(senderID, fbProfile)
   }
 
-  if (message.attachments) {
-    const message = localeStrings(user.locale, 'attachments')
-    await send(senderID, message)
+  if (message.attachments && message.attachments.length > 0) {
+    for (let i = 0; i < message.attachments.length; i++) {
+      const attachment = message.attachments[i]
+      const errorMsg = localeStrings(user.locale, 'attachments')
+
+      if (!attachment.payload.sticker_id) await send(senderID, errorMsg)
+    }
+
     return
   }
 
