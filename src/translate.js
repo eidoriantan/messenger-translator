@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { translate } = require('google-translate-api-browser')
+const translate = require('@vitalets/google-translate-api')
 const Kuroshiro = require('kuroshiro')
 const Kuromoji = require('kuroshiro-analyzer-kuromoji')
 const hangulRomanization = require('hangul-romanization')
@@ -45,7 +45,7 @@ const DEBUG = process.env.DEBUG || false
 module.exports = async function (text, iso, locale) {
   if (DEBUG) console.log('Calling Google Translate to translate the text')
 
-  const result = await translate(text, { to: iso })
+  const result = await translate(text, { to: iso, client: 'gtx' })
   let romaji
 
   switch (iso) {
