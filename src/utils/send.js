@@ -57,7 +57,7 @@ module.exports = async function (psid, text, type = 'message') {
   const response = await request('POST', url, {}, data)
   const body = response.body
 
-  if (body.error) {
+  if (body.error && body.error.code !== 551) {
     logger.write(`Error when trying to send message: ${psid}`)
     logger.write(`Error(${body.error.code}): ${body.error.message}`)
     logger.write('Data:')
