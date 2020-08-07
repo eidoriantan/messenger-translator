@@ -228,6 +228,7 @@ async function receivedMessage (event) {
     const language = langRegex.exec(text)[3]
     response = await profile.changeLanguage(user, language, user.locale)
   } else {
+    if (user.language === 'zh') user.language = 'zh-cn'
     response = await translate(text, user.language, user.locale)
   }
 
