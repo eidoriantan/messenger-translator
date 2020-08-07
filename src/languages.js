@@ -36,10 +36,10 @@ module.exports = {
   ceb: { name: 'Cebuano', regex: /^(ceb|Cebuano)$/i },
   ny: { name: 'Chichewa', regex: /^(ny|Chichewa)$/i },
   zh: { name: 'Chinese Simplified', regex: /^(zh|Chinese( Simplified)?)$/i },
-  'zh-cn': {
+  'zh-CN': {
     name: 'Chinese Simplified', regex: /^(zh-cn|Chinese Simplified)$/i
   },
-  'zh-tw': {
+  'zh-TW': {
     name: 'Chinese Traditional', regex: /^(zh-tw|Chinese Traditional)$/i
   },
   co: { name: 'Corsican', regex: /^(co|Corsican)$/i },

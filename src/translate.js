@@ -61,8 +61,8 @@ module.exports = async function (text, iso, locale) {
       romaji = hangulRomanization.convert(result.text)
       break
 
-    case 'zh-cn':
-    case 'zh-tw':
+    case 'zh-CN':
+    case 'zh-TW':
       romaji = pinyin(result.text, { keepRest: true, removeTone: true })
       break
 
