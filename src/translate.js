@@ -49,24 +49,28 @@ const proxies = [
  *    @return {string} translated text
  */
 module.exports = async function (text, iso, locale) {
-  if (DEBUG) console.log('Calling Google Translate to translate the text')
-
   let result = null
   let romaji
 
+  if (DEBUG) console.log('Calling Google Translate to translate the text')
   for (let i = 0; i < proxies.length; i++) {
     const host = proxies[i]
     const agent = tunnel.httpsOverHttp({
       proxy: { host, port: '443' }
     })
 
+    if (DEBUG) console.log(`Trying proxy server: ${host}`)
     try {
       result = await translate(text, { to: iso, client: 'gtx' }, { agent })
-      if (result !== null) break
+      if (result !== null) {
+        if (DEBUG) console.log('Translated successfully!')
+        break
+      }
     } catch (e) {}
   }
 
   if (result === null) {
+    if (DEBUG) console.log('Unable to translate the text')
     const message = localeStrings(locale, 'requests_limit')
     return message
   }
