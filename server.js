@@ -83,14 +83,12 @@ app.get('/webhook', (req, res) => {
 
   if (mode === 'subscribe' && verifyToken === VALIDATION_TOKEN) {
     res.status(200).send(challenge)
-    return true
   } else {
     logger.write('Mode/verification token doesn\'t match')
     logger.write('Parameters:')
     logger.write({ mode, verifyToken, challenge })
 
     res.status(403).send('Mode/verification token doesn\'t match')
-    return false
   }
 })
 
@@ -102,7 +100,7 @@ app.post('/webhook', (req, res) => {
     logger.write(data)
 
     res.status(403).send('An error has occurred')
-    return false
+    return
   }
 
   data.entry.forEach(entry => {
@@ -114,21 +112,19 @@ app.post('/webhook', (req, res) => {
 
       if (event.message) {
         receivedMessage(event)
+        res.status(200).send('Success')
       } else if (event.postback) {
         receivedPostback(event)
+        res.status(200).send('Success')
       } else {
         logger.write('Unknown/unsupported event')
         logger.write('Event:')
         logger.write(event)
 
-        res.status(403).send('Unknown/unsupported event')
-        return false
+        res.status(400).send('Unknown/unsupported event')
       }
     })
   })
-
-  res.status(200).send('Success')
-  return true
 })
 
 /**
