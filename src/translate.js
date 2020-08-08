@@ -22,6 +22,7 @@ const Kuroshiro = require('kuroshiro')
 const Kuromoji = require('kuroshiro-analyzer-kuromoji')
 const hangulRomanization = require('hangul-romanization')
 const pinyin = require('chinese-to-pinyin')
+const tunnel = require('tunnel')
 
 const localeStrings = require('./locale/')
 const replacer = require('./utils/replacer.js')
@@ -32,6 +33,11 @@ const analyzer = new Kuromoji()
 const kuroinit = kuroshiro.init(analyzer)
 
 const DEBUG = process.env.DEBUG || false
+const proxies = [
+  'msgr-translator-proxy1.herokuapp.com',
+  'msgr-translator-proxy2.herokuapp.com',
+  'msgr-translator-proxy3.herokuapp.com'
+]
 
 /**
  *  Translates the text.
@@ -45,8 +51,25 @@ const DEBUG = process.env.DEBUG || false
 module.exports = async function (text, iso, locale) {
   if (DEBUG) console.log('Calling Google Translate to translate the text')
 
-  const result = await translate(text, { to: iso, client: 'gtx' })
+  let result = null
   let romaji
+
+  for (let i = 0; i < proxies.length; i++) {
+    const host = proxies[i]
+    const agent = tunnel.httpsOverHttp({
+      proxy: { host, port: '443' }
+    })
+
+    try {
+      result = await translate(text, { to: iso, client: 'gtx' }, { agent })
+      if (result !== null) break
+    } catch (e) {}
+  }
+
+  if (result === null) {
+    const message = localeStrings(locale, 'requests_limit')
+    return message
+  }
 
   switch (iso) {
     case 'ja':
