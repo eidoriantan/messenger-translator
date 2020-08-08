@@ -174,6 +174,8 @@ async function receivedPostback (event) {
       logger.write('Event:')
       logger.write(event)
   }
+
+  await send(senderID, null, 'typing_off')
 }
 
 /**
@@ -206,6 +208,7 @@ async function receivedMessage (event) {
       if (!attachment.payload.sticker_id) await send(senderID, errorMsg)
     }
 
+    await send(senderID, null, 'typing_off')
     return
   }
 
@@ -233,6 +236,8 @@ async function receivedMessage (event) {
     const longMessage = localeStrings(user.locale, 'long_message')
     await send(user.psid, longMessage)
   }
+
+  await send(senderID, null, 'typing_off')
 }
 
 const server = app.listen(PORT, () => {
