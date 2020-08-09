@@ -22,7 +22,8 @@ const Kuroshiro = require('kuroshiro')
 const Kuromoji = require('kuroshiro-analyzer-kuromoji')
 const hangulRomanization = require('hangul-romanization')
 const pinyin = require('chinese-to-pinyin')
-const tunnel = require('tunnel')
+const http = require('http')
+const https = require('https')
 
 const localeStrings = require('./locale/')
 const replacer = require('./utils/replacer.js')
@@ -33,11 +34,7 @@ const analyzer = new Kuromoji()
 const kuroinit = kuroshiro.init(analyzer)
 
 const DEBUG = process.env.DEBUG || false
-const proxies = [
-  'msgr-translator-proxy1.herokuapp.com',
-  'msgr-translator-proxy2.herokuapp.com',
-  'msgr-translator-proxy3.herokuapp.com'
-]
+const PROXIES = process.env.PROXIES
 
 /**
  *  Translates the text.
@@ -49,19 +46,30 @@ const proxies = [
  *    @return {string} translated text
  */
 module.exports = async function (text, iso, locale) {
+  const proxies = PROXIES.split(',')
   let result = null
   let romaji
 
   if (DEBUG) console.log('Calling Google Translate to translate the text')
   for (let i = 0; i < proxies.length; i++) {
     const host = proxies[i]
-    const agent = tunnel.httpsOverHttp({
-      proxy: { host, port: '443' }
-    })
-
     if (DEBUG) console.log(`Trying proxy server: ${host}`)
+
     try {
-      result = await translate(text, { to: iso, client: 'gtx' }, { agent })
+      result = await translate(text, { to: iso, client: 'gtx' }, {
+        request: function (options, callback) {
+          const url = `${host}/${options.href}`
+          const opt = {
+            headers: { 'x-requested-with': `Node.js ${process.version}` },
+            timeout: 5000
+          }
+
+          return options.protocol === 'https:'
+            ? https.request(url, opt, callback)
+            : http.request(url, opt, callback)
+        }
+      })
+
       if (result !== null) {
         if (DEBUG) console.log('Translated successfully!')
         break

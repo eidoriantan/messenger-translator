@@ -49,8 +49,7 @@
     "kuroshiro": "^1.1.2",
     "kuroshiro-analyzer-kuromoji": "^1.1.0",
     "mssql": "^6.2.1",
-    "serve-index": "^1.9.1",
-    "tunnel": "0.0.6"
+    "serve-index": "^1.9.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^9.1.1",
