@@ -14,6 +14,7 @@ env:
   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
   APP_SECRET: ${{ secrets.APP_SECRET }}
   VALIDATION_TOKEN: ${{ secrets.VALIDATION_TOKEN }}
+  PROXIES: ${{ secrets.PROXIES }}
   SERVER: ${{ secrets.SERVER }}
   USERNAME: ${{ secrets.USERNAME }}
   PASSWORD: ${{ secrets.PASSWORD }}
