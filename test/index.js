@@ -42,6 +42,7 @@ describe('Bot test', () => {
 
   after(() => {
     require('./database.js')
+    require('./translate.js')
     server.close()
   })
 })
