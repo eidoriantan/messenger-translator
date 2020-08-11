@@ -38,11 +38,16 @@ describe('Bot test', () => {
         done()
       })
   })
-
-  after(async () => {
-    await require('./database.js')
-    await require('./translate.js')
-
-    server.close()
-  })
 })
+
+const tests = { database: false, translate: false }
+
+require('./database.js').then(result => { tests.database = result })
+require('./translate.js').then(result => { tests.translate = result })
+
+while (true) {
+  if (tests.database && tests.translate) {
+    server.close()
+    break
+  }
+}
