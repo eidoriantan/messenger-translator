@@ -46,19 +46,27 @@ const PROXIES = process.env.PROXIES
  *    @return {string} translated text
  */
 module.exports = async function (text, iso, locale) {
-  const proxies = PROXIES.split(',')
+  let proxies = PROXIES.split(',')
   let result = null
   let romaji
 
   if (DEBUG) console.log('Calling Google Translate to translate the text')
-  for (let i = 0; i < proxies.length; i++) {
-    const host = proxies[i]
-    if (DEBUG) console.log(`Trying proxy server: ${host}`)
+  while (result === null) {
+    if (proxies.length === 0) break
 
+    const random = Math.floor(Math.random() * proxies.length)
+    const proxy = proxies[random]
+    proxies = proxies.filter(element => proxy !== element)
+
+    if (DEBUG) console.log(`Trying proxy server: ${proxy}`)
     try {
       result = await translate(text, { to: iso, client: 'gtx' }, {
         request: function (options, callback) {
-          const url = `${host}/${options.href}`
+          /**
+           *  Wrapper for proxying using `cors-anywhere`
+           *  @see https://github.com/Rob--W/cors-anywhere
+           */
+          const url = `${proxy}/${options.href}`
           const opt = {
             headers: { 'x-requested-with': `Node.js ${process.version}` },
             timeout: 20000
@@ -69,11 +77,6 @@ module.exports = async function (text, iso, locale) {
             : http.request(url, opt, callback)
         }
       })
-
-      if (result !== null) {
-        if (DEBUG) console.log('Translated successfully!')
-        break
-      }
     } catch (e) {}
   }
 
