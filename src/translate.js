@@ -61,7 +61,7 @@ module.exports = async function (text, iso, locale) {
           const url = `${host}/${options.href}`
           const opt = {
             headers: { 'x-requested-with': `Node.js ${process.version}` },
-            timeout: 5000
+            timeout: 20000
           }
 
           return options.protocol === 'https:'
