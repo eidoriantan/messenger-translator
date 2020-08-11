@@ -20,14 +20,18 @@
 const translate = require('../src/translate.js')
 require('should')
 
-describe('Translator test', () => {
-  it('Translate text', async () => {
-    const result = await translate('hello', 'ja', 'en')
-    result.includes('こんにちは').should.be.true()
-  })
+module.exports = new Promise(resolve => {
+  describe('Translator test', () => {
+    it('Translate text', async () => {
+      const result = await translate('hello', 'ja', 'en')
+      result.includes('こんにちは').should.be.true()
+    })
 
-  it('Change locale', async () => {
-    const result = await translate('hello', 'ja', 'tl')
-    result.should.endWith('Para sa tulong, i-type "--help"')
+    it('Change locale', async () => {
+      const result = await translate('hello', 'ja', 'tl')
+      result.should.endWith('Para sa tulong, i-type "--help"')
+    })
+
+    after(() => resolve(true))
   })
 })

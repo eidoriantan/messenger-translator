@@ -20,38 +20,37 @@
 const database = require('../src/database.js')
 require('should')
 
-const TEST_USERID = process.env.TEST_USERID
-process.env.DEBUG = true
+module.exports = new Promise(resolve => {
+  describe('User Database test', () => {
+    const TEST_USERID = process.env.TEST_USERID
+    let testUser
 
-if (!TEST_USERID) throw new Error('Test user ID was not defined')
+    it('Adds user', async () => {
+      const userData = await database.addUser(TEST_USERID, {})
+      userData.should.containEql({ psid: TEST_USERID })
+      userData.should.containEql({ name: '' })
+      userData.should.containEql({ language: 'en' })
+      userData.should.containEql({ locale: 'en_US' })
+      userData.should.containEql({ menu: ['en', 'ja', '_help'] })
+      testUser = userData
+    })
 
-describe('User Database test', async () => {
-  let testUser
+    it('Gets user', async () => {
+      const userData = await database.getUser(testUser.psid)
+      userData.should.containDeep(testUser)
+    })
 
-  it('Adds user', async () => {
-    const userData = await database.addUser(TEST_USERID, {})
-    userData.should.containEql({ psid: TEST_USERID })
-    userData.should.containEql({ name: '' })
-    userData.should.containEql({ language: 'en' })
-    userData.should.containEql({ locale: 'en_US' })
-    userData.should.containEql({ menu: ['en', 'ja', '_help'] })
-    testUser = userData
-  })
+    it('Sets user property', async () => {
+      await database.setUser(testUser.psid, { language: 'ja' })
 
-  it('Gets user', async () => {
-    const userData = await database.getUser(testUser.psid)
-    userData.should.containDeep(testUser)
-  })
+      testUser.language = 'ja'
+      const userData = await database.getUser(testUser.psid)
+      userData.should.containDeep(testUser)
+    })
 
-  it('Sets user property', async () => {
-    await database.setUser(testUser.psid, { language: 'ja' })
-
-    testUser.language = 'ja'
-    const userData = await database.getUser(testUser.psid)
-    userData.should.containDeep(testUser)
-  })
-
-  after(async () => {
-    await database.deleteUser(testUser.psid)
+    after(async () => {
+      await database.deleteUser(testUser.psid)
+      resolve(true)
+    })
   })
 })

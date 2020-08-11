@@ -23,10 +23,9 @@ const should = require('should')
 const { app, server } = require('../server.js')
 const request = supertest(app)
 
-const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
-process.env.DEBUG = true
-
 describe('Bot test', () => {
+  const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
+
   it('Verify webhook', done => {
     const query = `hub.mode=subscribe&hub.verify_token=${VALIDATION_TOKEN}`
     const challenge = 'kwAvays'
@@ -40,9 +39,10 @@ describe('Bot test', () => {
       })
   })
 
-  after(() => {
-    require('./database.js')
-    require('./translate.js')
+  after(async () => {
+    await require('./database.js')
+    await require('./translate.js')
+
     server.close()
   })
 })
