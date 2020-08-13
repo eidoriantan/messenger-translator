@@ -219,6 +219,7 @@ async function receivedMessage (event) {
 
   const langRegex = /^(-?-?lang(uage)? (.+))$/i
   const help = /^(-?-?help)$/i
+  const feedback = /^(-?-?(feedback|fb) (.+))$/i
   let response = ''
 
   if (text.match(help) !== null) {
@@ -226,6 +227,12 @@ async function receivedMessage (event) {
   } else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[3]
     response = await profile.changeLanguage(user, language, user.locale)
+  } else if (text.match(feedback) !== null) {
+    const message = feedback.exec(text)[3]
+    const confirmation = localeStrings(user.locale, 'feedback_confirmation')
+
+    logger.write(`Feedback from ${user.name} (${user.psid})\r\n${message}`)
+    await send(user.psid, confirmation)
   } else {
     if (user.language === 'zh') user.language = 'zh-CN'
     response = await translate(text, user.language, user.locale)
