@@ -18,6 +18,7 @@
  */
 
 const express = require('express')
+const basicAuth = require('express-basic-auth')
 const serveIndex = require('serve-index')
 const cors = require('cors')
 
@@ -33,6 +34,8 @@ const translate = require('./src/translate.js')
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const APP_SECRET = process.env.APP_SECRET
 const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
+const USERNAME = process.env.USERNAME
+const PASSWORD = process.env.PASSWORD
 const PORT = process.env.PORT || 8080
 const DEBUG = process.env.DEBUG
 
@@ -71,7 +74,12 @@ app.use(express.json({
 }))
 
 const logs = logger.directory
-app.use('/logs', cors(), express.static(logs), serveIndex(logs, {
+const users = {}
+
+users[USERNAME] = PASSWORD
+const auth = basicAuth({ users })
+
+app.use('/logs', cors(), auth, express.static(logs), serveIndex(logs, {
   icons: true,
   view: 'details'
 }))
