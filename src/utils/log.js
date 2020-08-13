@@ -23,16 +23,20 @@ const path = require('path')
 const directory = path.resolve(__dirname, '../../logs')
 if (!fs.existsSync(directory)) fs.mkdirSync(directory)
 
+const infoLog = path.resolve(directory, 'info.log')
 const errorlog = path.resolve(directory, 'error.log')
-const stream = fs.createWriteStream(errorlog, { flags: 'a' })
+
+const infoStream = fs.createWriteStream(infoLog, { flags: 'a' })
+const errorStream = fs.createWriteStream(errorlog, { flags: 'a' })
 
 /**
  *  Writes data to `error.log`
  *
  *  @param {mixed} data    Data to log
+ *  @param {int} level     0 = info, 1 = error
  *  @return {string} chunk
  */
-function write (data) {
+function write (data, level = 0) {
   const date = new Date().toISOString()
   let chunk = ''
 
@@ -60,7 +64,16 @@ function write (data) {
       chunk += `[${date}]: ${data.toString()}\r\n`
   }
 
-  stream.write(chunk)
+  switch (level) {
+    case 0:
+      infoStream.write(chunk)
+      break
+
+    case 1:
+      errorStream.write(chunk)
+      break
+  }
+
   return chunk
 }
 
@@ -68,7 +81,8 @@ function write (data) {
  *  Closes the file write stream
  */
 function close () {
-  stream.end()
+  infoStream.end()
+  errorStream.end()
 }
 
 module.exports = { write, close, directory }

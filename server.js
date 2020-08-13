@@ -18,7 +18,7 @@
  */
 
 const express = require('express')
-const serveIndex = require('serve-index')
+const basicAuth = require('express-basic-auth')
 const cors = require('cors')
 
 const localeStrings = require('./src/locale/')
@@ -33,6 +33,8 @@ const translate = require('./src/translate.js')
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const APP_SECRET = process.env.APP_SECRET
 const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
+const USERNAME = process.env.USERNAME
+const PASSWORD = process.env.PASSWORD
 const PORT = process.env.PORT || 8080
 const DEBUG = process.env.DEBUG
 
@@ -41,6 +43,14 @@ const app = express()
 if (!ACCESS_TOKEN || !VALIDATION_TOKEN || !APP_SECRET) {
   throw new Error('Access, App Secret and/or validation token is not defined')
 }
+
+const logs = logger.directory
+const users = {}
+users[USERNAME] = PASSWORD
+
+app.use('/logs', cors())
+app.use('/logs', basicAuth({ users, challenge: true }))
+app.use('/logs', express.static(logs))
 
 app.use((req, res, next) => {
   res.set('Content-Type', 'text/plain')
@@ -59,21 +69,15 @@ app.use(express.json({
     const expected = hash(algo, buf, APP_SECRET)
 
     if (defined !== expected) {
-      logger.write('Invalid signature')
-      logger.write(`Signature: ${signature}`)
-      logger.write('Body:')
-      logger.write(req.body)
+      logger.write('Invalid signature', 1)
+      logger.write(`Signature: ${signature}`, 1)
+      logger.write('Body:', 1)
+      logger.write(req.body, 1)
 
       res.status(403).send('Invalid signature')
       throw new Error('Invalid signature')
     }
   }
-}))
-
-const logs = logger.directory
-app.use('/logs', cors(), express.static(logs), serveIndex(logs, {
-  icons: true,
-  view: 'details'
 }))
 
 app.get('/webhook', (req, res) => {
@@ -84,9 +88,9 @@ app.get('/webhook', (req, res) => {
   if (mode === 'subscribe' && verifyToken === VALIDATION_TOKEN) {
     res.status(200).send(challenge)
   } else {
-    logger.write('Mode/verification token doesn\'t match')
-    logger.write('Parameters:')
-    logger.write({ mode, verifyToken, challenge })
+    logger.write('Mode/verification token doesn\'t match', 1)
+    logger.write('Parameters:', 1)
+    logger.write({ mode, verifyToken, challenge }, 1)
 
     res.status(403).send('Mode/verification token doesn\'t match')
   }
@@ -95,9 +99,9 @@ app.get('/webhook', (req, res) => {
 app.post('/webhook', (req, res) => {
   const data = req.body
   if (data.object !== 'page') {
-    logger.write('Object is not a page')
-    logger.write('Data:')
-    logger.write(data)
+    logger.write('Object is not a page', 1)
+    logger.write('Data:', 1)
+    logger.write(data, 1)
 
     res.status(403).send('An error has occurred')
     return
@@ -117,9 +121,9 @@ app.post('/webhook', (req, res) => {
         receivedPostback(event)
         res.status(200).send('Success')
       } else {
-        logger.write('Unknown/unsupported event')
-        logger.write('Event:')
-        logger.write(event)
+        logger.write('Unknown/unsupported event', 1)
+        logger.write('Event:', 1)
+        logger.write(event, 1)
 
         res.status(400).send('Unknown/unsupported event')
       }
@@ -170,9 +174,9 @@ async function receivedPostback (event) {
     }
 
     default:
-      logger.write('Unknown/unsupported payload')
-      logger.write('Event:')
-      logger.write(event)
+      logger.write('Unknown/unsupported payload', 1)
+      logger.write('Event:', 1)
+      logger.write(event, 1)
   }
 
   await send(senderID, null, 'typing_off')
@@ -219,6 +223,7 @@ async function receivedMessage (event) {
 
   const langRegex = /^(-?-?lang(uage)? (.+))$/i
   const help = /^(-?-?help)$/i
+  const feedback = /^(-?-?(feedback|fb) (.+))$/i
   let response = ''
 
   if (text.match(help) !== null) {
@@ -226,6 +231,12 @@ async function receivedMessage (event) {
   } else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[3]
     response = await profile.changeLanguage(user, language, user.locale)
+  } else if (text.match(feedback) !== null) {
+    response = localeStrings(user.locale, 'feedback_confirmation')
+
+    const message = feedback.exec(text)[3]
+    logger.write(`Feedback from ${user.name} (${user.psid})`)
+    logger.write(message)
   } else {
     if (user.language === 'zh') user.language = 'zh-CN'
     response = await translate(text, user.language, user.locale)
@@ -245,15 +256,15 @@ const server = app.listen(PORT, () => {
 })
 
 process.on('uncaughtException', error => {
-  logger.write('Uncaught Exception')
-  logger.write(`Error: ${error.message}`)
-  logger.write(`Stack: ${error.stack}`)
+  logger.write('Uncaught Exception', 1)
+  logger.write(`Error: ${error.message}`, 1)
+  logger.write(`Stack: ${error.stack}`, 1)
 })
 
 process.on('unhandledRejection', error => {
-  logger.write('Unhandled Promise rejection')
-  logger.write('Error:')
-  logger.write(error)
+  logger.write('Unhandled Promise rejection', 1)
+  logger.write('Error:', 1)
+  logger.write(error, 1)
 })
 
 process.on('SIGINT', () => {
@@ -269,6 +280,7 @@ server.on('close', async () => {
 
   const pool = await database.poolAsync
   pool.close()
+  logger.close()
 })
 
 module.exports = { app, server }
