@@ -22,7 +22,6 @@ const Kuroshiro = require('kuroshiro')
 const Kuromoji = require('kuroshiro-analyzer-kuromoji')
 const hangulRomanization = require('hangul-romanization')
 const pinyin = require('chinese-to-pinyin')
-const http = require('http')
 const https = require('https')
 
 const localeStrings = require('./locale/')
@@ -67,15 +66,13 @@ module.exports = async function (text, iso, locale) {
            *  Wrapper for proxying using `cors-anywhere`
            *  @see https://github.com/Rob--W/cors-anywhere
            */
-          const url = `${proxy}/${options.href}`
+          const url = `https://${proxy}/${options.href}`
           const opt = {
             headers: { 'x-requested-with': `Node.js ${process.version}` },
             timeout: 20000
           }
 
-          return options.protocol === 'https:'
-            ? https.request(url, opt, callback)
-            : http.request(url, opt, callback)
+          return https.request(url, opt, callback)
         }
       })
     } catch (e) {}
