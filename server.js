@@ -19,7 +19,6 @@
 
 const express = require('express')
 const basicAuth = require('express-basic-auth')
-const serveIndex = require('serve-index')
 const cors = require('cors')
 
 const localeStrings = require('./src/locale/')
@@ -44,6 +43,14 @@ const app = express()
 if (!ACCESS_TOKEN || !VALIDATION_TOKEN || !APP_SECRET) {
   throw new Error('Access, App Secret and/or validation token is not defined')
 }
+
+const logs = logger.directory
+const users = {}
+users[USERNAME] = PASSWORD
+
+app.use('/logs', cors())
+app.use('/logs', basicAuth({ users, challenge: true }))
+app.use('/logs', express.static(logs))
 
 app.use((req, res, next) => {
   res.set('Content-Type', 'text/plain')
@@ -71,17 +78,6 @@ app.use(express.json({
       throw new Error('Invalid signature')
     }
   }
-}))
-
-const logs = logger.directory
-const users = {}
-
-users[USERNAME] = PASSWORD
-const auth = basicAuth({ users })
-
-app.use('/logs', cors(), auth, express.static(logs), serveIndex(logs, {
-  icons: true,
-  view: 'details'
 }))
 
 app.get('/webhook', (req, res) => {
