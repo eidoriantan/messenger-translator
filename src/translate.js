@@ -83,7 +83,7 @@ module.exports = async function (text, iso, locale) {
 
   if (result === null) {
     if (DEBUG) console.log('Unable to translate the text')
-    logger.write('Unable to translate text! Please check proxy servers')
+    logger.write('Unable to translate text! Please check proxy servers', 1)
 
     const message = localeStrings(locale, 'requests_limit')
     return message

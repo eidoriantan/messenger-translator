@@ -110,13 +110,13 @@ async function addUser (psid, profile) {
     const query = `INSERT INTO users (${names.join(', ')}) VALUES (${values})`
     await request.query(query)
   } catch (error) {
-    logger.write(`Unable to add user to database: ${psid}`)
-    logger.write(`Error: ${error.message}`)
-    logger.write(`Stack: ${error.stack}`)
-    logger.write('Profile:')
-    logger.write(profile)
-    logger.write('User Data:')
-    logger.write(userData)
+    logger.write(`Unable to add user to database: ${psid}`, 1)
+    logger.write(`Error: ${error.message}`, 1)
+    logger.write(`Stack: ${error.stack}`, 1)
+    logger.write('Profile:', 1)
+    logger.write(profile, 1)
+    logger.write('User Data:', 1)
+    logger.write(userData, 1)
   }
 
   return userData
@@ -134,9 +134,9 @@ async function deleteUser (psid) {
     request.input('psid', getDataType('psid'), psid)
     await request.query('DELETE FROM users WHERE psid=@psid')
   } catch (error) {
-    logger.write(`Unable to delete user from database: ${psid}`)
-    logger.write(`Error: ${error.message}`)
-    logger.write(`Stack: ${error.stack}`)
+    logger.write(`Unable to delete user from database: ${psid}`, 1)
+    logger.write(`Error: ${error.message}`, 1)
+    logger.write(`Stack: ${error.stack}`, 1)
   }
 }
 
@@ -160,9 +160,9 @@ async function getUser (psid) {
 
     return result.recordset.length > 0 ? parseUser(result.recordset[0]) : null
   } catch (error) {
-    logger.write(`Unable to get user information: ${psid}`)
-    logger.write(`Error: ${error.message}`)
-    logger.write(`Stack: ${error.stack}`)
+    logger.write(`Unable to get user information: ${psid}`, 1)
+    logger.write(`Error: ${error.message}`, 1)
+    logger.write(`Stack: ${error.stack}`, 1)
     return null
   }
 }
@@ -193,9 +193,9 @@ async function setUser (psid, values) {
     const columns = names.map(name => `${name}=@${name}`).join(', ')
     await request.query(`UPDATE users SET ${columns} WHERE psid=@psid`)
   } catch (error) {
-    logger.write(`Unable to update user information: ${psid}`)
-    logger.write(`Error: ${error.message}`)
-    logger.write(`Stack: ${error.stack}`)
+    logger.write(`Unable to update user information: ${psid}`, 1)
+    logger.write(`Error: ${error.message}`, 1)
+    logger.write(`Stack: ${error.stack}`, 1)
   }
 }
 

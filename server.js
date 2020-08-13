@@ -59,10 +59,10 @@ app.use(express.json({
     const expected = hash(algo, buf, APP_SECRET)
 
     if (defined !== expected) {
-      logger.write('Invalid signature')
-      logger.write(`Signature: ${signature}`)
-      logger.write('Body:')
-      logger.write(req.body)
+      logger.write('Invalid signature', 1)
+      logger.write(`Signature: ${signature}`, 1)
+      logger.write('Body:', 1)
+      logger.write(req.body, 1)
 
       res.status(403).send('Invalid signature')
       throw new Error('Invalid signature')
@@ -84,9 +84,9 @@ app.get('/webhook', (req, res) => {
   if (mode === 'subscribe' && verifyToken === VALIDATION_TOKEN) {
     res.status(200).send(challenge)
   } else {
-    logger.write('Mode/verification token doesn\'t match')
-    logger.write('Parameters:')
-    logger.write({ mode, verifyToken, challenge })
+    logger.write('Mode/verification token doesn\'t match', 1)
+    logger.write('Parameters:', 1)
+    logger.write({ mode, verifyToken, challenge }, 1)
 
     res.status(403).send('Mode/verification token doesn\'t match')
   }
@@ -95,9 +95,9 @@ app.get('/webhook', (req, res) => {
 app.post('/webhook', (req, res) => {
   const data = req.body
   if (data.object !== 'page') {
-    logger.write('Object is not a page')
-    logger.write('Data:')
-    logger.write(data)
+    logger.write('Object is not a page', 1)
+    logger.write('Data:', 1)
+    logger.write(data, 1)
 
     res.status(403).send('An error has occurred')
     return
@@ -117,9 +117,9 @@ app.post('/webhook', (req, res) => {
         receivedPostback(event)
         res.status(200).send('Success')
       } else {
-        logger.write('Unknown/unsupported event')
-        logger.write('Event:')
-        logger.write(event)
+        logger.write('Unknown/unsupported event', 1)
+        logger.write('Event:', 1)
+        logger.write(event, 1)
 
         res.status(400).send('Unknown/unsupported event')
       }
@@ -170,9 +170,9 @@ async function receivedPostback (event) {
     }
 
     default:
-      logger.write('Unknown/unsupported payload')
-      logger.write('Event:')
-      logger.write(event)
+      logger.write('Unknown/unsupported payload', 1)
+      logger.write('Event:', 1)
+      logger.write(event, 1)
   }
 
   await send(senderID, null, 'typing_off')
@@ -245,15 +245,15 @@ const server = app.listen(PORT, () => {
 })
 
 process.on('uncaughtException', error => {
-  logger.write('Uncaught Exception')
-  logger.write(`Error: ${error.message}`)
-  logger.write(`Stack: ${error.stack}`)
+  logger.write('Uncaught Exception', 1)
+  logger.write(`Error: ${error.message}`, 1)
+  logger.write(`Stack: ${error.stack}`, 1)
 })
 
 process.on('unhandledRejection', error => {
-  logger.write('Unhandled Promise rejection')
-  logger.write('Error:')
-  logger.write(error)
+  logger.write('Unhandled Promise rejection', 1)
+  logger.write('Error:', 1)
+  logger.write(error, 1)
 })
 
 process.on('SIGINT', () => {

@@ -58,10 +58,10 @@ module.exports = async function (psid, text, type = 'message') {
   const body = response.body
 
   if (body.error && body.error.code !== 551) {
-    logger.write(`Error when trying to send message: ${psid}`)
-    logger.write(`Error(${body.error.code}): ${body.error.message}`)
-    logger.write('Data:')
-    logger.write(data)
+    logger.write(`Error when trying to send message: ${psid}`, 1)
+    logger.write(`Error(${body.error.code}): ${body.error.message}`, 1)
+    logger.write('Data:', 1)
+    logger.write(data, 1)
     return false
   }
 

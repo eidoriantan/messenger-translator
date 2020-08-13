@@ -137,8 +137,8 @@ async function getProfile (psid) {
   const body = response.body
 
   if (body.error) {
-    logger.write(`Unable to get user's FB profile: ${psid}`)
-    logger.write(`Error(${body.error.code}): ${body.error.message}`)
+    logger.write(`Unable to get user's FB profile: ${psid}`, 1)
+    logger.write(`Error(${body.error.code}): ${body.error.message}`, 1)
   }
 
   return body
