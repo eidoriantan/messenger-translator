@@ -269,6 +269,7 @@ server.on('close', async () => {
 
   const pool = await database.poolAsync
   pool.close()
+  logger.close()
 })
 
 module.exports = { app, server }
