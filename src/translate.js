@@ -26,6 +26,7 @@ const http = require('http')
 const https = require('https')
 
 const localeStrings = require('./locale/')
+const logger = require('./utils/log.js')
 const replacer = require('./utils/replacer.js')
 const languages = require('./languages.js')
 
@@ -82,6 +83,8 @@ module.exports = async function (text, iso, locale) {
 
   if (result === null) {
     if (DEBUG) console.log('Unable to translate the text')
+    logger.write('Unable to translate text! Please check proxy servers')
+
     const message = localeStrings(locale, 'requests_limit')
     return message
   }
