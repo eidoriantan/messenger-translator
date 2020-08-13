@@ -74,7 +74,6 @@ function write (data, level = 0) {
       break
   }
 
-  errorStream.write(chunk)
   return chunk
 }
 
