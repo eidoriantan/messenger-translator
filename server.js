@@ -228,11 +228,10 @@ async function receivedMessage (event) {
     const language = langRegex.exec(text)[3]
     response = await profile.changeLanguage(user, language, user.locale)
   } else if (text.match(feedback) !== null) {
-    const message = feedback.exec(text)[3]
-    const confirmation = localeStrings(user.locale, 'feedback_confirmation')
+    response = localeStrings(user.locale, 'feedback_confirmation')
 
+    const message = feedback.exec(text)[3]
     logger.write(`Feedback from ${user.name} (${user.psid})\r\n${message}`)
-    await send(user.psid, confirmation)
   } else {
     if (user.language === 'zh') user.language = 'zh-CN'
     response = await translate(text, user.language, user.locale)
