@@ -35,7 +35,7 @@
     "start": "node server.js",
     "lint": "eslint -c .eslintrc.json . --ext .js,.mjs",
     "commitlint": "git log -1 --format=%B | commitlint",
-    "test": "npm run lint && mocha"
+    "test": "npm run lint && mocha test/index.js"
   },
   "dependencies": {
     "@vitalets/google-translate-api": "^3.0.0",

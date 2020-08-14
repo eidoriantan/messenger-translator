@@ -40,8 +40,15 @@ describe('Bot test', () => {
       })
   })
 
-  after(() => {
-    require('./database.js')
-    server.close()
+  after(done => {
+    extendTests()
+    done()
   })
 })
+
+async function extendTests () {
+  await require('./database.js')()
+  await require('./translate.js')()
+
+  server.close()
+}

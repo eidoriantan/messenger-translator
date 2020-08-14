@@ -25,33 +25,36 @@ process.env.DEBUG = true
 
 if (!TEST_USERID) throw new Error('Test user ID was not defined')
 
-describe('User Database test', () => {
-  let testUser
+module.exports = () => new Promise(resolve => {
+  describe('User Database test', () => {
+    let testUser
 
-  it('Adds user', async () => {
-    const userData = await database.addUser(TEST_USERID, {})
-    userData.should.containEql({ psid: TEST_USERID })
-    userData.should.containEql({ name: '' })
-    userData.should.containEql({ language: 'en' })
-    userData.should.containEql({ locale: 'en_US' })
-    userData.should.containEql({ menu: ['en', 'ja', '_help'] })
-    testUser = userData
-  })
+    it('Adds user', async () => {
+      const userData = await database.addUser(TEST_USERID, {})
+      userData.should.containEql({ psid: TEST_USERID })
+      userData.should.containEql({ name: '' })
+      userData.should.containEql({ language: 'en' })
+      userData.should.containEql({ locale: 'en_US' })
+      userData.should.containEql({ menu: ['en', 'ja', '_help'] })
+      testUser = userData
+    })
 
-  it('Gets user', async () => {
-    const userData = await database.getUser(testUser.psid)
-    userData.should.containDeep(testUser)
-  })
+    it('Gets user', async () => {
+      const userData = await database.getUser(testUser.psid)
+      userData.should.containDeep(testUser)
+    })
 
-  it('Sets user property', async () => {
-    await database.setUser(testUser.psid, { language: 'ja' })
-    testUser.language = 'ja'
+    it('Sets user property', async () => {
+      await database.setUser(testUser.psid, { language: 'ja' })
+      testUser.language = 'ja'
 
-    const userData = await database.getUser(testUser.psid)
-    userData.should.containDeep(testUser)
-  })
+      const userData = await database.getUser(testUser.psid)
+      userData.should.containDeep(testUser)
+    })
 
-  after(async () => {
-    await database.deleteUser(testUser.psid)
+    after(async () => {
+      await database.deleteUser(testUser.psid)
+      resolve()
+    })
   })
 })
