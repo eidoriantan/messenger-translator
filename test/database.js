@@ -25,7 +25,7 @@ process.env.DEBUG = true
 
 if (!TEST_USERID) throw new Error('Test user ID was not defined')
 
-describe('User Database test', async () => {
+describe('User Database test', () => {
   let testUser
 
   it('Adds user', async () => {
@@ -45,8 +45,8 @@ describe('User Database test', async () => {
 
   it('Sets user property', async () => {
     await database.setUser(testUser.psid, { language: 'ja' })
-
     testUser.language = 'ja'
+
     const userData = await database.getUser(testUser.psid)
     userData.should.containDeep(testUser)
   })
