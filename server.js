@@ -276,11 +276,8 @@ process.on('SIGINT', () => {
 
 server.on('close', async () => {
   console.log('Server is closing...')
-  console.log('MySQL server is closing...')
-
-  const pool = await database.poolAsync
-  pool.close()
   logger.close()
+  await database.close()
 })
 
 module.exports = { app, server }

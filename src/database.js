@@ -29,6 +29,7 @@ if (!SERVER || !USERNAME || !PASSWORD || !DATABASE) {
   throw new Error('Server connection configuration was not defined')
 }
 
+console.log('Connecting to SQL server!')
 const config = {
   server: SERVER,
   user: USERNAME,
@@ -41,15 +42,8 @@ const config = {
   }
 }
 
-const poolAsync = new Promise((resolve, reject) => {
-  console.log('Connecting to MySQL server...')
-  try {
-    const pool = sql.connect(config)
-    console.log('Connected to MySQL server!')
-    resolve(pool)
-  } catch (error) {
-    reject(error)
-  }
+sql.connect(config).then(() => {
+  console.log('Connected to SQL server!')
 })
 
 /**
@@ -94,7 +88,7 @@ async function addUser (psid, profile) {
   }
 
   try {
-    const pool = await poolAsync
+    const pool = await sql.connect()
     const request = pool.request()
     const names = []
 
@@ -126,10 +120,11 @@ async function addUser (psid, profile) {
  *  Deletes a user in the database
  *
  *  @param {string} psid    User's page-scoped ID
+ *  @return void
  */
 async function deleteUser (psid) {
   try {
-    const pool = await poolAsync
+    const pool = await sql.connect()
     const request = pool.request()
     request.input('psid', getDataType('psid'), psid)
     await request.query('DELETE FROM users WHERE psid=@psid')
@@ -148,7 +143,7 @@ async function deleteUser (psid) {
  */
 async function getUser (psid) {
   try {
-    const pool = await poolAsync
+    const pool = await sql.connect()
     const request = pool.request()
     request.input('psid', getDataType('psid'), psid)
 
@@ -177,7 +172,7 @@ async function getUser (psid) {
  */
 async function setUser (psid, values) {
   try {
-    const pool = await poolAsync
+    const pool = await sql.connect()
     const request = pool.request()
     request.input('psid', getDataType('psid'), psid)
     const names = []
@@ -199,4 +194,13 @@ async function setUser (psid, values) {
   }
 }
 
-module.exports = { poolAsync, addUser, deleteUser, getUser, setUser }
+/**
+ *  Closes the SQL pool connection
+ */
+async function close () {
+  console.log('SQL server is closing...')
+  const pool = await sql.connect()
+  pool.close()
+}
+
+module.exports = { addUser, deleteUser, getUser, setUser, close }
