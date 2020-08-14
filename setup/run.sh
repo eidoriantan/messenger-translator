@@ -19,6 +19,9 @@
 openssl version
 curl --version
 
+: "${ACCESS_TOKEN:?ACCESS_TOKEN must be set}"
+: "${APP_SECRET:?APP_SECRET must be set}"
+
 proof=$(echo -n "$ACCESS_TOKEN" | openssl sha256 -hmac $APP_SECRET)
 proof=$(echo "$proof" | sed -e 's/^.* //')
 param="access_token=$ACCESS_TOKEN&appsecret_proof=$proof"
