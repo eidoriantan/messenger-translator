@@ -17,7 +17,29 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+const hash = require('../src/utils/hash.js')
+const request = require('../src/utils/request.js')
+
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN
+const APP_SECRET = process.env.APP_SECRET
+
 process.env.DEVELOPMENT = true
+
+describe('Facebook', () => {
+  it('Check ACCESS_TOKEN and APP_SECRET', async () => {
+    const endpoint = 'https://graph.facebook.com/v8.0/debug_token'
+    const params = new URLSearchParams()
+    const proof = hash('sha256', ACCESS_TOKEN, APP_SECRET)
+    params.set('input_token', ACCESS_TOKEN)
+    params.set('access_token', ACCESS_TOKEN)
+    params.set('appsecret_proof', proof)
+
+    const debug = `${endpoint}?${params.toString()}`
+    const response = await request('GET', debug)
+
+    if (response.status !== 200) throw new Error(response.message)
+  })
+})
 
 require('./database.js')
 require('./translate.js')
