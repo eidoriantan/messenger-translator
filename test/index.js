@@ -17,38 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const supertest = require('supertest')
-const should = require('should')
-
-const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
 process.env.DEVELOPMENT = true
 
-const { app, server } = require('../server.js')
-const request = supertest(app)
-
-describe('Bot test', () => {
-  it('Verify webhook', done => {
-    const query = `hub.mode=subscribe&hub.verify_token=${VALIDATION_TOKEN}`
-    const challenge = 'kwAvays'
-
-    request.get(`/webhook?${query}&hub.challenge=${challenge}`)
-      .expect(200)
-      .expect(response => should.strictEqual(response.text, challenge))
-      .end(error => {
-        if (error) throw error
-        done()
-      })
-  })
-
-  after(done => {
-    extendTests()
-    done()
-  })
-})
-
-async function extendTests () {
-  await require('./database.js')()
-  await require('./translate.js')()
-
-  server.close()
-}
+require('./database.js')
+require('./translate.js')
