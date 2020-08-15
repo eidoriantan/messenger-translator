@@ -36,7 +36,6 @@ const config = {
   user: USERNAME,
   password: PASSWORD,
   database: DATABASE,
-  pool: { min: 1 },
   options: {
     enableArithAbort: true,
     encrypt: true
