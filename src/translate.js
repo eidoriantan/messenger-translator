@@ -36,6 +36,8 @@ const kuroinit = kuroshiro.init(analyzer)
 const DEBUG = process.env.DEBUG || false
 const PROXIES = process.env.PROXIES
 
+if (!PROXIES) throw new Error('Proxies are not defined')
+
 /**
  *  Translates the text.
  *

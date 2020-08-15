@@ -29,27 +29,21 @@ if (!SERVER || !USERNAME || !PASSWORD || !DATABASE) {
   throw new Error('Server connection configuration was not defined')
 }
 
+console.log('Connecting to SQL server!')
+const table = process.env.DEVELOPMENT ? 'users_test' : 'users'
 const config = {
   server: SERVER,
   user: USERNAME,
   password: PASSWORD,
   database: DATABASE,
-  pool: { min: 1 },
   options: {
     enableArithAbort: true,
     encrypt: true
   }
 }
 
-const poolAsync = new Promise((resolve, reject) => {
-  console.log('Connecting to MySQL server...')
-  try {
-    const pool = sql.connect(config)
-    console.log('Connected to MySQL server!')
-    resolve(pool)
-  } catch (error) {
-    reject(error)
-  }
+sql.connect(config).then(() => {
+  console.log('Connected to SQL server!')
 })
 
 /**
@@ -94,7 +88,7 @@ async function addUser (psid, profile) {
   }
 
   try {
-    const pool = await poolAsync
+    const pool = await sql.connect()
     const request = pool.request()
     const names = []
 
@@ -106,8 +100,9 @@ async function addUser (psid, profile) {
       request.input(name, dataType, value)
     }
 
+    const namesStr = names.join(', ')
     const values = names.map(name => `@${name}`).join(', ')
-    const query = `INSERT INTO users (${names.join(', ')}) VALUES (${values})`
+    const query = `INSERT INTO ${table} (${namesStr}) VALUES (${values})`
     await request.query(query)
   } catch (error) {
     logger.write(`Unable to add user to database: ${psid}`, 1)
@@ -126,13 +121,14 @@ async function addUser (psid, profile) {
  *  Deletes a user in the database
  *
  *  @param {string} psid    User's page-scoped ID
+ *  @return void
  */
 async function deleteUser (psid) {
   try {
-    const pool = await poolAsync
+    const pool = await sql.connect()
     const request = pool.request()
     request.input('psid', getDataType('psid'), psid)
-    await request.query('DELETE FROM users WHERE psid=@psid')
+    await request.query(`DELETE FROM ${table} WHERE psid=@psid`)
   } catch (error) {
     logger.write(`Unable to delete user from database: ${psid}`, 1)
     logger.write(`Error: ${error.message}`, 1)
@@ -148,11 +144,12 @@ async function deleteUser (psid) {
  */
 async function getUser (psid) {
   try {
-    const pool = await poolAsync
+    const pool = await sql.connect()
     const request = pool.request()
     request.input('psid', getDataType('psid'), psid)
 
-    const result = await request.query('SELECT * FROM users WHERE psid=@psid')
+    const query = `SELECT * FROM ${table} WHERE psid=@psid`
+    const result = await request.query(query)
     const parseUser = user => {
       user.menu = user.menu.split(',')
       return user
@@ -177,7 +174,7 @@ async function getUser (psid) {
  */
 async function setUser (psid, values) {
   try {
-    const pool = await poolAsync
+    const pool = await sql.connect()
     const request = pool.request()
     request.input('psid', getDataType('psid'), psid)
     const names = []
@@ -191,7 +188,7 @@ async function setUser (psid, values) {
     }
 
     const columns = names.map(name => `${name}=@${name}`).join(', ')
-    await request.query(`UPDATE users SET ${columns} WHERE psid=@psid`)
+    await request.query(`UPDATE ${table} SET ${columns} WHERE psid=@psid`)
   } catch (error) {
     logger.write(`Unable to update user information: ${psid}`, 1)
     logger.write(`Error: ${error.message}`, 1)
@@ -199,4 +196,12 @@ async function setUser (psid, values) {
   }
 }
 
-module.exports = { poolAsync, addUser, deleteUser, getUser, setUser }
+/**
+ *  Closes the SQL pool connection
+ */
+function close () {
+  console.log('SQL server is closing...')
+  sql.close()
+}
+
+module.exports = { addUser, deleteUser, getUser, setUser, close }

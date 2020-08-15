@@ -17,31 +17,29 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const supertest = require('supertest')
-const should = require('should')
+const hash = require('../src/utils/hash.js')
+const request = require('../src/utils/request.js')
 
-const { app, server } = require('../server.js')
-const request = supertest(app)
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN
+const APP_SECRET = process.env.APP_SECRET
 
-const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
-process.env.DEBUG = true
+process.env.DEVELOPMENT = true
 
-describe('Bot test', () => {
-  it('Verify webhook', done => {
-    const query = `hub.mode=subscribe&hub.verify_token=${VALIDATION_TOKEN}`
-    const challenge = 'kwAvays'
+describe('Facebook', () => {
+  it('Check ACCESS_TOKEN and APP_SECRET', async () => {
+    const endpoint = 'https://graph.facebook.com/v8.0/debug_token'
+    const params = new URLSearchParams()
+    const proof = hash('sha256', ACCESS_TOKEN, APP_SECRET)
+    params.set('input_token', ACCESS_TOKEN)
+    params.set('access_token', ACCESS_TOKEN)
+    params.set('appsecret_proof', proof)
 
-    request.get(`/webhook?${query}&hub.challenge=${challenge}`)
-      .expect(200)
-      .expect(response => should.strictEqual(response.text, challenge))
-      .end(error => {
-        if (error) throw error
-        done()
-      })
-  })
+    const debug = `${endpoint}?${params.toString()}`
+    const response = await request('GET', debug)
 
-  after(() => {
-    require('./database.js')
-    server.close()
+    if (response.status !== 200) throw new Error(response.message)
   })
 })
+
+require('./database.js')
+require('./translate.js')

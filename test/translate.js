@@ -17,10 +17,10 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const translate = require('../src/translate.js')
 require('should')
+const translate = require('../src/translate.js')
 
-describe('Translator test', () => {
+describe('Translator', () => {
   it('Translate text', async () => {
     const result = await translate('hello', 'ja', 'en')
     result.includes('こんにちは').should.be.true()
