@@ -1,24 +1,30 @@
 
-### Contributing
-This project is open for contributions from anyone who are interested but please
-make sure that you are following these guidelines:
+## Contributing
+This project is open for contributions from anyone who are interested. The
+following are some ways for you on how to contribute:
 
- * You should have a [Facebook] account to test and use the app;
+### Reporting an issue
+If you found an issue when using the bot, you can report it by opening an issue
+at [GitHub issues] (make sure that there are no the same issue that is currently
+open).
 
- * You should have a role in the app at [Facebook Developer]. You can apply for
-   a role by sending an email to [eidoriantan@gmail.com] then wait for a
-   response for further instructions;
+### Proposing changes
+If you have an idea in mind that you think is a good for the project, don't
+hesitate to open an issue at [GitHub issues] or at the [Facebook page] so we can
+discuss about it.
 
-   **Note:** Please include your Facebook name and/or ID when sending an email.
-   You can get your Facebook ID by using this [site](https://findmyfbid.com/).
+### Proposing code changes
+If you know how to use [Node.js], JavaScript, and [Git], you can help us improve
+the codes but make sure that you are following the guidelines when coding.
 
+#### Guidelines
  * When editting JavaScript (`*.js`, `*.mjs`) files, please follow the
    [standard.js styleguide];
 
  * Extending the styleguide, please limit the rowlength to 80 characters;
 
- * When committing, the commit message should follow the [Convential Commits].
-   You can run `npm run commitlint` after commit to test your commit message.
+ * When committing, the commit message should follow the [Conventional Commits].
+   You can run `npm run commitlint` to test the latest commit message.
 
 You can also take a look at the repository's [projects] to know more about the
 project's future plans.
@@ -26,9 +32,14 @@ project's future plans.
 Any contributions to this project are greatly appreciated. Thank you
 
 [projects]: https://github.com/eidoriantan/messenger-translator/projects
-[eidoriantan@gmail.com]: mailto:eidoriantan@gmail.com
+[donate]: https://www.patreon.com/eidoriantan
+[Facebook page]: https://facebook.com/msgr.translator
+[GitHub issues]: https://github.com/eidoriantan/messenger-translator/issues
 
 [Facebook]: https://facebook.com
 [Facebook Developer]: https://developer.facebook.com
+[Node.js]: https://nodejs.org
+[npm]: https://www.npmjs.com
+[Git]: https://git-scm.com
 [Conventional Commits]: https://www.conventionalcommits.org/en/v1.0.0/
 [standard.js styleguide]: https://standardjs.com/rules.html
