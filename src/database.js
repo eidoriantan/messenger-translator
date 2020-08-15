@@ -30,6 +30,7 @@ if (!SERVER || !USERNAME || !PASSWORD || !DATABASE) {
 }
 
 console.log('Connecting to SQL server!')
+const table = process.env.DEVELOPMENT ? 'users_test' : 'users'
 const config = {
   server: SERVER,
   user: USERNAME,
@@ -100,8 +101,9 @@ async function addUser (psid, profile) {
       request.input(name, dataType, value)
     }
 
+    const namesStr = names.join(', ')
     const values = names.map(name => `@${name}`).join(', ')
-    const query = `INSERT INTO users (${names.join(', ')}) VALUES (${values})`
+    const query = `INSERT INTO ${table} (${namesStr}) VALUES (${values})`
     await request.query(query)
   } catch (error) {
     logger.write(`Unable to add user to database: ${psid}`, 1)
@@ -127,7 +129,7 @@ async function deleteUser (psid) {
     const pool = await sql.connect()
     const request = pool.request()
     request.input('psid', getDataType('psid'), psid)
-    await request.query('DELETE FROM users WHERE psid=@psid')
+    await request.query(`DELETE FROM ${table} WHERE psid=@psid`)
   } catch (error) {
     logger.write(`Unable to delete user from database: ${psid}`, 1)
     logger.write(`Error: ${error.message}`, 1)
@@ -147,7 +149,8 @@ async function getUser (psid) {
     const request = pool.request()
     request.input('psid', getDataType('psid'), psid)
 
-    const result = await request.query('SELECT * FROM users WHERE psid=@psid')
+    const query = `SELECT * FROM ${table} WHERE psid=@psid`
+    const result = await request.query(query)
     const parseUser = user => {
       user.menu = user.menu.split(',')
       return user
@@ -186,7 +189,7 @@ async function setUser (psid, values) {
     }
 
     const columns = names.map(name => `${name}=@${name}`).join(', ')
-    await request.query(`UPDATE users SET ${columns} WHERE psid=@psid`)
+    await request.query(`UPDATE ${table} SET ${columns} WHERE psid=@psid`)
   } catch (error) {
     logger.write(`Unable to update user information: ${psid}`, 1)
     logger.write(`Error: ${error.message}`, 1)
@@ -197,10 +200,9 @@ async function setUser (psid, values) {
 /**
  *  Closes the SQL pool connection
  */
-async function close () {
+function close () {
   console.log('SQL server is closing...')
-  const pool = await sql.connect()
-  pool.close()
+  sql.close()
 }
 
 module.exports = { addUser, deleteUser, getUser, setUser, close }

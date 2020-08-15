@@ -21,8 +21,6 @@ const database = require('../src/database.js')
 require('should')
 
 const TEST_USERID = process.env.TEST_USERID
-process.env.DEBUG = true
-
 if (!TEST_USERID) throw new Error('Test user ID was not defined')
 
 module.exports = () => new Promise(resolve => {

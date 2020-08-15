@@ -20,11 +20,11 @@
 const supertest = require('supertest')
 const should = require('should')
 
+const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
+process.env.DEVELOPMENT = true
+
 const { app, server } = require('../server.js')
 const request = supertest(app)
-
-const VALIDATION_TOKEN = process.env.VALIDATION_TOKEN
-process.env.DEBUG = true
 
 describe('Bot test', () => {
   it('Verify webhook', done => {
