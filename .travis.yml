@@ -4,7 +4,7 @@ node_js:
   - 12
 
 env:
-  - DEBUG=true PORT=3000 TEST_USERID=0000000000000000
+  - PORT=3000 TEST_USERID=0000000000000000
 
 script:
   - npm run commitlint
