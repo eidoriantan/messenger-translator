@@ -47,6 +47,10 @@ window.fbAsyncInit = function () {
       })
     })
   })
+
+  FB.Event.subscribe('customerchat.dialogShow', function () {
+    FB.AppEvents.logEvent('Customer Chat Clicks')
+  })
 }
 
 $(document).ready(function () {
