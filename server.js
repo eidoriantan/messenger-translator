@@ -247,7 +247,7 @@ async function receivedMessage (event) {
     logger.write(message)
   } else {
     if (user.language === 'zh') user.language = 'zh-CN'
-    response = await translate(text, user.language, user.locale)
+    response = await translate(text, user.language, user.psid, user.locale)
   }
 
   const result = await send(user.psid, response)
