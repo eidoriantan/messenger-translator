@@ -12,11 +12,11 @@ window.fbAsyncInit = function () {
   FB.init({
     appId: '552177775495405',
     autoLogAppEvents: true,
-    version: 'v7.0'
+    version: 'v8.0'
   })
 
   FB.AppEvents.setAppVersion('3.13.1')
-  FB.AppEvents.logEvent('Site clicks')
+  FB.AppEvents.logPageView()
 
   $('[data-fbml]').each(function () {
     const element = $(this)
