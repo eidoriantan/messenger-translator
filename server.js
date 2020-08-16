@@ -258,7 +258,7 @@ const server = app.listen(PORT, () => {
 process.on('uncaughtException', error => {
   logger.write('Uncaught Exception', 1)
   logger.write(`Error: ${error.message}`, 1)
-  logger.write(`Stack: ${error.stack}`, 1)
+  logger.write(error, 1)
 })
 
 process.on('unhandledRejection', error => {
