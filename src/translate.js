@@ -35,6 +35,7 @@ const kuroinit = kuroshiro.init(analyzer)
 
 const DEBUG = process.env.DEBUG || false
 const PROXIES = process.env.PROXIES
+const requests = {}
 
 if (!PROXIES) throw new Error('Proxies are not defined')
 
@@ -61,6 +62,9 @@ module.exports = async function (text, iso, locale) {
     proxies = proxies.filter(element => proxy !== element)
 
     if (DEBUG) console.log(`Trying proxy server: ${proxy}`)
+    requests[proxy] = requests[proxy] || { success: 0, total: 0 }
+    requests[proxy].total++
+
     try {
       result = await translate(text, { to: iso, client: 'gtx' }, {
         request: (options, callback) => {
@@ -77,7 +81,12 @@ module.exports = async function (text, iso, locale) {
           return https.request(url, opt, callback)
         }
       })
-    } catch (e) {}
+
+      if (result !== null) requests[proxy].success++
+    } catch (e) {
+      logger.write(`Proxy server (${proxy}) is not working`, 1)
+      logger.write(e, 1)
+    }
   }
 
   if (result === null) {
@@ -125,3 +134,14 @@ module.exports = async function (text, iso, locale) {
 
   return replacer(template, replace).trim()
 }
+
+/**
+ *  Returns the proxy servers requests status
+ *
+ *    @return {object[]}
+ */
+module.exports.requests = () => ({
+  name: 'proxies',
+  date: Date.now(),
+  requests
+})

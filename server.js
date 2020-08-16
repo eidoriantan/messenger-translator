@@ -131,6 +131,14 @@ app.post('/webhook', (req, res) => {
   })
 })
 
+app.get('/requests', (req, res) => {
+  const requests = translate.requests()
+  const data = JSON.stringify(requests, null, 2)
+
+  res.set('Content-Type', 'application/json')
+  res.status(200).send(data)
+})
+
 /**
  *  Handles received postback events.
  *
