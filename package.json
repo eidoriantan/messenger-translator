@@ -61,8 +61,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "mocha": "^8.1.1",
     "should": "^13.2.3",
-    "standard": "^14.3.4",
-    "supertest": "^4.0.2"
+    "standard": "^14.3.4"
   },
   "private": true
 }
