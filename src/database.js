@@ -29,7 +29,7 @@ if (!SERVER || !USERNAME || !PASSWORD || !DATABASE) {
   throw new Error('Server connection configuration was not defined')
 }
 
-console.log('Connecting to SQL server!')
+console.log('Connecting to SQL server...')
 const table = process.env.DEVELOPMENT ? 'users_test' : 'users'
 const config = {
   server: SERVER,
