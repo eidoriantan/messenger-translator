@@ -58,7 +58,23 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(express.json({
+app.get('/webhook', (req, res) => {
+  const mode = req.query['hub.mode']
+  const verifyToken = req.query['hub.verify_token']
+  const challenge = req.query['hub.challenge']
+
+  if (mode === 'subscribe' && verifyToken === VALIDATION_TOKEN) {
+    res.status(200).send(challenge)
+  } else {
+    logger.write('Mode/verification token doesn\'t match', 1)
+    logger.write('Parameters:', 1)
+    logger.write({ mode, verifyToken, challenge }, 1)
+
+    res.status(403).send('Mode/verification token doesn\'t match')
+  }
+})
+
+app.post('/webhook', express.json({
   verify: (req, res, buf) => {
     const signature = req.get('x-hub-signature')
     if (!signature) throw new Error('No signature')
@@ -79,22 +95,6 @@ app.use(express.json({
     }
   }
 }))
-
-app.get('/webhook', (req, res) => {
-  const mode = req.query['hub.mode']
-  const verifyToken = req.query['hub.verify_token']
-  const challenge = req.query['hub.challenge']
-
-  if (mode === 'subscribe' && verifyToken === VALIDATION_TOKEN) {
-    res.status(200).send(challenge)
-  } else {
-    logger.write('Mode/verification token doesn\'t match', 1)
-    logger.write('Parameters:', 1)
-    logger.write({ mode, verifyToken, challenge }, 1)
-
-    res.status(403).send('Mode/verification token doesn\'t match')
-  }
-})
 
 app.post('/webhook', (req, res) => {
   const data = req.body
