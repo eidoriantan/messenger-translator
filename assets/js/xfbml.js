@@ -16,6 +16,7 @@ window.fbAsyncInit = function () {
   })
 
   FB.AppEvents.setAppVersion('3.13.1')
+  FB.AppEvents.logEvent('Site clicks')
 
   $('[data-fbml]').each(function () {
     const element = $(this)
