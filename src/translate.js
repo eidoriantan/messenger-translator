@@ -42,11 +42,11 @@ if (!PROXIES) throw new Error('Proxies are not defined')
 /**
  *  Translates the text.
  *
- *    @param {string} text      The text to be translated
- *    @param {string} iso       The language's ISO code, eg. en
- *    @param {string} locale    User's locale for response messages
+ *  @param {string} text      The text to be translated
+ *  @param {string} iso       The language's ISO code, eg. en
+ *  @param {string} locale    User's locale for response messages
  *
- *    @return {string} translated text
+ *  @return {string} translated text
  */
 module.exports = async function (text, iso, locale) {
   let proxies = PROXIES.split(',')
@@ -137,8 +137,7 @@ module.exports = async function (text, iso, locale) {
 
 /**
  *  Returns the proxy servers requests status
- *
- *    @return {object[]}
+ *  @return {object[]}
  */
 module.exports.requests = () => ({
   name: 'proxies',

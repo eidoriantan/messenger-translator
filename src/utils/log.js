@@ -34,6 +34,7 @@ const errorStream = fs.createWriteStream(errorlog, { flags: 'a' })
  *
  *  @param {mixed} data    Data to log
  *  @param {int} level     0 = info, 1 = error
+ *
  *  @return {string} chunk
  */
 function write (data, level = 0) {
@@ -79,6 +80,7 @@ function write (data, level = 0) {
 
 /**
  *  Closes the file write stream
+ *  @return void
  */
 function close () {
   infoStream.end()

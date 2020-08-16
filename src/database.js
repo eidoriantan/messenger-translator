@@ -194,6 +194,7 @@ async function setUser (psid, values) {
 
 /**
  *  Closes the SQL pool connection
+ *  @return void
  */
 function close () {
   console.log('SQL server is closing...')
