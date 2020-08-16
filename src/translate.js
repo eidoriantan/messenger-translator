@@ -63,7 +63,7 @@ module.exports = async function (text, iso, locale) {
     if (DEBUG) console.log(`Trying proxy server: ${proxy}`)
     try {
       result = await translate(text, { to: iso, client: 'gtx' }, {
-        request: function (options, callback) {
+        request: (options, callback) => {
           /**
            *  Wrapper for proxying using `cors-anywhere`
            *  @see https://github.com/Rob--W/cors-anywhere
