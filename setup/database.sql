@@ -21,12 +21,12 @@
  *  Setting up a table in a database
  */
 CREATE TABLE users (
-  psid NVARCHAR(16) NOT NULL,
+  psid NVARCHAR(16) NOT NULL PRIMARY KEY,
   name NVARCHAR(255) NOT NULL,
   language NVARCHAR(16) NOT NULL,
   locale NVARCHAR(16) NOT NULL,
   menu NVARCHAR(255) NOT NULL,
-  UNIQUE(psid)
+  CONSTRAINT pk_psid_prod PRIMARY KEY (psid)
 );
 
 /**
@@ -38,5 +38,5 @@ CREATE TABLE users_test (
   language NVARCHAR(16) NOT NULL,
   locale NVARCHAR(16) NOT NULL,
   menu NVARCHAR(255) NOT NULL,
-  UNIQUE(psid)
+  CONSTRAINT pk_psid PRIMARY KEY (psid)
 );

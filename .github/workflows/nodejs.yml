@@ -13,6 +13,8 @@ env:
   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
   APP_SECRET: ${{ secrets.APP_SECRET }}
   VALIDATION_TOKEN: ${{ secrets.VALIDATION_TOKEN }}
+  APP_ID: ${{ secrets.APP_ID }}
+  PAGE_ID: ${{ secrets.PAGE_ID }}
   PROXIES: ${{ secrets.PROXIES }}
   SERVER: ${{ secrets.SERVER }}
   USERNAME: ${{ secrets.USERNAME }}

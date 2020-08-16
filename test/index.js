@@ -26,7 +26,7 @@ const APP_SECRET = process.env.APP_SECRET
 process.env.DEVELOPMENT = true
 
 describe('Facebook', () => {
-  it('Check ACCESS_TOKEN and APP_SECRET', async () => {
+  it('Debug ACCESS_TOKEN', async () => {
     const endpoint = 'https://graph.facebook.com/v8.0/debug_token'
     const params = new URLSearchParams()
     const proof = hash('sha256', ACCESS_TOKEN, APP_SECRET)
