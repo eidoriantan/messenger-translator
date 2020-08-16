@@ -131,7 +131,7 @@ app.post('/webhook', (req, res) => {
   })
 })
 
-app.get('/requests', (req, res) => {
+app.get('/requests', basicAuth({ users, challenge: true }), (req, res) => {
   const requests = translate.requests()
   const data = JSON.stringify(requests, null, 2)
 
