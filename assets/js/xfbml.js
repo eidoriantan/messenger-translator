@@ -15,7 +15,7 @@ window.fbAsyncInit = function () {
     version: 'v8.0'
   })
 
-  FB.AppEvents.setAppVersion('3.13.3')
+  FB.AppEvents.setAppVersion('3.13.4')
   FB.AppEvents.logPageView()
 
   $('[data-fbml]').each(function () {
