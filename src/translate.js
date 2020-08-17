@@ -87,6 +87,11 @@ module.exports = async function (text, iso, psid, locale) {
             timeout: 20000
           }
 
+          if (url.length > 2000) {
+            const message = localeStrings(locale, 'long_message')
+            return message
+          }
+
           return https.request(url, opt, callback)
         }
       })
