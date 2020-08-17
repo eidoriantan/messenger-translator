@@ -26,7 +26,7 @@ const translations = fs.readdirSync(localeDir)
 const strings = {}
 
 translations.forEach(file => {
-  if (file === 'index.js') return
+  if (!file.match(/(\.ini)$/i)) return
 
   const filepath = path.join(localeDir, file)
   const filedata = fs.readFileSync(filepath, 'utf8')
