@@ -112,8 +112,13 @@ module.exports = async function (text, iso, psid, locale) {
       const proof = hash('sha256', ACCESS_TOKEN, APP_SECRET)
       const url = `https://graph.facebook.com/v8.0/${APP_ID}/activities`
       const event = [{
-        _eventName: 'language_translated_to',
-        language
+        _eventName: 'text_translated',
+        _logTime: Math.floor(Date.now() / 1000),
+        fb_content: [{
+          id: iso,
+          name: language,
+          quantity: 1
+        }]
       }]
 
       params.set('event', 'CUSTOM_APP_EVENTS')
