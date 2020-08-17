@@ -22,6 +22,7 @@ const Kuroshiro = require('kuroshiro')
 const Kuromoji = require('kuroshiro-analyzer-kuromoji')
 const hangulRomanization = require('hangul-romanization')
 const pinyin = require('chinese-to-pinyin')
+const got = require('got')
 const https = require('https')
 
 const localeStrings = require('./locale/')
@@ -87,19 +88,17 @@ module.exports = async function (text, iso, psid, locale) {
             timeout: 20000
           }
 
-          if (url.length > 2000) {
-            const message = localeStrings(locale, 'long_message')
-            return message
-          }
-
+          if (url.length > 2000) throw new Error('URI is too long')
           return https.request(url, opt, callback)
         }
       })
 
       if (result !== null) requests[proxy].success++
     } catch (e) {
-      logger.write(`Proxy server (${proxy}) is not working`, 1)
-      logger.write(e, 1)
+      if (e instanceof got.RequestError) {
+        logger.write(`Proxy server (${proxy}) is not working`, 1)
+        logger.write(e, 1)
+      } else result = localeStrings(locale, 'long_message')
     }
   }
 
