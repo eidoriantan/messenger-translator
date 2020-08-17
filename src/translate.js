@@ -87,19 +87,21 @@ module.exports = async function (text, iso, psid, locale) {
             timeout: 20000
           }
 
-          if (url.length > 2000) throw new Error('URI is too long')
+          if (url.length > 2000) {
+            result = localeStrings(locale, 'long_message')
+            throw new Error('URI is too long')
+          }
+
           return https.request(url, opt, callback)
         }
       })
 
       if (result !== null) requests[proxy].success++
     } catch (e) {
-      if (e.message === 'URI is too long') {
-        result = localeStrings(locale, 'long_message')
-      } else {
-        logger.write(`Proxy server (${proxy}) is not working`, 1)
-        logger.write(e, 1)
-      }
+      if (result) return result
+
+      logger.write(`Proxy server (${proxy}) is not working`, 1)
+      logger.write(e, 1)
     }
   }
 
