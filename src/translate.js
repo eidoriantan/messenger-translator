@@ -167,10 +167,21 @@ module.exports = async function (text, iso, psid, locale) {
 
 /**
  *  Returns the proxy servers requests status
- *  @return {object[]}
+ *  @return {object}
  */
-module.exports.requests = () => ({
-  name: 'proxies',
-  date: Date.now(),
-  requests
-})
+module.exports.requests = () => {
+  let success = 0
+  let total = 0
+
+  for (const key in requests) {
+    success += requests[key].success
+    total += requests[key].total
+  }
+
+  return {
+    name: 'proxies',
+    date: Date.now(),
+    total: { success, total },
+    requests
+  }
+}
