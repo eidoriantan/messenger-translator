@@ -105,39 +105,40 @@ module.exports = async function (text, iso, psid, locale) {
     }
   }
 
-  const language = languages[iso].name
-  if (result !== null) {
-    if (!DEVELOPMENT) {
-      const params = new URLSearchParams()
-      const proof = hash('sha256', ACCESS_TOKEN, APP_SECRET)
-      const url = `https://graph.facebook.com/v8.0/${APP_ID}/activities`
-      const event = [{
-        _eventName: 'text_translated',
-        _logTime: Math.floor(Date.now() / 1000),
-        fb_content: [{
-          id: iso,
-          name: language,
-          quantity: 1
-        }]
-      }]
-
-      params.set('event', 'CUSTOM_APP_EVENTS')
-      params.set('custom_events', JSON.stringify(event))
-      params.set('advertiser_tracking_enabled', 0)
-      params.set('application_tracking_enabled', 0)
-      params.set('page_id', PAGE_ID)
-      params.set('page_scoped_user_id', psid)
-      params.set('access_token', ACCESS_TOKEN)
-      params.set('appsecret_proof', proof)
-
-      await request('POST', `${url}?${params.toString()}`)
-    }
-  } else {
+  if (result === null) {
     if (DEBUG) console.log('Unable to translate the text')
     logger.write('Unable to translate text! Please check proxy servers', 1)
 
     const message = localeStrings(locale, 'requests_limit')
     return message
+  }
+
+  const language = languages[iso].name
+  const from = languages[result.from.language.iso]
+    ? languages[result.from.language.iso].name : 'Unknown'
+
+  if (!DEVELOPMENT) {
+    const params = new URLSearchParams()
+    const proof = hash('sha256', ACCESS_TOKEN, APP_SECRET)
+    const url = `https://graph.facebook.com/v8.0/${APP_ID}/activities`
+    const event = [{
+      _eventName: 'text_translated',
+      _logTime: Math.floor(Date.now() / 1000),
+      language,
+      from
+    }]
+
+    params.set('event', 'CUSTOM_APP_EVENTS')
+    params.set('custom_events', JSON.stringify(event))
+    params.set('advertiser_tracking_enabled', 0)
+    params.set('application_tracking_enabled', 0)
+    params.set('extinfo', JSON.stringify(['mb1']))
+    params.set('page_id', PAGE_ID)
+    params.set('page_scoped_user_id', psid)
+    params.set('access_token', ACCESS_TOKEN)
+    params.set('appsecret_proof', proof)
+
+    await request('POST', `${url}?${params.toString()}`)
   }
 
   switch (iso) {
@@ -163,10 +164,6 @@ module.exports = async function (text, iso, psid, locale) {
   }
 
   if (romaji) result.text += `\r\n*romaji*: ${romaji}`
-
-  const from = languages[result.from.language.iso]
-    ? languages[result.from.language.iso].name : 'Unknown'
-
   const template = localeStrings(locale, 'body')
   const replace = {
     TO: language,
