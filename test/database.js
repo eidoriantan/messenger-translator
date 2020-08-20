@@ -49,6 +49,10 @@ describe('User Database', () => {
     userData.should.containDeep(testUser)
   })
 
+  it('Logs messages', async () => {
+    await database.logFeedback(TEST_USERID, 'FEEDBACK TEST (DELETE THIS)')
+  })
+
   after(async () => {
     await database.deleteUser(testUser.psid)
     database.close()
