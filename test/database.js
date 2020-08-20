@@ -29,7 +29,7 @@ describe('User Database', () => {
   it('Adds user', async () => {
     const userData = await database.addUser(TEST_USERID, {})
     userData.should.containEql({ psid: TEST_USERID })
-    userData.should.containEql({ name: '' })
+    userData.should.containEql({ name: '[NO NAME]' })
     userData.should.containEql({ language: 'en' })
     userData.should.containEql({ locale: 'en_US' })
     userData.should.containEql({ menu: ['en', 'ja', '_help'] })

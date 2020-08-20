@@ -81,7 +81,7 @@ function getDataType (name) {
 async function addUser (psid, profile) {
   const userData = {
     psid,
-    name: profile.name || '',
+    name: profile.name || '[NO NAME]',
     language: 'en',
     locale: profile.locale || 'en_US',
     menu: ['en', 'ja', '_help']
