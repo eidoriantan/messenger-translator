@@ -40,3 +40,12 @@ CREATE TABLE users_test (
   menu NVARCHAR(255) NOT NULL,
   CONSTRAINT pk_psid PRIMARY KEY (psid)
 );
+
+/**
+ *  Table for receiving feedbacks
+ */
+CREATE TABLE feedbacks (
+  psid NVARCHAR(16) NOT NULL,
+  message NVARCHAR(MAX) NOT NULL,
+  CONSTRAINT pk_feedback PRIMARY KEY (psid)
+);

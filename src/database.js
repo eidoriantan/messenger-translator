@@ -65,6 +65,10 @@ function getDataType (name) {
     case 'menu':
       dataType = sql.NVarChar(255)
       break
+
+    case 'feedback':
+      dataType = sql.NVarChar(sql.MAX)
+      break
   }
 
   return dataType
@@ -193,6 +197,25 @@ async function setUser (psid, values) {
 }
 
 /**
+ *  Logging feedbacks to database
+ */
+async function logFeedback (psid, message) {
+  try {
+    const pool = await sql.connect()
+    const request = pool.request()
+
+    request.input('psid', getDataType('psid'), psid)
+    request.input('msg', getDataType('feedback'), message)
+
+    const query = 'INSERT INTO feedbacks (psid, message) VALUES (@psid, @msg)'
+    await request.query(query)
+  } catch (error) {
+    logger.write(`Unable to log feedback: ${psid}: ${message}`)
+    logger.write(error, 1)
+  }
+}
+
+/**
  *  Closes the SQL pool connection
  *  @return void
  */
@@ -201,4 +224,4 @@ function close () {
   sql.close()
 }
 
-module.exports = { addUser, deleteUser, getUser, setUser, close }
+module.exports = { addUser, deleteUser, getUser, setUser, logFeedback, close }

@@ -243,6 +243,7 @@ async function receivedMessage (event) {
     response = localeStrings(user.locale, 'feedback_confirmation')
 
     const message = feedback.exec(text)[3]
+    await database.logFeedback(user.psid, message)
     logger.write(`Feedback from ${user.name} (${user.psid})`)
     logger.write(message)
   } else {
