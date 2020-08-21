@@ -198,6 +198,11 @@ async function setUser (psid, values) {
 
 /**
  *  Logging feedbacks to database
+ *
+ *  @param {string} psid       Page-scoped user ID to attach with the message
+ *  @param {string} message    Message to be logged
+ *
+ *  @return void
  */
 async function logFeedback (psid, message) {
   try {
