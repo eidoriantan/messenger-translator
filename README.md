@@ -11,11 +11,9 @@ a like and review.
 
 ## Features
  * Interactive messaging
- * Character romanization for some supported languages:
-   - Japanese
-   - Chinese Simplified
-   - Chinese Traditional
-   - Korean
+ * Auto-language detection
+ * Auto-correct spelling
+ * Character romanization
 
 ### Support
 You can show your support on this project by liking the page and giving it a
