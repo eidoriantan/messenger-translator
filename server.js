@@ -19,7 +19,6 @@
 
 const express = require('express')
 const basicAuth = require('express-basic-auth')
-const cors = require('cors')
 
 const localeStrings = require('./src/locale/')
 const hash = require('./src/utils/hash.js')
@@ -39,18 +38,14 @@ const PORT = process.env.PORT || 8080
 const DEBUG = process.env.DEBUG
 
 const app = express()
+const users = {}
+users[USERNAME] = PASSWORD
 
 if (!ACCESS_TOKEN || !VALIDATION_TOKEN || !APP_SECRET) {
   throw new Error('Access, App Secret and/or validation token is not defined')
 }
 
-const logs = logger.directory
-const users = {}
-users[USERNAME] = PASSWORD
-
-app.use('/logs', cors())
-app.use('/logs', basicAuth({ users, challenge: true }))
-app.use('/logs', express.static(logs))
+app.use('/logs', express.static(logger.directory))
 
 app.use((req, res, next) => {
   res.set('Content-Type', 'text/plain')
@@ -240,12 +235,10 @@ async function receivedMessage (event) {
     const language = langRegex.exec(text)[3]
     response = await profile.changeLanguage(user, language, user.locale)
   } else if (text.match(feedback) !== null) {
-    response = localeStrings(user.locale, 'feedback_confirmation')
-
     const message = feedback.exec(text)[3]
     await database.logFeedback(user.psid, message)
-    logger.write(`Feedback from ${user.name} (${user.psid})`)
-    logger.write(message)
+
+    response = localeStrings(user.locale, 'feedback_confirmation')
   } else {
     if (user.language === 'zh') user.language = 'zh-CN'
     response = await translate(text, user.language, user.psid, user.locale)
