@@ -24,12 +24,17 @@ const TEST_USERID = process.env.TEST_USERID
 if (!TEST_USERID) throw new Error('Test user ID was not defined')
 
 describe('User Database', () => {
-  let testUser
+  let testUser = null
 
   it('Adds user', async () => {
-    const userData = await database.addUser(TEST_USERID, {})
+    const userData = await database.addUser(TEST_USERID, {
+      psid: TEST_USERID,
+      name: 'Test Name',
+      locale: 'en_US'
+    })
+
     userData.should.containEql({ psid: TEST_USERID })
-    userData.should.containEql({ name: '[NO NAME]' })
+    userData.should.containEql({ name: 'Test Name' })
     userData.should.containEql({ language: 'en' })
     userData.should.containEql({ locale: 'en_US' })
     userData.should.containEql({ menu: ['en', 'ja', '_help'] })

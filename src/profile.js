@@ -21,7 +21,6 @@ const FuzzySet = require('fuzzyset.js')
 
 const localeStrings = require('./locale/')
 const hash = require('./utils/hash.js')
-const logger = require('./utils/log.js')
 const replacer = require('./utils/replacer.js')
 const request = require('./utils/request.js')
 
@@ -134,14 +133,17 @@ async function getProfile (psid) {
 
   const url = `https://graph.facebook.com/${psid}?${params.toString()}`
   const response = await request('GET', url)
-  const body = response.body
+  let profile = response.body
 
-  if (body.error) {
-    logger.write(`Unable to get user's FB profile: ${psid}`, 1)
-    logger.write(`Error(${body.error.code}): ${body.error.message}`, 1)
+  if (profile.error) {
+    profile = {
+      psid,
+      name: '[NO NAME]',
+      locale: 'en_US'
+    }
   }
 
-  return body
+  return profile
 }
 
 module.exports = { changeLanguage, getProfile }
