@@ -133,8 +133,8 @@ module.exports = async function (text, iso, psid, locale) {
   }
 
   if (result.pronunciation) {
-    const romaji = result.pronunciation
-    result.text += `\r\n*romaji*: ${romaji}`
+    const pronunciation = result.pronunciation
+    result.text += `\r\n*pronunciation*: ${pronunciation}`
   }
 
   const template = localeStrings(locale, 'body')
