@@ -66,7 +66,7 @@ module.exports = async function (text, iso, psid, locale) {
     requests[proxy].total++
 
     try {
-      result = await translate(text, { to: iso, client: 'gtx', raw: true }, {
+      result = await translate(text, { to: iso, client: 'gtx' }, {
         request: (options, callback) => {
           /**
            *  Wrapper for proxying using `cors-anywhere`
@@ -132,10 +132,11 @@ module.exports = async function (text, iso, psid, locale) {
     await request('POST', `${url}?${params.toString()}`)
   }
 
-  const raw = JSON.parse(result.raw)
-  const romaji = raw[0][1] ? raw[0][1][2] : null
+  if (result.pronunciation) {
+    const romaji = result.pronunciation
+    result.text += `\r\n*romaji*: ${romaji}`
+  }
 
-  if (romaji !== null) result.text += `\r\n*romaji*: ${romaji}`
   const template = localeStrings(locale, 'body')
   const replace = {
     TO: language,
