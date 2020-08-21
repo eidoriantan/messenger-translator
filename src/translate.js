@@ -18,10 +18,6 @@
  */
 
 const translate = require('@vitalets/google-translate-api')
-const Kuroshiro = require('kuroshiro')
-const Kuromoji = require('kuroshiro-analyzer-kuromoji')
-const hangulRomanization = require('hangul-romanization')
-const pinyin = require('chinese-to-pinyin')
 const https = require('https')
 
 const localeStrings = require('./locale/')
@@ -30,10 +26,6 @@ const logger = require('./utils/log.js')
 const replacer = require('./utils/replacer.js')
 const request = require('./utils/request.js')
 const languages = require('./languages.js')
-
-const kuroshiro = new Kuroshiro()
-const analyzer = new Kuromoji()
-const kuroinit = kuroshiro.init(analyzer)
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const APP_SECRET = process.env.APP_SECRET
@@ -60,7 +52,6 @@ if (!PAGE_ID || !APP_ID) throw new Error('Page/App ID are not defined')
 module.exports = async function (text, iso, psid, locale) {
   let proxies = PROXIES.split(',')
   let result = null
-  let romaji
 
   if (DEBUG) console.log('Calling Google Translate to translate the text')
   while (result === null) {
@@ -75,7 +66,7 @@ module.exports = async function (text, iso, psid, locale) {
     requests[proxy].total++
 
     try {
-      result = await translate(text, { to: iso, client: 'gtx' }, {
+      result = await translate(text, { to: iso, client: 'gtx', raw: true }, {
         request: (options, callback) => {
           /**
            *  Wrapper for proxying using `cors-anywhere`
@@ -141,29 +132,10 @@ module.exports = async function (text, iso, psid, locale) {
     await request('POST', `${url}?${params.toString()}`)
   }
 
-  switch (iso) {
-    case 'ja':
-      await kuroinit
-      romaji = await kuroshiro.convert(result.text, {
-        to: 'romaji',
-        mode: 'spaced'
-      })
-      break
+  const raw = JSON.parse(result.raw)
+  const romaji = raw[0][1] ? raw[0][1][2] : null
 
-    case 'ko':
-      romaji = hangulRomanization.convert(result.text)
-      break
-
-    case 'zh-CN':
-    case 'zh-TW':
-      romaji = pinyin(result.text, { keepRest: true, removeTone: true })
-      break
-
-    default:
-      romaji = null
-  }
-
-  if (romaji) result.text += `\r\n*romaji*: ${romaji}`
+  if (romaji !== null) result.text += `\r\n*romaji*: ${romaji}`
   const template = localeStrings(locale, 'body')
   const replace = {
     TO: language,
