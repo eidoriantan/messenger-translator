@@ -200,19 +200,23 @@ async function setUser (psid, values) {
  *  Logging feedbacks to database
  *
  *  @param {string} psid       Page-scoped user ID to attach with the message
+ *  @param {string} name       User's FB profile name
  *  @param {string} message    Message to be logged
  *
  *  @return void
  */
-async function logFeedback (psid, message) {
+async function logFeedback (psid, name, message) {
   try {
     const pool = await sql.connect()
     const request = pool.request()
 
     request.input('psid', getDataType('psid'), psid)
+    request.input('name', getDataType('name'), name)
     request.input('msg', getDataType('feedback'), message)
 
-    const query = 'INSERT INTO feedbacks (psid, message) VALUES (@psid, @msg)'
+    const query = 'INSERT INTO feedbacks (psid, name, message) ' +
+      'VALUES (@psid, @name, @msg)'
+
     await request.query(query)
   } catch (error) {
     logger.write(`Unable to log feedback: ${psid}: ${message}`)

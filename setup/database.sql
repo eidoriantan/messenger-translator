@@ -46,5 +46,6 @@ CREATE TABLE users_test (
  */
 CREATE TABLE feedbacks (
   psid NVARCHAR(16) NOT NULL,
+  name NVARCHAR(255) NOT NULL,
   message NVARCHAR(MAX) NOT NULL
 );

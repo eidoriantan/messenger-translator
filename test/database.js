@@ -55,7 +55,7 @@ describe('User Database', () => {
   })
 
   it('Logs messages', async () => {
-    await database.logFeedback(TEST_USERID, 'FEEDBACK TEST (DELETE THIS)')
+    await database.logFeedback(TEST_USERID, 'test', 'DELETE THIS')
   })
 
   after(async () => {

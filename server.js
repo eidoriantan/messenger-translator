@@ -236,7 +236,7 @@ async function receivedMessage (event) {
     response = await profile.changeLanguage(user, language, user.locale)
   } else if (text.match(feedback) !== null) {
     const message = feedback.exec(text)[3]
-    await database.logFeedback(user.psid, message)
+    await database.logFeedback(user.psid, user.name, message)
 
     response = localeStrings(user.locale, 'feedback_confirmation')
   } else {
