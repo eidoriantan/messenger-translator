@@ -197,6 +197,23 @@ async function setUser (psid, values) {
 }
 
 /**
+ *  Returns all recorded feedbacks
+ *  @return {object[]}
+ */
+async function getFeedbacks () {
+  try {
+    const pool = await sql.connect()
+    const request = pool.request()
+    const result = await request.query('SELECT * FROM feedbacks')
+
+    return result.recordset
+  } catch (error) {
+    logger.write('Unable to get all feedbacks', 1)
+    logger.write(error, 1)
+  }
+}
+
+/**
  *  Logging feedbacks to database
  *
  *  @param {string} psid       Page-scoped user ID to attach with the message
@@ -258,6 +275,7 @@ module.exports = {
   deleteUser,
   getUser,
   setUser,
+  getFeedbacks,
   logFeedback,
   deleteFeedback,
   close

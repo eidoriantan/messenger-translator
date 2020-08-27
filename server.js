@@ -41,6 +41,8 @@ const app = express()
 const users = {}
 users[USERNAME] = PASSWORD
 
+const auth = basicAuth({ users, challenge: true })
+
 if (!ACCESS_TOKEN || !VALIDATION_TOKEN || !APP_SECRET) {
   throw new Error('Access, App Secret and/or validation token is not defined')
 }
@@ -126,12 +128,20 @@ app.post('/webhook', (req, res) => {
   })
 })
 
-app.get('/requests', basicAuth({ users, challenge: true }), (req, res) => {
+app.get('/requests', auth, (req, res) => {
   const requests = translate.requests()
   const data = JSON.stringify(requests, null, 2)
 
   res.set('Content-Type', 'application/json')
   res.status(200).send(data)
+})
+
+app.get('/feedbacks', auth, (req, res) => {
+  database.getFeedbacks().then(feedbacks => {
+    const data = JSON.stringify(feedbacks, null, 2)
+    res.set('Content-Type', 'application/json')
+    res.status(200).send(data)
+  })
 })
 
 /**
