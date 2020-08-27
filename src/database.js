@@ -225,6 +225,26 @@ async function logFeedback (psid, name, message) {
 }
 
 /**
+ *  Deleting logged feedbacks by PSID
+ *
+ *  @param {string} psid    Page-scoped user ID
+ *  @return void
+ */
+async function deleteFeedback (psid, name) {
+  try {
+    const pool = await sql.connect()
+    const request = pool.request()
+
+    request.input('psid', getDataType('psid'), psid)
+    const query = 'DELETE FROM feedbacks WHERE psid=@psid'
+    await request.query(query)
+  } catch (error) {
+    logger.write(`Unable to delete feedbacks with PSID: ${psid}`)
+    logger.write(error, 1)
+  }
+}
+
+/**
  *  Closes the SQL pool connection
  *  @return void
  */
@@ -233,4 +253,12 @@ function close () {
   sql.close()
 }
 
-module.exports = { addUser, deleteUser, getUser, setUser, logFeedback, close }
+module.exports = {
+  addUser,
+  deleteUser,
+  getUser,
+  setUser,
+  logFeedback,
+  deleteFeedback,
+  close
+}

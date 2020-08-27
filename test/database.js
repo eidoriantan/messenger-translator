@@ -60,6 +60,7 @@ describe('User Database', () => {
 
   after(async () => {
     await database.deleteUser(testUser.psid)
+    await database.deleteFeedback(testUser.psid)
     database.close()
   })
 })
