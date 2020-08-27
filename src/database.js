@@ -219,7 +219,7 @@ async function logFeedback (psid, name, message) {
 
     await request.query(query)
   } catch (error) {
-    logger.write(`Unable to log feedback: ${psid}: ${message}`)
+    logger.write(`Unable to log feedback: ${psid}: ${message}`, 1)
     logger.write(error, 1)
   }
 }
@@ -239,7 +239,7 @@ async function deleteFeedback (psid, name) {
     const query = 'DELETE FROM feedbacks WHERE psid=@psid'
     await request.query(query)
   } catch (error) {
-    logger.write(`Unable to delete feedbacks with PSID: ${psid}`)
+    logger.write(`Unable to delete feedbacks with PSID: ${psid}`, 1)
     logger.write(error, 1)
   }
 }
