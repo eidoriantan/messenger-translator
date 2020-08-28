@@ -222,7 +222,10 @@ async function receivedMessage (event) {
       const attachment = message.attachments[i]
       const errorMsg = localeStrings(user.locale, 'attachments')
 
-      if (!attachment.payload.sticker_id) await send(senderID, errorMsg)
+      if (!attachment.payload.sticker_id) {
+        await send(senderID, errorMsg)
+        break
+      }
     }
 
     await send(senderID, null, 'typing_off')
