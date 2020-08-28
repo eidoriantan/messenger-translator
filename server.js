@@ -181,7 +181,7 @@ async function receivedPostback (event) {
 
     case 'change_language': {
       const language = postback.title.split('--language ')[1]
-      const response = await profile.changeLanguage(user, language, user.locale)
+      const response = await profile.changeLanguage(user, language)
       await send(user.psid, response)
       break
     }
@@ -246,7 +246,7 @@ async function receivedMessage (event) {
     response = localeStrings(user.locale, 'help')
   } else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[3]
-    response = await profile.changeLanguage(user, language, user.locale)
+    response = await profile.changeLanguage(user, language)
   } else if (text.match(feedback) !== null) {
     const message = feedback.exec(text)[3]
     await database.logFeedback(user.psid, user.name, message)

@@ -37,11 +37,10 @@ const DEBUG = process.env.DEBUG
  *
  *  @param {string} user      User's object from the database
  *  @param {string} lang      Name of the language
- *  @param {string} locale    User's locale for response messages
  *
  *  @return {string} message
  */
-async function changeLanguage (user, lang, locale) {
+async function changeLanguage (user, lang) {
   let name, code
   Object.keys(languages).forEach(key => {
     const language = languages[key]
@@ -55,7 +54,7 @@ async function changeLanguage (user, lang, locale) {
   if (!name || !code) {
     const langNames = Object.entries(languages).map(langObj => langObj[1].name)
     const fuzzy = FuzzySet(langNames).get(lang, null, 0.50)
-    const template = localeStrings(locale, 'unknown_language')
+    const template = localeStrings(user.locale, 'unknown_language')
     const replace = {
       TEXT: lang,
       MEAN: fuzzy !== null ? fuzzy.map(match => match[1]).join(',') : 'English'
@@ -71,7 +70,7 @@ async function changeLanguage (user, lang, locale) {
   }
 
   await database.setUser(user.psid, { language: code, menu })
-  const template = localeStrings(locale, 'language_change')
+  const template = localeStrings(user.locale, 'language_change')
   const replace = { LANG: name }
   return replacer(template, replace)
 }
