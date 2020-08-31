@@ -229,7 +229,8 @@ async function receivedMessage (event) {
 
   if (message.attachments && message.attachments.length > 0) {
     const attachments = message.attachments.filter(attachment => {
-      return typeof attachment.payload.sticker_id === 'undefined'
+      return attachment.type === 'image' &&
+        typeof attachment.payload.sticker_id === 'undefined'
     })
 
     if (attachments.length > 1) {
