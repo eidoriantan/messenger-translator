@@ -25,6 +25,7 @@ const logger = require('./src/utils/log.js')
 const send = require('./src/utils/send.js')
 
 const database = require('./src/database.js')
+const ocr = require('./src/ocr.js')
 const profile = require('./src/profile.js')
 const translate = require('./src/translate.js')
 
@@ -156,14 +157,14 @@ async function receivedPostback (event) {
 
   if (DEBUG) console.log(`Postback was called with payload: ${payload}`)
 
-  await send(senderID, null, 'mark_seen')
-  await send(senderID, null, 'typing_on')
-
   let user = await database.getUser(senderID)
   if (user === null) {
     const fbProfile = await profile.getProfile(senderID)
     user = await database.addUser(senderID, fbProfile)
   }
+
+  await send(user.psid, null, 'mark_seen')
+  await send(user.psid, null, 'typing_on')
 
   if (DEBUG) {
     console.log('User Data: ')
@@ -191,7 +192,7 @@ async function receivedPostback (event) {
       logger.write(event, 1)
   }
 
-  await send(senderID, null, 'typing_off')
+  await send(user.psid, null, 'typing_off')
 }
 
 /**
@@ -205,10 +206,7 @@ async function receivedMessage (event) {
   const message = event.message
   const text = message.text
 
-  if (DEBUG) console.log(`Message was received with text: ${text}`)
-
-  await send(senderID, null, 'mark_seen')
-  await send(senderID, null, 'typing_on')
+  if (text && DEBUG) console.log(`Message was received with text: ${text}`)
 
   let user = await database.getUser(senderID)
   if (user === null) {
@@ -216,32 +214,38 @@ async function receivedMessage (event) {
     user = await database.addUser(senderID, fbProfile)
   }
 
-  if (message.attachments && message.attachments.length > 0) {
-    for (let i = 0; i < message.attachments.length; i++) {
-      const attachment = message.attachments[i]
-      const errorMsg = localeStrings(user.locale, 'attachments')
+  await send(user.psid, null, 'mark_seen')
+  await send(user.psid, null, 'typing_on')
 
-      if (!attachment.payload.sticker_id) {
-        await send(senderID, errorMsg)
-        break
-      }
-    }
-
-    await send(senderID, null, 'typing_off')
-    return
-  }
+  const langRegex = /^(-?-?lang(uage)? (.+))$/i
+  const feedback = /^(-?-?(feedback|fb) (.+))$/i
+  let response = ''
 
   if (DEBUG) {
     console.log('User Data: ')
     console.log(user)
   }
 
-  const langRegex = /^(-?-?lang(uage)? (.+))$/i
-  const help = /^(-?-?help)$/i
-  const feedback = /^(-?-?(feedback|fb) (.+))$/i
-  let response = ''
+  if (message.attachments && message.attachments.length > 0) {
+    const attachments = message.attachments.filter(attachment => {
+      return typeof attachment.payload.sticker_id !== 'undefined'
+    })
 
-  if (text.match(help) !== null) {
+    if (attachments.length > 1) {
+      response = localeStrings(user.locale, 'img_too_many')
+    } else if (attachments.length === 1) {
+      const recognizing = localeStrings(user.locale, 'img_recognizing')
+      await send(user.psid, recognizing)
+
+      const url = attachments[0].payload.url
+      try {
+        const recognized = await ocr.recognize(url)
+        response = await translate(recognized, user)
+      } catch (e) {
+        response = localeStrings(user.locale, 'img_error')
+      }
+    }
+  } else if (text.match(/^(-?-?help)$/i) !== null) {
     response = localeStrings(user.locale, 'help')
   } else if (text.match(langRegex) !== null) {
     const language = langRegex.exec(text)[3]
@@ -251,10 +255,7 @@ async function receivedMessage (event) {
     await database.logFeedback(user.psid, user.name, message)
 
     response = localeStrings(user.locale, 'feedback_confirmation')
-  } else {
-    if (user.language === 'zh') user.language = 'zh-CN'
-    response = await translate(text, user)
-  }
+  } else response = await translate(text, user)
 
   const result = await send(user.psid, response)
   if (!result) {
@@ -262,7 +263,7 @@ async function receivedMessage (event) {
     await send(user.psid, longMessage)
   }
 
-  await send(senderID, null, 'typing_off')
+  await send(user.psid, null, 'typing_off')
 }
 
 const server = app.listen(PORT, () => {
@@ -291,6 +292,7 @@ process.on('SIGINT', () => {
 server.on('close', async () => {
   console.log('Server is closing...')
   logger.close()
+  await ocr.close()
   await database.close()
 })
 
