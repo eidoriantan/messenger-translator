@@ -34,7 +34,6 @@ jobs:
       with:
         node-version: 10.x
     - run: npm ci
-    - run: npm run commitlint
     - run: npm test
       env:
         TEST_USERID: '0000000000000002'
@@ -51,7 +50,6 @@ jobs:
       with:
         node-version: 12.x
     - run: npm ci
-    - run: npm run commitlint
     - run: npm test
       env:
         TEST_USERID: '0000000000000003'
