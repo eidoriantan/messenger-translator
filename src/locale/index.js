@@ -1,4 +1,3 @@
-
 /**
  *  Messenger Translator
  *  Copyright (C) 2020 Adriane Justine Tan
