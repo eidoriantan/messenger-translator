@@ -14,6 +14,7 @@ a like and review.
  * Auto-language detection
  * Auto-correct spelling
  * Character romanization
+ * Image text detection
 
 ### Support
 You can show your support on this project by liking the page and giving it a
