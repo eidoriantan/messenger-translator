@@ -22,6 +22,7 @@ const basicAuth = require('express-basic-auth')
 const localeStrings = require('./src/locale/')
 const hash = require('./src/utils/hash.js')
 const logger = require('./src/utils/log.js')
+const replace = require('./src/utils/replacer.js')
 const send = require('./src/utils/send.js')
 
 const database = require('./src/database.js')
@@ -238,12 +239,20 @@ async function receivedMessage (event) {
       await send(user.psid, recognizing)
 
       const url = attachments[0].payload.url
-      try {
-        const recognized = await ocr.recognize(url)
-        response = await translate(recognized, user)
-      } catch (e) {
-        response = localeStrings(user.locale, 'img_error')
-      }
+      const lines = await ocr.recognize(url)
+      if (lines.length > 0) {
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i]
+          const translated = await translate(line, user)
+          const message = localeStrings(user.locale, 'img_translated')
+          const result = replace(message, {
+            LINE: line,
+            RES: translated
+          })
+
+          await send(user.psid, result)
+        }
+      } else response = localeStrings(user.locale, 'img_no_text')
     }
   } else if (text.match(/^(-?-?help)$/i) !== null) {
     response = localeStrings(user.locale, 'help')
