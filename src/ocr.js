@@ -19,6 +19,7 @@
 const fs = require('fs')
 const path = require('path')
 const Tesseract = require('tesseract.js')
+const logger = require('./utils/log.js')
 
 const DEBUG = process.env.DEBUG || false
 const langPath = path.resolve(__dirname, '../tessdata')
@@ -52,12 +53,19 @@ const workerAsync = (async () => {
  *  Extracts text from an image
  *
  *  @param {string} url    Image URL
- *  @return {string} text
+ *  @return {string[]} text
  */
 async function recognize (url) {
   const worker = await workerAsync
-  const result = await worker.recognize(url)
-  return result.data.text
+  try {
+    const result = await worker.recognize(url)
+    const lines = result.data.lines
+    return lines.filter(line => line.confidence > 60).map(line => line.text)
+  } catch (error) {
+    logger.write('Error recognizing image', 1)
+    logger.write(error)
+    return []
+  }
 }
 
 /**
