@@ -228,7 +228,7 @@ async function receivedMessage (event) {
 
   if (message.attachments && message.attachments.length > 0) {
     const attachments = message.attachments.filter(attachment => {
-      return typeof attachment.payload.sticker_id !== 'undefined'
+      return typeof attachment.payload.sticker_id === 'undefined'
     })
 
     if (attachments.length > 1) {
@@ -257,10 +257,12 @@ async function receivedMessage (event) {
     response = localeStrings(user.locale, 'feedback_confirmation')
   } else response = await translate(text, user)
 
-  const result = await send(user.psid, response)
-  if (!result) {
-    const longMessage = localeStrings(user.locale, 'long_message')
-    await send(user.psid, longMessage)
+  if (response) {
+    const result = await send(user.psid, response)
+    if (!result) {
+      const longMessage = localeStrings(user.locale, 'long_message')
+      await send(user.psid, longMessage)
+    }
   }
 
   await send(user.psid, null, 'typing_off')
