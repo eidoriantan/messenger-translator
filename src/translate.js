@@ -33,14 +33,12 @@ if (!PROXIES) throw new Error('Proxies are not defined')
 /**
  *  Translates the text.
  *
- *  @param {string} text      The text to be translated
- *  @param {string} iso       The language's ISO code, eg. en
- *  @param {string} psid      User's page scoped ID
- *  @param {string} locale    User's locale for response messages
+ *  @param {string} text    Text to be translated
+ *  @param {object} user    User-object retrieved from database
  *
  *  @return {string} translated text
  */
-module.exports = async function (text, iso, psid, locale) {
+module.exports = async function (text, user) {
   let proxies = PROXIES.split(',')
   let result = null
 
@@ -57,7 +55,7 @@ module.exports = async function (text, iso, psid, locale) {
     requests[proxy].total++
 
     try {
-      result = await translate(text, { to: iso, client: 'gtx' }, {
+      result = await translate(text, { to: user.language, client: 'gtx' }, {
         request: (options, callback) => {
           /**
            *  Wrapper for proxying using `cors-anywhere`
@@ -70,7 +68,7 @@ module.exports = async function (text, iso, psid, locale) {
           }
 
           if (url.length > 2000) {
-            result = localeStrings(locale, 'long_message')
+            result = localeStrings(user.locale, 'long_message')
             throw new Error('URI is too long')
           }
 
@@ -91,7 +89,7 @@ module.exports = async function (text, iso, psid, locale) {
     if (DEBUG) console.log('Unable to translate the text')
     logger.write('Unable to translate text! Please check proxy servers', 1)
 
-    const message = localeStrings(locale, 'requests_limit')
+    const message = localeStrings(user.locale, 'requests_limit')
     return message
   }
 
@@ -100,10 +98,10 @@ module.exports = async function (text, iso, psid, locale) {
     result.text += `\r\n*pronunciation*: ${pronunciation}`
   }
 
-  const language = languages[iso].name
+  const language = languages[user.language].name
   const from = languages[result.from.language.iso]
     ? languages[result.from.language.iso].name : 'Unknown'
-  const template = localeStrings(locale, 'body')
+  const template = localeStrings(user.locale, 'body')
   const replace = {
     TO: language,
     FROM: from,

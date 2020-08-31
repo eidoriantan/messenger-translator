@@ -253,7 +253,7 @@ async function receivedMessage (event) {
     response = localeStrings(user.locale, 'feedback_confirmation')
   } else {
     if (user.language === 'zh') user.language = 'zh-CN'
-    response = await translate(text, user.language, user.psid, user.locale)
+    response = await translate(text, user)
   }
 
   const result = await send(user.psid, response)
