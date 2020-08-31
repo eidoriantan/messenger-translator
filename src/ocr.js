@@ -60,7 +60,8 @@ async function recognize (url) {
   try {
     const result = await worker.recognize(url)
     const lines = result.data.lines
-    return lines.filter(line => line.confidence > 60).map(line => line.text)
+    return lines.filter(line => line.confidence > 60)
+      .map(line => line.text.trim())
   } catch (error) {
     logger.write('Error recognizing image', 1)
     logger.write(error)
