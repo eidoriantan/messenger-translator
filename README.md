@@ -18,6 +18,7 @@ a like and review.
    - English
    - Chinese (Simplified and Traditional)
    - Japanese
+   - Korean
 
 ### Support
 You can show your support on this project by liking the page and giving it a
