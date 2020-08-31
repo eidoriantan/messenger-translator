@@ -1,6 +1,6 @@
 {
   "name": "messenger-translator",
-  "version": "3.15.0",
+  "version": "3.16.0-beta",
   "description": "Webhook server for Messenger translator",
   "keywords": [
     "node",
@@ -33,7 +33,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "lint": "eslint -c .eslintrc.json . --ext .js,.mjs && npm run commitlint",
+    "lint": "eslint . --ext .js && npm run commitlint",
     "commitlint": "git log -1 --format=%B | commitlint",
     "test": "npm run lint && mocha test/index.js"
   },
@@ -43,12 +43,13 @@
     "express-basic-auth": "^1.2.0",
     "fuzzyset.js": "^1.0.5",
     "ini": "^1.3.5",
-    "mssql": "^6.2.1"
+    "mssql": "^6.2.1",
+    "tesseract.js": "^2.1.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^10.0.0",
     "@commitlint/config-conventional": "^10.0.0",
-    "eslint": "^6.8.0",
+    "eslint": "^7.7.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-node": "^11.1.0",
@@ -57,6 +58,9 @@
     "mocha": "^8.1.3",
     "should": "^13.2.3",
     "standard": "^14.3.4"
+  },
+  "engines": {
+    "node": ">=10.0.0"
   },
   "private": true
 }
