@@ -25,6 +25,7 @@ const replacer = require('./utils/replacer.js')
 const languages = require('./languages.js')
 
 const PROXIES = process.env.PROXIES
+const ORIGIN = process.env.ORIGIN
 const DEBUG = process.env.DEBUG || false
 const requests = {}
 
@@ -63,7 +64,7 @@ module.exports = async function (text, user) {
            */
           const url = `https://${proxy}/${options.href}`
           const opt = {
-            headers: { 'x-requested-with': `Node.js ${process.version}` },
+            headers: { origin: ORIGIN },
             timeout: 20000
           }
 
