@@ -18,6 +18,7 @@ env:
   USERNAME: ${{ secrets.USERNAME }}
   PASSWORD: ${{ secrets.PASSWORD }}
   DATABASE: ${{ secrets.DATABASE }}
+  ORIGIN: ${{ secrets.ORIGIN }}
 
 jobs:
   nodejs_10:
