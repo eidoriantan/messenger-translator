@@ -16,7 +16,6 @@ a like and review.
  * Character romanization
  * Image text detection support:
    - English
-   - Chinese (Simplified and Traditional)
    - Japanese
    - Korean
 
