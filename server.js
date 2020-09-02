@@ -26,6 +26,8 @@ const replace = require('./src/utils/replacer.js')
 const send = require('./src/utils/send.js')
 
 const database = require('./src/database.js')
+const users = require('./src/users.js')
+const feedbacks = require('./src/feedbacks.js')
 const ocr = require('./src/ocr.js')
 const profile = require('./src/profile.js')
 const translate = require('./src/translate.js')
@@ -39,10 +41,10 @@ const PORT = process.env.PORT || 8080
 const DEBUG = process.env.DEBUG
 
 const app = express()
-const users = {}
-users[USERNAME] = PASSWORD
+const authUsers = {}
+authUsers[USERNAME] = PASSWORD
 
-const auth = basicAuth({ users, challenge: true })
+const auth = basicAuth({ authUsers, challenge: true })
 
 if (!ACCESS_TOKEN || !VALIDATION_TOKEN || !APP_SECRET) {
   throw new Error('Access, App Secret and/or validation token is not defined')
@@ -138,7 +140,7 @@ app.get('/requests', auth, (req, res) => {
 })
 
 app.get('/feedbacks', auth, (req, res) => {
-  database.getFeedbacks().then(feedbacks => {
+  feedbacks.getFeedbacks().then(feedbacks => {
     const data = JSON.stringify(feedbacks, null, 2)
     res.set('Content-Type', 'application/json')
     res.status(200).send(data)
@@ -158,10 +160,10 @@ async function receivedPostback (event) {
 
   if (DEBUG) console.log(`Postback was called with payload: ${payload}`)
 
-  let user = await database.getUser(senderID)
+  let user = await users.getUser(senderID)
   if (user === null) {
     const fbProfile = await profile.getProfile(senderID)
-    user = await database.addUser(senderID, fbProfile)
+    user = await users.addUser(senderID, fbProfile)
   }
 
   await send(user.psid, null, 'mark_seen')
@@ -209,10 +211,10 @@ async function receivedMessage (event) {
 
   if (text && DEBUG) console.log(`Message was received with text: ${text}`)
 
-  let user = await database.getUser(senderID)
+  let user = await users.getUser(senderID)
   if (user === null) {
     const fbProfile = await profile.getProfile(senderID)
-    user = await database.addUser(senderID, fbProfile)
+    user = await users.addUser(senderID, fbProfile)
   }
 
   await send(user.psid, null, 'mark_seen')
@@ -262,7 +264,7 @@ async function receivedMessage (event) {
     response = await profile.changeLanguage(user, language)
   } else if (text.match(feedback) !== null) {
     const message = feedback.exec(text)[3]
-    await database.logFeedback(user.psid, user.name, message)
+    await feedbacks.logFeedback(user.psid, user.name, message)
 
     response = localeStrings(user.locale, 'feedback_confirmation')
   } else response = await translate(text, user)
@@ -303,9 +305,9 @@ process.on('SIGINT', () => {
 
 server.on('close', async () => {
   console.log('Server is closing...')
-  logger.close()
   await ocr.close()
-  await database.close()
+  logger.close()
+  database.close()
 })
 
 module.exports = { app, server }

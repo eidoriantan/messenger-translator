@@ -29,7 +29,6 @@ if (!SERVER || !USERNAME || !PASSWORD || !DATABASE) {
 }
 
 console.log('Connecting to SQL server...')
-const table = process.env.DEVELOPMENT ? 'users_test' : 'users'
 const config = {
   server: SERVER,
   user: USERNAME,
@@ -46,218 +45,38 @@ sql.connect(config).then(() => {
 })
 
 /**
- *  Returns the data type of the name in the database
+ *  Begins a transaction and runs a query
  *
- *  @param {string} name    The name in the database
- *  @return {SQLDataType} data type
+ *  @param {string} query      Query string
+ *  @param {array[]} inputs    Array of input (parameters of request.input)
+ *
+ *  @return {object}
  */
-function getDataType (name) {
-  let dataType
-  switch (name) {
-    case 'psid':
-    case 'language':
-    case 'locale':
-      dataType = sql.NVarChar(16)
-      break
+async function query (query, inputs = []) {
+  await sql.connect()
+  return new Promise((resolve, reject) => {
+    const transaction = new sql.Transaction()
+    transaction.begin(error => {
+      if (error) {
+        logger.write('An error occured when starting a transaction:')
+        logger.write(error, 1)
+        reject(error)
+      }
 
-    case 'name':
-    case 'menu':
-      dataType = sql.NVarChar(255)
-      break
+      const request = new sql.Request()
+      inputs.forEach(input => request.input(...input))
+      request.query(query, (error, result) => {
+        if (error) {
+          logger.write('An error occured when querying command:')
+          logger.write(error, 1)
+          reject(error)
+        }
 
-    case 'feedback':
-      dataType = sql.NVarChar(sql.MAX)
-      break
-  }
-
-  return dataType
-}
-
-/**
- *  Asynchronous function that adds a user to the database.
- *
- *  @param {string} psid       User's page-scoped ID
- *  @param {object} profile    User's profile object
- *
- *  @return {object} userData
- */
-async function addUser (psid, profile) {
-  const userData = {
-    psid,
-    name: profile.name,
-    language: 'en',
-    locale: profile.locale,
-    menu: ['en', 'ja', '_help']
-  }
-
-  try {
-    const pool = await sql.connect()
-    const request = pool.request()
-    const names = []
-
-    for (const name in userData) {
-      const dataType = getDataType(name)
-      const value = userData[name]
-
-      names.push(name)
-      request.input(name, dataType, value)
-    }
-
-    const namesStr = names.join(', ')
-    const values = names.map(name => `@${name}`).join(', ')
-    const query = `INSERT INTO ${table} (${namesStr}) VALUES (${values})`
-    await request.query(query)
-  } catch (error) {
-    logger.write(`Unable to add user to database: ${psid}`, 1)
-    logger.write(error, 1)
-    logger.write('Profile:', 1)
-    logger.write(profile, 1)
-    logger.write('User Data:', 1)
-    logger.write(userData, 1)
-  }
-
-  return userData
-}
-
-/**
- *  Deletes a user in the database
- *
- *  @param {string} psid    User's page-scoped ID
- *  @return void
- */
-async function deleteUser (psid) {
-  try {
-    const pool = await sql.connect()
-    const request = pool.request()
-    request.input('psid', getDataType('psid'), psid)
-    await request.query(`DELETE FROM ${table} WHERE psid=@psid`)
-  } catch (error) {
-    logger.write(`Unable to delete user from database: ${psid}`, 1)
-    logger.write(error, 1)
-  }
-}
-
-/**
- *  Asynchronous function that gets the user data from the database.
- *
- *  @param {string} psid    User's page-scoped ID
- *  @return {object} userData
- */
-async function getUser (psid) {
-  try {
-    const pool = await sql.connect()
-    const request = pool.request()
-    request.input('psid', getDataType('psid'), psid)
-
-    const query = `SELECT * FROM ${table} WHERE psid=@psid`
-    const result = await request.query(query)
-    const parseUser = user => {
-      user.menu = user.menu.split(',')
-      return user
-    }
-
-    return result.recordset.length > 0 ? parseUser(result.recordset[0]) : null
-  } catch (error) {
-    logger.write(`Unable to get user information: ${psid}`, 1)
-    logger.write(error, 1)
-    return null
-  }
-}
-
-/**
- *  Asynchronous function that updates the user data to the database.
- *
- *  @param {string} psid      User's page-scoped ID
- *  @param {object} values    Array of { key: value } to update the database
- *
- *  @return void
- */
-async function setUser (psid, values) {
-  try {
-    const pool = await sql.connect()
-    const request = pool.request()
-    request.input('psid', getDataType('psid'), psid)
-    const names = []
-
-    for (const name in values) {
-      const dataType = getDataType(name)
-      const value = values[name]
-
-      names.push(name)
-      request.input(name, dataType, value)
-    }
-
-    const columns = names.map(name => `${name}=@${name}`).join(', ')
-    await request.query(`UPDATE ${table} SET ${columns} WHERE psid=@psid`)
-  } catch (error) {
-    logger.write(`Unable to update user information: ${psid}`, 1)
-    logger.write(error, 1)
-  }
-}
-
-/**
- *  Returns all recorded feedbacks
- *  @return {object[]}
- */
-async function getFeedbacks () {
-  try {
-    const pool = await sql.connect()
-    const request = pool.request()
-    const result = await request.query('SELECT * FROM feedbacks')
-
-    return result.recordset
-  } catch (error) {
-    logger.write('Unable to get all feedbacks', 1)
-    logger.write(error, 1)
-  }
-}
-
-/**
- *  Logging feedbacks to database
- *
- *  @param {string} psid       Page-scoped user ID to attach with the message
- *  @param {string} name       User's FB profile name
- *  @param {string} message    Message to be logged
- *
- *  @return void
- */
-async function logFeedback (psid, name, message) {
-  try {
-    const pool = await sql.connect()
-    const request = pool.request()
-
-    request.input('psid', getDataType('psid'), psid)
-    request.input('name', getDataType('name'), name)
-    request.input('msg', getDataType('feedback'), message)
-
-    const query = 'INSERT INTO feedbacks (psid, name, message) ' +
-      'VALUES (@psid, @name, @msg)'
-
-    await request.query(query)
-  } catch (error) {
-    logger.write(`Unable to log feedback: ${psid}: ${message}`, 1)
-    logger.write(error, 1)
-  }
-}
-
-/**
- *  Deleting logged feedbacks by PSID
- *
- *  @param {string} psid    Page-scoped user ID
- *  @return void
- */
-async function deleteFeedback (psid, name) {
-  try {
-    const pool = await sql.connect()
-    const request = pool.request()
-
-    request.input('psid', getDataType('psid'), psid)
-    const query = 'DELETE FROM feedbacks WHERE psid=@psid'
-    await request.query(query)
-  } catch (error) {
-    logger.write(`Unable to delete feedbacks with PSID: ${psid}`, 1)
-    logger.write(error, 1)
-  }
+        transaction.commit()
+        resolve(result)
+      })
+    })
+  })
 }
 
 /**
@@ -269,13 +88,4 @@ function close () {
   sql.close()
 }
 
-module.exports = {
-  addUser,
-  deleteUser,
-  getUser,
-  setUser,
-  getFeedbacks,
-  logFeedback,
-  deleteFeedback,
-  close
-}
+module.exports = { query, close }
