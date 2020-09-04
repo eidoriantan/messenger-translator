@@ -53,7 +53,6 @@ module.exports = async function (text, user) {
 
     if (DEBUG) console.log(`Trying proxy server: ${proxy}`)
     requests[proxy] = requests[proxy] || { success: 0, total: 0 }
-    requests[proxy].total++
 
     try {
       result = await translate(text, { to: user.language, client: 'gtx' }, {
@@ -71,7 +70,7 @@ module.exports = async function (text, user) {
           if (url.length > 2000) {
             result = localeStrings(user.locale, 'long_message')
             throw new Error('URI is too long')
-          }
+          } else requests[proxy].total++
 
           return https.request(url, opt, callback)
         }
