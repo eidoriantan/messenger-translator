@@ -29,6 +29,7 @@ if (!fs.existsSync(cachePath)) fs.mkdirSync(cachePath)
 const langFiles = fs.readdirSync(langPath)
 const langRegex = /([^.]+)\.traineddata/i
 
+const scheduler = Tesseract.createScheduler()
 const workerAsync = (async () => {
   console.log('Loading worker')
   const worker = Tesseract.createWorker({
@@ -45,6 +46,7 @@ const workerAsync = (async () => {
   await worker.load()
   await worker.loadLanguage(langs)
   await worker.initialize(langs)
+  scheduler.addWorker(worker)
 
   return worker
 })()
@@ -56,9 +58,9 @@ const workerAsync = (async () => {
  *  @return {string[]} text
  */
 async function recognize (url) {
-  const worker = await workerAsync
+  await workerAsync
   try {
-    const result = await worker.recognize(url)
+    const result = await scheduler.addJob('recognize', url)
     const lines = result.data.lines
     return lines.filter(line => line.confidence > 60)
       .map(line => line.text.trim())
@@ -74,8 +76,8 @@ async function recognize (url) {
  *  @return void
  */
 async function close () {
-  const worker = await workerAsync
-  return await worker.terminate()
+  await workerAsync
+  return await scheduler.terminate()
 }
 
 module.exports = { recognize, close }
