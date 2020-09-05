@@ -23,7 +23,7 @@ const hash = require('./utils/hash.js')
 const replacer = require('./utils/replacer.js')
 const request = require('./utils/request.js')
 
-const database = require('./database.js')
+const users = require('./users.js')
 const languages = require('./languages.js')
 
 const ME_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
@@ -68,7 +68,7 @@ async function changeLanguage (user, lang) {
     await updateUserMenu(user.psid, menu)
   }
 
-  await database.setUser(user.psid, { language: code, menu })
+  await users.setUser(user.psid, { language: code, menu })
   const template = localeStrings(user.locale, 'language_change')
   const replace = { LANG: name }
   return replacer(template, replace)
