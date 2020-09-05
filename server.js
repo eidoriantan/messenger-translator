@@ -267,10 +267,7 @@ async function receivedMessage (event) {
     await feedbacks.logFeedback(user.psid, user.name, message)
 
     response = localeStrings(user.locale, 'feedback_confirmation')
-  } else {
-    if (user.language === 'zh') user.language = 'zh-CN'
-    response = await translate(text, user)
-  }
+  } else response = await translate(text, user)
 
   if (response) {
     const result = await send(user.psid, response)

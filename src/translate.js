@@ -54,6 +54,7 @@ module.exports = async function (text, user) {
     if (DEBUG) console.log(`Trying proxy server: ${proxy}`)
     requests[proxy] = requests[proxy] || { success: 0, total: 0 }
 
+    if (user.language === 'zh') user.language = 'zh-CN'
     try {
       result = await translate(text, { to: user.language, client: 'gtx' }, {
         request: (options, callback) => {
