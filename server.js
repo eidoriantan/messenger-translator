@@ -44,7 +44,7 @@ const app = express()
 const authUsers = {}
 authUsers[USERNAME] = PASSWORD
 
-const auth = basicAuth({ authUsers, challenge: true })
+const auth = basicAuth({ users: authUsers, challenge: true })
 
 if (!ACCESS_TOKEN || !VALIDATION_TOKEN || !APP_SECRET) {
   throw new Error('Access, App Secret and/or validation token is not defined')
