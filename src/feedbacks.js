@@ -31,7 +31,8 @@ const types = {
  */
 async function getFeedbacks () {
   try {
-    return await database.query('SELECT * FROM feedbacks')
+    const feedbacks = await database.query('SELECT * FROM feedbacks')
+    return feedbacks.recordset
   } catch (error) {
     logger.write('Unable to get all feedbacks', 1)
     logger.write(error, 1)
