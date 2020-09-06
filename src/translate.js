@@ -126,8 +126,6 @@ module.exports.requests = () => {
   }
 
   return {
-    name: 'proxies',
-    date: Date.now(),
     total: { success, total },
     requests
   }

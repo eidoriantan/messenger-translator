@@ -42,6 +42,8 @@ const DEBUG = process.env.DEBUG
 
 const app = express()
 const authUsers = {}
+
+let started = 0
 authUsers[USERNAME] = PASSWORD
 
 const auth = basicAuth({ users: authUsers, challenge: true })
@@ -133,6 +135,10 @@ app.post('/webhook', (req, res) => {
 
 app.get('/requests', auth, (req, res) => {
   const requests = translate.requests()
+  const date = Date.now()
+
+  requests.started = started
+  requests.requested = date
   const data = JSON.stringify(requests, null, 2)
 
   res.set('Content-Type', 'application/json')
@@ -281,6 +287,7 @@ async function receivedMessage (event) {
 }
 
 const server = app.listen(PORT, () => {
+  started = Date.now()
   console.log(`Server is running on port ${PORT}`)
 })
 
