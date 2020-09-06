@@ -16,35 +16,48 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
- *  Setting up a table in a database
- */
-CREATE TABLE users (
-  psid NVARCHAR(16) NOT NULL,
-  name NVARCHAR(255) NOT NULL,
-  language NVARCHAR(16) NOT NULL,
-  locale NVARCHAR(16) NOT NULL,
-  menu NVARCHAR(255) NOT NULL,
-  CONSTRAINT pk_psid_prod PRIMARY KEY (psid)
-);
+BEGIN TRANSACTION Tables
 
 /**
- *  Setting up a table in a database for testing
+ *  Setting up the users table in a database
  */
-CREATE TABLE users_test (
-  psid NVARCHAR(16) NOT NULL,
-  name NVARCHAR(255) NOT NULL,
-  language NVARCHAR(16) NOT NULL,
-  locale NVARCHAR(16) NOT NULL,
-  menu NVARCHAR(255) NOT NULL,
-  CONSTRAINT pk_psid PRIMARY KEY (psid)
-);
+IF OBJECT_ID(N'dbo.users', N'U') IS NULL
+BEGIN
+  CREATE TABLE users (
+    psid NVARCHAR(16) NOT NULL,
+    name NVARCHAR(255) NOT NULL,
+    language NVARCHAR(16) NOT NULL,
+    locale NVARCHAR(16) NOT NULL,
+    menu NVARCHAR(255) NOT NULL,
+    CONSTRAINT pk_psid_prod PRIMARY KEY (psid)
+  )
+END
+
+/**
+ *  Setting up a table for testing
+ */
+IF OBJECT_ID(N'dbo.users_test', N'U') IS NULL
+BEGIN
+  CREATE TABLE users_test (
+    psid NVARCHAR(16) NOT NULL,
+    name NVARCHAR(255) NOT NULL,
+    language NVARCHAR(16) NOT NULL,
+    locale NVARCHAR(16) NOT NULL,
+    menu NVARCHAR(255) NOT NULL,
+    CONSTRAINT pk_psid PRIMARY KEY (psid)
+  )
+END
 
 /**
  *  Table for receiving feedbacks
  */
-CREATE TABLE feedbacks (
-  psid NVARCHAR(15) NOT NULL,
-  name NVARCHAR(255) NOT NULL,
-  message NVARCHAR(MAX) NOT NULL
-);
+IF OBJECT_ID(N'dbo.feedbacks', N'U') IS NULL
+BEGIN
+  CREATE TABLE feedbacks (
+    psid NVARCHAR(15) NOT NULL,
+    name NVARCHAR(255) NOT NULL,
+    message NVARCHAR(MAX) NOT NULL
+  )
+END
+
+COMMIT TRANSACTION Tables
