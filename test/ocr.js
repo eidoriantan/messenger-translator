@@ -24,7 +24,7 @@ describe('Tesseract', () => {
   it('Read text', async () => {
     const image = path.resolve(__dirname, 'assets/simple.jpg')
     const text = await ocr.recognize(image)
-    should.strictEqual(text, 'Tesseract.js')
+    should.strictEqual(text.trim(), 'Tesseract.js')
   })
 
   after(async () => {
