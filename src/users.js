@@ -49,19 +49,20 @@ async function addUser (psid, profile) {
   try {
     const names = []
     const inputs = []
+    const values = {}
 
     for (const name in userData) {
       const type = types[name]
-      const value = userData[name]
 
       names.push(name)
-      inputs.push([name, type, value])
+      inputs.push([name, type])
+      values[name] = userData[name]
     }
 
     const namesStr = names.join(', ')
-    const values = names.map(name => `@${name}`).join(', ')
-    const query = `INSERT INTO ${table} (${namesStr}) VALUES (${values})`
-    await database.query(query, inputs)
+    const valuesStr = names.map(name => `@${name}`).join(', ')
+    const query = `INSERT INTO ${table} (${namesStr}) VALUES (${valuesStr})`
+    await database.query(query, inputs, values)
   } catch (error) {
     logger.write(`Unable to add user to database: ${psid}`, 1)
     logger.write(error, 1)
@@ -82,8 +83,10 @@ async function addUser (psid, profile) {
  */
 async function deleteUser (psid) {
   try {
-    const input = ['psid', types.psid, psid]
-    await database.query(`DELETE FROM ${table} WHERE psid=@psid`, [input])
+    const inputs = [['psid', types.psid]]
+    const values = { psid }
+    const query = `DELETE FROM ${table} WHERE psid=@psid`
+    await database.query(query, inputs, values)
   } catch (error) {
     logger.write(`Unable to delete user from database: ${psid}`, 1)
     logger.write(error, 1)
@@ -98,9 +101,10 @@ async function deleteUser (psid) {
  */
 async function getUser (psid) {
   try {
-    const input = ['psid', types.psid, psid]
+    const inputs = [['psid', types.psid]]
+    const values = { psid }
     const query = `SELECT * FROM ${table} WHERE psid=@psid`
-    const result = await database.query(query, [input])
+    const result = await database.query(query, inputs, values)
     const parseUser = user => {
       user.menu = user.menu.split(',')
       return user
@@ -118,14 +122,14 @@ async function getUser (psid) {
  *  Asynchronous function that updates the user data to the database.
  *
  *  @param {string} psid      User's page-scoped ID
- *  @param {object} values    Array of { key: value } to update the database
+ *  @param {object} values    Array of key pair to update the database
  *
  *  @return void
  */
 async function setUser (psid, values) {
   try {
-    const input = ['psid', types.psid, psid]
-    const inputs = [input]
+    const inputs = [['psid', types.psid]]
+    const psValues = { psid }
     const names = []
 
     for (const name in values) {
@@ -133,12 +137,13 @@ async function setUser (psid, values) {
       const value = values[name]
 
       names.push(name)
-      inputs.push([name, type, value])
+      inputs.push([name, type])
+      psValues[name] = value
     }
 
     const columns = names.map(name => `${name}=@${name}`).join(', ')
     const query = `UPDATE ${table} SET ${columns} WHERE psid=@psid`
-    await database.query(query, inputs)
+    await database.query(query, inputs, psValues)
   } catch (error) {
     logger.write(`Unable to update user information: ${psid}`, 1)
     logger.write(error, 1)

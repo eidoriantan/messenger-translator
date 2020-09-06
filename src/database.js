@@ -48,31 +48,31 @@ sql.connect(config).then(() => {
  *  Begins a transaction and runs a query
  *
  *  @param {string} query      Query string
- *  @param {array[]} inputs    Array of input (parameters of request.input)
+ *  @param {array[]} inputs    Array of input (parameters of ps.input)
+ *  @param {object} values     Key pair values
  *
  *  @return {object}
  */
-async function query (query, inputs = []) {
+async function query (query, inputs = [], values = {}) {
   await sql.connect()
   return new Promise((resolve, reject) => {
-    const transaction = new sql.Transaction()
-    transaction.begin(error => {
+    const ps = new sql.PreparedStatement()
+    inputs.forEach(input => ps.input(...input))
+    ps.prepare(query, error => {
       if (error) {
-        logger.write('An error occured when starting a transaction:')
+        logger.write('An error occured when preparing command:', 1)
         logger.write(error, 1)
-        reject(error)
+        return reject(error)
       }
 
-      const request = new sql.Request()
-      inputs.forEach(input => request.input(...input))
-      request.query(query, (error, result) => {
+      ps.execute(values, (error, result) => {
         if (error) {
-          logger.write('An error occured when querying command:')
+          logger.write('An error occured when executing command:', 1)
           logger.write(error, 1)
-          reject(error)
+          return reject(error)
         }
 
-        transaction.commit()
+        ps.unprepare()
         resolve(result)
       })
     })

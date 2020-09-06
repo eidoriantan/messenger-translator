@@ -51,14 +51,15 @@ async function getFeedbacks () {
 async function logFeedback (psid, name, message) {
   try {
     const inputs = []
-    inputs.push(['psid', users.types.psid, psid])
-    inputs.push(['name', users.types.name, name])
-    inputs.push(['msg', types.feedback, message])
+    const values = { psid, name, message }
+    inputs.push(['psid', users.types.psid])
+    inputs.push(['name', users.types.name])
+    inputs.push(['message', types.feedback])
 
     const query = 'INSERT INTO feedbacks (psid, name, message) ' +
       'VALUES (@psid, @name, @msg)'
 
-    await database.query(query, inputs)
+    await database.query(query, inputs, values)
   } catch (error) {
     logger.write(`Unable to log feedback: ${psid}: ${message}`, 1)
     logger.write(error, 1)
@@ -73,9 +74,10 @@ async function logFeedback (psid, name, message) {
  */
 async function deleteFeedback (psid, name) {
   try {
-    const input = ['psid', users.types.psid, psid]
+    const inputs = [['psid', users.types.psid]]
+    const values = { psid }
     const query = 'DELETE FROM feedbacks WHERE psid=@psid'
-    await database.query(query, [input])
+    await database.query(query, inputs, values)
   } catch (error) {
     logger.write(`Unable to delete feedbacks with PSID: ${psid}`, 1)
     logger.write(error, 1)
