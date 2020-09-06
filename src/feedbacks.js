@@ -57,7 +57,7 @@ async function logFeedback (psid, name, message) {
     inputs.push(['message', types.feedback])
 
     const query = 'INSERT INTO feedbacks (psid, name, message) ' +
-      'VALUES (@psid, @name, @msg)'
+      'VALUES (@psid, @name, @message)'
 
     await database.query(query, inputs, values)
   } catch (error) {
