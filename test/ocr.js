@@ -16,15 +16,15 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-require('should')
+const should = require('should')
 const path = require('path')
 const ocr = require('../src/ocr.js')
 
 describe('Tesseract', () => {
   it('Read text', async () => {
     const image = path.resolve(__dirname, 'assets/simple.jpg')
-    const lines = await ocr.recognize(image)
-    lines[0].includes('Tesseract.js').should.be.true()
+    const text = await ocr.recognize(image)
+    should.strictEqual(text, 'Tesseract.js')
   })
 
   after(async () => {
