@@ -55,19 +55,17 @@ const workerAsync = (async () => {
  *  Extracts text from an image
  *
  *  @param {string} url    Image URL
- *  @return {string[]} text
+ *  @return {string} text
  */
 async function recognize (url) {
   await workerAsync
   try {
     const result = await scheduler.addJob('recognize', url)
-    const lines = result.data.lines
-    return lines.filter(line => line.confidence > 60)
-      .map(line => line.text.trim())
+    return result.data.text
   } catch (error) {
     logger.write('Error recognizing image', 1)
     logger.write(error)
-    return []
+    return null
   }
 }
 
