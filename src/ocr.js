@@ -61,7 +61,7 @@ async function recognize (url) {
   await workerAsync
   try {
     const result = await scheduler.addJob('recognize', url)
-    return result.data.text
+    return result.data.text.trim()
   } catch (error) {
     logger.write('Error recognizing image', 1)
     logger.write(error)
