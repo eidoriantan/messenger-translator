@@ -21,7 +21,6 @@ const path = require('path')
 const Tesseract = require('tesseract.js')
 const logger = require('./utils/log.js')
 
-const DEBUG = process.env.DEBUG || false
 const langPath = path.resolve(__dirname, '../tessdata')
 const cachePath = path.resolve(__dirname, '../cache')
 if (!fs.existsSync(cachePath)) fs.mkdirSync(cachePath)
@@ -32,12 +31,7 @@ const langRegex = /([^.]+)\.traineddata/i
 const scheduler = Tesseract.createScheduler()
 const workerAsync = (async () => {
   console.log('Loading worker')
-  const worker = Tesseract.createWorker({
-    logger: DEBUG ? msg => console.log(msg) : () => {},
-    langPath,
-    cachePath
-  })
-
+  const worker = Tesseract.createWorker({ langPath, cachePath })
   const langs = langFiles
     .filter(filename => filename.match(langRegex))
     .map(filename => langRegex.exec(filename)[1])
