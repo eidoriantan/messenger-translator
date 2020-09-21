@@ -31,13 +31,22 @@ const types = {
  */
 async function getFeedbacks () {
   try {
-    const feedbacks = await database.query('SELECT * FROM feedbacks')
-    return feedbacks.recordset
+    return await database.query('SELECT * FROM feedbacks')
   } catch (error) {
     logger.write('Unable to get all feedbacks', 1)
     logger.write(error, 1)
   }
 }
+
+const logPS = new sql.PreparedStatement()
+const logQuery = 'INSERT INTO feedbacks (psid, name, message) ' +
+  'VALUES (@psid, @name, @message)'
+
+logPS.input('psid', users.types.psid)
+logPS.input('name', users.types.name)
+logPS.input('message', types.feedback)
+
+database.addPS(logPS)
 
 /**
  *  Logging feedbacks to database
@@ -49,21 +58,15 @@ async function getFeedbacks () {
  *  @return void
  */
 async function logFeedback (psid, name, message) {
-  try {
-    const inputs = []
-    const values = { psid, name, message }
-    inputs.push(['psid', users.types.psid])
-    inputs.push(['name', users.types.name])
-    inputs.push(['message', types.feedback])
+  await sql.connect()
+  if (!logPS.prepared) await logPS.prepare(logQuery)
 
-    const query = 'INSERT INTO feedbacks (psid, name, message) ' +
-      'VALUES (@psid, @name, @message)'
+  logPS.execute({ psid, name, message }, (error, result) => {
+    if (!error) return
 
-    await database.query(query, inputs, values)
-  } catch (error) {
     logger.write(`Unable to log feedback: ${psid}: ${message}`, 1)
     logger.write(error, 1)
-  }
+  })
 }
 
 /**
@@ -72,12 +75,14 @@ async function logFeedback (psid, name, message) {
  *  @param {string} psid    Page-scoped user ID
  *  @return void
  */
-async function deleteFeedback (psid, name) {
+async function deleteFeedback (psid) {
   try {
-    const inputs = [['psid', users.types.psid]]
-    const values = { psid }
-    const query = 'DELETE FROM feedbacks WHERE psid=@psid'
-    await database.query(query, inputs, values)
+    await database.query('DELETE FROM feedbacks WHERE psid=@psid', {
+      psid: {
+        type: types.psid,
+        value: psid
+      }
+    })
   } catch (error) {
     logger.write(`Unable to delete feedbacks with PSID: ${psid}`, 1)
     logger.write(error, 1)

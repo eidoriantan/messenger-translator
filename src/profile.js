@@ -62,13 +62,12 @@ async function changeLanguage (user, lang) {
     return replacer(template, replace)
   }
 
-  let menu = user.menu
-  if (code !== menu[0]) {
-    menu = [code, menu[0], '_help']
-    await updateUserMenu(user.psid, menu)
+  if (code !== user.menu[0]) {
+    user.menu = [code, user.menu[0], '_help']
+    await updateUserMenu(user)
   }
 
-  await users.setUser(user.psid, { language: code, menu })
+  await users.setUser(user)
   const template = localeStrings(user.locale, 'language_change')
   const replace = { LANG: name }
   return replacer(template, replace)
@@ -77,12 +76,11 @@ async function changeLanguage (user, lang) {
 /**
  *  Updates user's menu
  *
- *  @param {string} psid      User's page-scoped ID
- *  @param {string[]} menu    Array of menu item IDs
- *
+ *  @param {object} user    User data object
  *  @return {object} response
  */
-async function updateUserMenu (psid, menu) {
+async function updateUserMenu (user) {
+  const { psid, menu } = user
   const persistentMenu = [{
     locale: 'default',
     composer_input_disabled: false,
@@ -131,8 +129,8 @@ async function getProfile (psid) {
 
   const url = `https://graph.facebook.com/${psid}?${params.toString()}`
   const response = await request('GET', url)
-  let profile = response.body
 
+  let profile = response.body
   if (profile.error) {
     profile = {
       psid,

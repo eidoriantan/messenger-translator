@@ -29,8 +29,36 @@ const types = {
   menu: sql.NVarChar(255)
 }
 
+const addPS = new sql.PreparedStatement()
+const getPS = new sql.PreparedStatement()
+const setPS = new sql.PreparedStatement()
+
+const addQuery = `INSERT INTO ${table} (psid, name, language, locale, menu)` +
+  'VALUES (@psid, @name, @language, @locale, @menu)'
+const getQuery = `SELECT * FROM ${table} WHERE psid=@psid`
+const setQuery = `UPDATE ${table} SET name=@name, language=@language, ` +
+  'locale=@locale, menu=@menu WHERE psid=@psid'
+
+addPS.input('psid', types.psid)
+addPS.input('name', types.name)
+addPS.input('language', types.language)
+addPS.input('locale', types.locale)
+addPS.input('menu', types.menu)
+
+getPS.input('psid', types.psid)
+
+setPS.input('psid', types.psid)
+setPS.input('name', types.name)
+setPS.input('language', types.language)
+setPS.input('locale', types.locale)
+setPS.input('menu', types.menu)
+
+database.addPS(addPS)
+database.addPS(getPS)
+database.addPS(setPS)
+
 /**
- *  Asynchronous function that adds a user to the database.
+ *  Adds a user
  *
  *  @param {string} psid       User's page-scoped ID
  *  @param {object} profile    User's profile object
@@ -38,6 +66,9 @@ const types = {
  *  @return {object} userData
  */
 async function addUser (psid, profile) {
+  await sql.connect()
+  if (!addPS.prepared) await addPS.prepare(addQuery)
+
   const userData = {
     psid,
     name: profile.name,
@@ -47,22 +78,7 @@ async function addUser (psid, profile) {
   }
 
   try {
-    const names = []
-    const inputs = []
-    const values = {}
-
-    for (const name in userData) {
-      const type = types[name]
-
-      names.push(name)
-      inputs.push([name, type])
-      values[name] = userData[name]
-    }
-
-    const namesStr = names.join(', ')
-    const valuesStr = names.map(name => `@${name}`).join(', ')
-    const query = `INSERT INTO ${table} (${namesStr}) VALUES (${valuesStr})`
-    await database.query(query, inputs, values)
+    await addPS.execute(userData)
   } catch (error) {
     logger.write(`Unable to add user to database: ${psid}`, 1)
     logger.write(error, 1)
@@ -76,35 +92,17 @@ async function addUser (psid, profile) {
 }
 
 /**
- *  Deletes a user in the database
- *
- *  @param {string} psid    User's page-scoped ID
- *  @return void
- */
-async function deleteUser (psid) {
-  try {
-    const inputs = [['psid', types.psid]]
-    const values = { psid }
-    const query = `DELETE FROM ${table} WHERE psid=@psid`
-    await database.query(query, inputs, values)
-  } catch (error) {
-    logger.write(`Unable to delete user from database: ${psid}`, 1)
-    logger.write(error, 1)
-  }
-}
-
-/**
- *  Asynchronous function that gets the user data from the database.
+ *  Gets the user data
  *
  *  @param {string} psid    User's page-scoped ID
  *  @return {object} userData
  */
 async function getUser (psid) {
+  await sql.connect()
+  if (!getPS.prepared) await getPS.prepare(getQuery)
+
   try {
-    const inputs = [['psid', types.psid]]
-    const values = { psid }
-    const query = `SELECT * FROM ${table} WHERE psid=@psid`
-    const result = await database.query(query, inputs, values)
+    const result = await getPS.execute({ psid })
     const parseUser = user => {
       user.menu = user.menu.split(',')
       return user
@@ -119,35 +117,41 @@ async function getUser (psid) {
 }
 
 /**
- *  Asynchronous function that updates the user data to the database.
+ *  Updates the user data
  *
- *  @param {string} psid      User's page-scoped ID
- *  @param {object} values    Array of key pair to update the database
- *
+ *  @param {object} user    User data object
  *  @return void
  */
-async function setUser (psid, values) {
+async function setUser (user) {
+  await sql.connect()
+  if (!setPS.prepared) await setPS.prepare(setQuery)
+
   try {
-    const inputs = [['psid', types.psid]]
-    const psValues = { psid }
-    const names = []
-
-    for (const name in values) {
-      const type = types[name]
-      const value = values[name]
-
-      names.push(name)
-      inputs.push([name, type])
-      psValues[name] = value
-    }
-
-    const columns = names.map(name => `${name}=@${name}`).join(', ')
-    const query = `UPDATE ${table} SET ${columns} WHERE psid=@psid`
-    await database.query(query, inputs, psValues)
+    await setPS.execute(user)
   } catch (error) {
-    logger.write(`Unable to update user information: ${psid}`, 1)
+    logger.write(`Unable to update user information: ${user.psid}`, 1)
     logger.write(error, 1)
   }
 }
 
-module.exports = { types, addUser, deleteUser, getUser, setUser }
+/**
+ *  Deletes a user in the database
+ *
+ *  @param {string} psid    User's page-scoped ID
+ *  @return void
+ */
+async function deleteUser (psid) {
+  try {
+    await database.query(`DELETE FROM ${table} WHERE psid=@psid`, {
+      psid: {
+        type: types.psid,
+        value: psid
+      }
+    })
+  } catch (error) {
+    logger.write(`Unable to delete user from database: ${psid}`, 1)
+    logger.write(error, 1)
+  }
+}
+
+module.exports = { types, addUser, getUser, setUser, deleteUser }

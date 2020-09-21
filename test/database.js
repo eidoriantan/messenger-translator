@@ -48,8 +48,8 @@ describe('User Database', () => {
   })
 
   it('Sets user property', async () => {
-    await users.setUser(testUser.psid, { language: 'ja' })
     testUser.language = 'ja'
+    await users.setUser(testUser)
 
     const userData = await users.getUser(testUser.psid)
     userData.should.containDeep(testUser)

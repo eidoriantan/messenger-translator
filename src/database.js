@@ -45,38 +45,46 @@ sql.connect(config).then(() => {
 })
 
 /**
- *  Begins a transaction and runs a query
+ *  Performs a simple query
  *
- *  @param {string} query      Query string
- *  @param {array[]} inputs    Array of input (parameters of ps.input)
- *  @param {object} values     Key pair values
+ *  @param {string} query     Query string
+ *  @param {object} inputs    Object containing the input's types and values
  *
  *  @return {object}
  */
-async function query (query, inputs = [], values = {}) {
+async function query (query, inputs = {}) {
   await sql.connect()
-  return new Promise((resolve, reject) => {
-    const ps = new sql.PreparedStatement()
-    inputs.forEach(input => ps.input(...input))
-    ps.prepare(query, error => {
-      if (error) {
-        logger.write('An error occured when preparing command:', 1)
-        logger.write(error, 1)
-        return reject(error)
-      }
 
-      ps.execute(values, (error, result) => {
-        if (error) {
-          logger.write('An error occured when executing command:', 1)
-          logger.write(error, 1)
-          return reject(error)
-        }
+  const request = new sql.Request()
+  let result = null
 
-        ps.unprepare()
-        resolve(result)
-      })
-    })
-  })
+  for (const name in inputs) {
+    if (!Object.hasOwnProperty.call(inputs, name)) continue
+
+    const input = inputs[name]
+    request.input(name, input.type, input.value)
+  }
+
+  try {
+    result = await request.query(query)
+  } catch (error) {
+    logger.write(`Unable to execute query: ${query}`, 1)
+    logger.write(error, 1)
+  }
+
+  return result
+}
+
+const preparedStatements = []
+
+/**
+ *  Adds `PreparedStatement` to be unprepared after close
+ *  @param {object} ps    PreparedStatement instance
+ *  @return void
+ */
+function addPS (ps) {
+  if (ps instanceof sql.PreparedStatement) preparedStatements.push(ps)
+  else throw new TypeError('Argument is not an instance of `PreparedStatement`')
 }
 
 /**
@@ -84,8 +92,18 @@ async function query (query, inputs = [], values = {}) {
  *  @return void
  */
 function close () {
+  console.log('Unpreparing statements')
+  preparedStatements.forEach(ps => {
+    ps.unprepare(error => {
+      if (!error) return
+
+      logger.write('Unable to call unprepare', 1)
+      logger.write(error, 1)
+    })
+  })
+
   console.log('SQL server is closing...')
   sql.close()
 }
 
-module.exports = { query, close }
+module.exports = { query, addPS, close }
