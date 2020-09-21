@@ -33,9 +33,10 @@
   },
   "scripts": {
     "start": "node server.js",
-    "lint": "eslint . --ext .js && npm run commitlint",
-    "commitlint": "git log -1 --format=%B | commitlint",
-    "test": "npm run lint && mocha test/index.js"
+    "lint": "eslint . --ext .js",
+    "postlint": "git log -1 --format=%B | commitlint",
+    "pretest": "npm run lint",
+    "test": "mocha test/index.js"
   },
   "dependencies": {
     "@vitalets/google-translate-api": "^4.0.0",
