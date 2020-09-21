@@ -1,6 +1,6 @@
 {
   "name": "messenger-translator",
-  "version": "3.17.1",
+  "version": "3.17.2",
   "description": "Webhook server for Messenger translator",
   "keywords": [
     "node",
