@@ -64,10 +64,12 @@ async function changeLanguage (user, lang) {
 
   if (code !== user.menu[0]) {
     user.menu = [code, user.menu[0], '_help']
+    user.language = code
+
+    await users.setUser(user)
     await updateUserMenu(user)
   }
 
-  await users.setUser(user)
   const template = localeStrings(user.locale, 'language_change')
   const replace = { LANG: name }
   return replacer(template, replace)
