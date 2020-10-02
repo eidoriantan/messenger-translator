@@ -3,14 +3,16 @@ branches:
   except:
     - production
 
+env:
+  global:
+    - PORT=3000
+
 jobs:
   include:
   - name: "Node.js 10.x"
     node_js: 10
-    env: PORT=3000 TEST_USERID=0000000000000000
   - name: "Node.js 12.x"
     node_js: 12
-    env: PORT=3001 TEST_USERID=0000000000000001
 
 git:
   quiet: true
