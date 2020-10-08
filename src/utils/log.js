@@ -41,9 +41,11 @@ function write (data, level = 0) {
   let chunk = ''
 
   switch (typeof data) {
-    case 'string':
-      chunk += `[${date}]: ${data}\r\n`
+    case 'string': {
+      const lines = data.split('\n')
+      lines.forEach(line => { chunk += `[${date}]: ${line}\r\n` })
       break
+    }
 
     case 'number':
       chunk += `[${date}]: ${data.toString()}\r\n`
