@@ -20,14 +20,13 @@ const fs = require('fs')
 const path = require('path')
 const ini = require('ini')
 
-const localeDir = path.resolve(__dirname)
-const translations = fs.readdirSync(localeDir)
+const translations = fs.readdirSync(__dirname)
 const strings = {}
 
 translations.forEach(file => {
   if (!file.match(/(\.ini)$/i)) return
 
-  const filepath = path.join(localeDir, file)
+  const filepath = path.join(__dirname, file)
   const filedata = fs.readFileSync(filepath, 'utf8')
   const translation = ini.parse(filedata)
   const parsed = {}
