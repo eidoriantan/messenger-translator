@@ -19,11 +19,11 @@
 const fs = require('fs')
 const path = require('path')
 
-const directory = path.resolve(__dirname, '../../logs')
+const directory = path.join(__dirname, '../../logs')
 if (!fs.existsSync(directory)) fs.mkdirSync(directory)
 
-const infoLog = path.resolve(directory, 'info.log')
-const errorlog = path.resolve(directory, 'error.log')
+const infoLog = path.join(directory, 'info.log')
+const errorlog = path.join(directory, 'error.log')
 
 const infoStream = fs.createWriteStream(infoLog, { flags: 'a' })
 const errorStream = fs.createWriteStream(errorlog, { flags: 'a' })
