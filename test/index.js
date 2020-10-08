@@ -41,5 +41,4 @@ describe('Facebook', () => {
 })
 
 require('./database.js')
-require('./ocr.js')
 require('./translate.js')
