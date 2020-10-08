@@ -22,13 +22,11 @@ const basicAuth = require('express-basic-auth')
 const localeStrings = require('./src/locale/')
 const hash = require('./src/utils/hash.js')
 const logger = require('./src/utils/log.js')
-const replace = require('./src/utils/replacer.js')
 const send = require('./src/utils/send.js')
 
 const database = require('./src/database.js')
 const users = require('./src/users.js')
 const feedbacks = require('./src/feedbacks.js')
-const ocr = require('./src/ocr.js')
 const profile = require('./src/profile.js')
 const translate = require('./src/translate.js')
 
@@ -235,31 +233,8 @@ async function receivedMessage (event) {
     console.log(user)
   }
 
-  if (message.attachments && message.attachments.length > 0) {
-    const attachments = message.attachments.filter(attachment => {
-      return attachment.type === 'image' &&
-        typeof attachment.payload.sticker_id === 'undefined'
-    })
-
-    if (attachments.length > 1) {
-      response = localeStrings(user.locale, 'img_too_many')
-    } else if (attachments.length === 1) {
-      const recognizing = localeStrings(user.locale, 'img_recognizing')
-      await send(user.psid, recognizing)
-
-      const url = attachments[0].payload.url
-      const text = await ocr.recognize(url)
-      if (text !== null) {
-        const translated = await translate(text, user)
-        const message = localeStrings(user.locale, 'img_translated')
-        const result = replace(message, {
-          LINE: text,
-          RES: translated
-        })
-
-        await send(user.psid, result)
-      } else response = localeStrings(user.locale, 'img_no_text')
-    }
+  if (message.attachments) {
+    response = localeStrings(user.locale, 'unsupported_attachment')
   } else if (text.match(/^(-?-?help)$/i) !== null) {
     response = localeStrings(user.locale, 'help')
   } else if (text.match(langRegex) !== null) {
@@ -272,12 +247,10 @@ async function receivedMessage (event) {
     response = localeStrings(user.locale, 'feedback_confirmation')
   } else response = await translate(text, user)
 
-  if (response) {
-    const result = await send(user.psid, response)
-    if (!result) {
-      const longMessage = localeStrings(user.locale, 'long_message')
-      await send(user.psid, longMessage)
-    }
+  const result = await send(user.psid, response)
+  if (!result) {
+    const longMessage = localeStrings(user.locale, 'long_message')
+    await send(user.psid, longMessage)
   }
 
   await send(user.psid, null, 'typing_off')
@@ -303,13 +276,12 @@ process.on('unhandledRejection', error => {
 process.on('SIGINT', () => {
   server.close(() => {
     console.log('Exiting process...')
-    process.exit(1)
+    process.exit(0)
   })
 })
 
 server.on('close', async () => {
   console.log('Server is closing...')
-  await ocr.close()
   logger.close()
   database.close()
 })
