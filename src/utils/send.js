@@ -61,6 +61,18 @@ module.exports = async function (psid, text, type = 'message') {
     logger.write(`Error(${body.error.code}): ${body.error.message}`, 1)
     logger.write('Data:', 1)
     logger.write(data, 1)
+
+    switch (body.error.code) {
+      case 1200:
+        logger.write('Internet error from Facebook. Exit?')
+        break
+
+      case 4: case 32: case 100: case 613:
+        logger.write('Limit reached, exiting...')
+        process.kill(process.pid, 'SIGINT')
+        break
+    }
+
     return false
   }
 
