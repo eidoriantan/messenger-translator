@@ -38,20 +38,18 @@ const PASSWORD = process.env.PASSWORD
 const PORT = process.env.PORT || 8080
 const DEBUG = process.env.DEBUG
 
-const app = express()
-const authUsers = {}
-
-let started = 0
-authUsers[USERNAME] = PASSWORD
-
-const auth = basicAuth({ users: authUsers, challenge: true })
-
 if (!ACCESS_TOKEN || !VALIDATION_TOKEN || !APP_SECRET) {
   throw new Error('Access, App Secret and/or validation token is not defined')
 }
 
-app.use('/logs', express.static(logger.directory))
+let started = 0
+const authUsers = {}
+authUsers[USERNAME] = PASSWORD
 
+const app = express()
+const auth = basicAuth({ users: authUsers, challenge: true })
+
+app.use('/logs', express.static(logger.directory))
 app.use((req, res, next) => {
   res.set('Content-Type', 'text/plain')
   res.set('Content-Language', 'en')
@@ -137,17 +135,15 @@ app.get('/requests', auth, (req, res) => {
 
   requests.started = started
   requests.requested = date
-  const data = JSON.stringify(requests, null, 2)
 
   res.set('Content-Type', 'application/json')
-  res.status(200).send(data)
+  res.status(200).json(requests)
 })
 
 app.get('/feedbacks', auth, (req, res) => {
   feedbacks.getFeedbacks().then(feedbacks => {
-    const data = JSON.stringify(feedbacks, null, 2)
     res.set('Content-Type', 'application/json')
-    res.status(200).send(data)
+    res.status(200).json(feedbacks)
   })
 })
 
