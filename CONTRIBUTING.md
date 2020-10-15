@@ -9,13 +9,14 @@ at [GitHub issues] (make sure that there are no the same issue that is currently
 open).
 
 ### Proposing changes
-If you have an idea in mind that you think is a good for the project, don't
+If you have an idea in mind that you think is a good idea for the project, don't
 hesitate to open an issue at [GitHub issues] or at the [Facebook page] so we can
 discuss about it.
 
 ### Proposing code changes
-If you know how to use [Node.js], JavaScript, and [Git], you can help us improve
-the codes but make sure that you are following the guidelines when coding.
+If you know how to code in JavaScript with [Node.js] framework, and [Git].
+Please learn the project's code structure and you can just propose your changes.
+Make sure that you are following the guidelines when coding.
 
 #### Guidelines
  * When editting JavaScript (`*.js`, `*.mjs`) files, please follow the
