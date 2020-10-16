@@ -15,9 +15,10 @@ env:
   PASSWORD: sqlserver-password
   DATABASE: sqlserver-database
   MSSQL_SA_PASSWORD: ${{ env.PASSWORD }}
-  SQL_ENABLE_AGENT: y
   SQL_INSTALL_USER: ${{ env.USERNAME }}
   SQL_INSTALL_USER_PASSWORD: ${{ env.PASSWORD }}
+  SQL_ENABLE_AGENT: y
+  ACCEPT_EULA: y
   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
   APP_SECRET: ${{ secrets.APP_SECRET }}
   VALIDATION_TOKEN: ${{ secrets.VALIDATION_TOKEN }}

@@ -11,9 +11,10 @@ env:
     - PASSWORD=sqlserver-password
     - DATABASE=sqlserver-database
     - MSSQL_SA_PASSWORD=$PASSWORD
-    - SQL_ENABLE_AGENT='y'
     - SQL_INSTALL_USER=$USERNAME
     - SQL_INSTALL_USER_PASSWORD=$PASSWORD
+    - SQL_ENABLE_AGENT=y
+    - ACCEPT_EULA=y
 
 jobs:
   include:
