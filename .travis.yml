@@ -23,7 +23,7 @@ jobs:
     node_js: 12
 
 before_script:
-  - ./setup/ci.sh
+  - bash ./setup/ci.sh
 
 git:
   quiet: true
