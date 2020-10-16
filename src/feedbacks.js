@@ -21,9 +21,10 @@ const logger = require('./utils/log.js')
 const database = require('./database.js')
 const users = require('./users.js')
 
-const types = {
-  feedback: sql.NVarChar(sql.MAX)
-}
+const types = [
+  ...users.types,
+  { name: 'feedback', type: sql.NVarChar(sql.MAX) }
+]
 
 /**
  *  Returns all recorded feedbacks
@@ -38,16 +39,6 @@ async function getFeedbacks () {
   }
 }
 
-const logPS = new sql.PreparedStatement()
-const logQuery = 'INSERT INTO feedbacks (psid, name, message) ' +
-  'VALUES (@psid, @name, @message)'
-
-logPS.input('psid', users.types.psid)
-logPS.input('name', users.types.name)
-logPS.input('message', types.feedback)
-
-database.addPS(logPS)
-
 /**
  *  Logging feedbacks to database
  *
@@ -59,14 +50,16 @@ database.addPS(logPS)
  */
 async function logFeedback (psid, name, message) {
   await sql.connect()
-  if (!logPS.prepared) await logPS.prepare(logQuery)
 
-  logPS.execute({ psid, name, message }, (error, result) => {
-    if (!error) return
+  const query = 'INSERT INTO feedbacks (psid, name, message) ' +
+    'VALUES (@psid, @name, @message)'
 
+  try {
+    await database.prepareExec(query, types, { psid, name, message })
+  } catch (error) {
     logger.write(`Unable to log feedback: ${psid}: ${message}`, 1)
     logger.write(error, 1)
-  })
+  }
 }
 
 /**

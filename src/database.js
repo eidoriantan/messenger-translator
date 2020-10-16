@@ -75,16 +75,34 @@ async function query (query, inputs = {}) {
   return result
 }
 
-const preparedStatements = []
-
 /**
- *  Adds `PreparedStatement` to be unprepared after close
- *  @param {object} ps    PreparedStatement instance
- *  @return void
+ *  Prepares then execute a statement
+ *
+ *  @param {string} query       Query string
+ *  @param {object[]} inputs    Array of input object
+ *  @param {object} values      Values object
+ *
+ *  @return {object}
  */
-function addPS (ps) {
-  if (ps instanceof sql.PreparedStatement) preparedStatements.push(ps)
-  else throw new TypeError('Argument is not an instance of `PreparedStatement`')
+async function prepareExec (query, inputs = [], values = {}) {
+  const ps = new sql.PreparedStatement()
+  inputs.forEach(input => {
+    const { name, type } = input
+    ps.input(name, type)
+  })
+
+  return new Promise((resolve, reject) => {
+    ps.prepare(query, error => {
+      if (error) return reject(error)
+
+      ps.execute(values, (error, result) => {
+        if (error) reject(error)
+
+        ps.unprepare()
+        resolve(result)
+      })
+    })
+  })
 }
 
 /**
@@ -92,18 +110,8 @@ function addPS (ps) {
  *  @return void
  */
 function close () {
-  console.log('Unpreparing statements')
-  preparedStatements.forEach(ps => {
-    ps.unprepare(error => {
-      if (!error) return
-
-      logger.write('Unable to call unprepare', 1)
-      logger.write(error, 1)
-    })
-  })
-
   console.log('SQL server is closing...')
   sql.close()
 }
 
-module.exports = { query, addPS, close }
+module.exports = { query, prepareExec, close }

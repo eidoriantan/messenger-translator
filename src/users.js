@@ -21,41 +21,13 @@ const logger = require('./utils/log.js')
 const database = require('./database.js')
 
 const table = process.env.DEVELOPMENT ? 'users_test' : 'users'
-const types = {
-  psid: sql.NVarChar(16),
-  language: sql.NVarChar(16),
-  locale: sql.NVarChar(16),
-  name: sql.NVarChar(255),
-  menu: sql.NVarChar(255)
-}
-
-const addPS = new sql.PreparedStatement()
-const getPS = new sql.PreparedStatement()
-const setPS = new sql.PreparedStatement()
-
-const addQuery = `INSERT INTO ${table} (psid, name, language, locale, menu)` +
-  'VALUES (@psid, @name, @language, @locale, @menu)'
-const getQuery = `SELECT * FROM ${table} WHERE psid=@psid`
-const setQuery = `UPDATE ${table} SET name=@name, language=@language, ` +
-  'locale=@locale, menu=@menu WHERE psid=@psid'
-
-addPS.input('psid', types.psid)
-addPS.input('name', types.name)
-addPS.input('language', types.language)
-addPS.input('locale', types.locale)
-addPS.input('menu', types.menu)
-
-getPS.input('psid', types.psid)
-
-setPS.input('psid', types.psid)
-setPS.input('name', types.name)
-setPS.input('language', types.language)
-setPS.input('locale', types.locale)
-setPS.input('menu', types.menu)
-
-database.addPS(addPS)
-database.addPS(getPS)
-database.addPS(setPS)
+const types = [
+  { name: 'psid', type: sql.NVarChar(16) },
+  { name: 'name', type: sql.NVarChar(255) },
+  { name: 'language', type: sql.NVarChar(16) },
+  { name: 'locale', type: sql.NVarChar(16) },
+  { name: 'menu', type: sql.NVarChar(255) }
+]
 
 /**
  *  Adds a user
@@ -67,7 +39,6 @@ database.addPS(setPS)
  */
 async function addUser (psid, profile) {
   await sql.connect()
-  if (!addPS.prepared) await addPS.prepare(addQuery)
 
   const userData = {
     psid,
@@ -77,8 +48,11 @@ async function addUser (psid, profile) {
     menu: ['en', 'ja', '_help']
   }
 
+  const query = `INSERT INTO ${table} (psid, name, language, locale, menu)` +
+    'VALUES (@psid, @name, @language, @locale, @menu)'
+
   try {
-    await addPS.execute(userData)
+    await database.prepareExec(query, types, userData)
   } catch (error) {
     logger.write(`Unable to add user to database: ${psid}`, 1)
     logger.write(error, 1)
@@ -99,10 +73,10 @@ async function addUser (psid, profile) {
  */
 async function getUser (psid) {
   await sql.connect()
-  if (!getPS.prepared) await getPS.prepare(getQuery)
 
+  const query = `SELECT * FROM ${table} WHERE psid=@psid`
   try {
-    const result = await getPS.execute({ psid })
+    const result = await database.prepareExec(query, types, { psid })
     const parseUser = user => {
       user.menu = user.menu.split(',')
       return user
@@ -124,10 +98,12 @@ async function getUser (psid) {
  */
 async function setUser (user) {
   await sql.connect()
-  if (!setPS.prepared) await setPS.prepare(setQuery)
+
+  const query = `UPDATE ${table} SET name=@name, language=@language, ` +
+    'locale=@locale, menu=@menu WHERE psid=@psid'
 
   try {
-    await setPS.execute(user)
+    await database.prepareExec(query, types, user)
   } catch (error) {
     logger.write(`Unable to update user information: ${user.psid}`, 1)
     logger.write(error, 1)
