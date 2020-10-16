@@ -10,9 +10,9 @@ env:
     - USERNAME=sqlserver-username
     - PASSWORD=sqlserver-password
     - DATABASE=sqlserver-database
-    - MSSQL_SA_PASSWORD=$PASSWORD
-    - SQL_INSTALL_USER=$USERNAME
-    - SQL_INSTALL_USER_PASSWORD=$PASSWORD
+    - MSSQL_SA_PASSWORD=sqlserver-password
+    - SQL_INSTALL_USER=sqlserver-username
+    - SQL_INSTALL_USER_PASSWORD=sqlserver-password
     - SQL_ENABLE_AGENT=y
     - ACCEPT_EULA=y
 
