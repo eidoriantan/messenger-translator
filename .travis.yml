@@ -6,6 +6,14 @@ branches:
 env:
   global:
     - PORT=3000
+    - SERVER=localhost
+    - USERNAME=sqlserver-username
+    - PASSWORD=sqlserver-password
+    - DATABASE=sqlserver-database
+    - MSSQL_SA_PASSWORD=$PASSWORD
+    - SQL_ENABLE_AGENT='y'
+    - SQL_INSTALL_USER=$USERNAME
+    - SQL_INSTALL_USER_PASSWORD=$PASSWORD
 
 jobs:
   include:
@@ -13,6 +21,9 @@ jobs:
     node_js: 10
   - name: "Node.js 12.x"
     node_js: 12
+
+before_script:
+  - ./setup/ci.sh
 
 git:
   quiet: true

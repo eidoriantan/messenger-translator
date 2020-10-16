@@ -10,14 +10,18 @@ on:
 env:
   CI: true
   PORT: 3000
+  SERVER: localhost
+  USERNAME: sqlserver-username
+  PASSWORD: sqlserver-password
+  DATABASE: sqlserver-database
+  MSSQL_SA_PASSWORD: ${{ env.PASSWORD }}
+  SQL_ENABLE_AGENT: y
+  SQL_INSTALL_USER: ${{ env.USERNAME }}
+  SQL_INSTALL_USER_PASSWORD: ${{ env.PASSWORD }}
   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
   APP_SECRET: ${{ secrets.APP_SECRET }}
   VALIDATION_TOKEN: ${{ secrets.VALIDATION_TOKEN }}
   PROXIES: ${{ secrets.PROXIES }}
-  SERVER: ${{ secrets.SERVER }}
-  USERNAME: ${{ secrets.USERNAME }}
-  PASSWORD: ${{ secrets.PASSWORD }}
-  DATABASE: ${{ secrets.DATABASE }}
   ORIGIN: ${{ secrets.ORIGIN }}
 
 jobs:
