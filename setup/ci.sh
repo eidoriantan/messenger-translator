@@ -22,4 +22,4 @@ export PATH="$PATH:/opt/mssql-tools/bin"
 # Connect to MSSQL Server
 echo "$id: Connecting to MSSQL Server..."
 sqlcmd -S $SERVER -U $USERNAME -P $PASSWORD -Q "CREATE DATABASE $DATABASE"
-sqlcmd -S $SERVER -U $USERNAME -P $PASSWORD -i ./database.sql
+sqlcmd -S $SERVER -U $USERNAME -P $PASSWORD -i ./setup/database.sql
