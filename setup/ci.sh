@@ -17,11 +17,17 @@ curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
 curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
 sudo apt-get update
 sudo apt-get install mssql-tools unixodbc-dev
-echo 'export PATH="$PATH:/opt/mssql-tools/bin"' | sudo tee -a ~/.bash_profile
-echo 'export PATH="$PATH:/opt/mssql-tools/bin"' | sudo tee -a ~/.bashrc
-source ~/.bashrc
+export PATH="$PATH:/opt/mssql-tools/bin"
 
 # Connect to MSSQL Server
+query="
+CREATE DATABASE $DATABASE
+CREATE LOGIN $USERNAME
+  WITH PASSWORD = '$PASSWORD';
+GO
+"
+
 echo "$script_id: Connecting to MSSQL Server..."
-sqlcmd -S $SERVER -U $USERNAME -xP $PASSWORD -Q "CREATE DATABASE $DATABASE"
+sqlcmd -S $SERVER -U $USERNAME -xP $PASSWORD -Q $query
 sqlcmd -S $SERVER -U $USERNAME -P $PASSWORD -i ./setup/database.sql
+systemctl status mssql-server --no-pager
