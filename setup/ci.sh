@@ -19,6 +19,9 @@ sudo apt-get update
 sudo apt-get install mssql-tools unixodbc-dev
 export PATH="$PATH:/opt/mssql-tools/bin"
 
+sudo ufw allow 1433/tcp
+sudo ufw reload
+
 # Connect to MSSQL Server
 query="
 CREATE DATABASE $DATABASE
