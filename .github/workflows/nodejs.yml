@@ -12,9 +12,9 @@ env:
   PORT: 3000
   SERVER: localhost
   USERNAME: eidoriantan
-  PASSWORD: SQLServer2019-password
-  DATABASE: sqlserver-database
-  MSSQL_SA_PASSWORD: SQLServer2019-password
+  PASSWORD: SQLServer2019_password
+  DATABASE: sqlserver_database
+  MSSQL_SA_PASSWORD: SQLServer2019_password
   SQL_ENABLE_AGENT: y
   ACCEPT_EULA: y
   ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
