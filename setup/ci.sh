@@ -25,5 +25,5 @@ sudo systemctl restart mssql-server
 
 # Connect to MSSQL Server
 echo "$script_id: Connecting to MSSQL Server..."
-sqlcmd -S $SERVER -U SA -P $PASSWORD -i ./setup/database.sql
+sqlcmd -S $SERVER -U $USERNAME -P $PASSWORD -i ./setup/database.sql
 systemctl status mssql-server --no-pager
