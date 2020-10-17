@@ -21,8 +21,7 @@ const database = require('../src/database.js')
 const users = require('../src/users.js')
 const feedbacks = require('../src/feedbacks.js')
 
-const { env } = process
-const TEST_USERID = env.TRAVIS ? env.TRAVIS_JOB_ID : env.TEST_USERID
+const TEST_USERID = process.env.TEST_USERID
 if (!TEST_USERID) throw new Error('Test user ID was not defined')
 
 describe('User Database', () => {

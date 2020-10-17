@@ -5,7 +5,16 @@ branches:
 
 env:
   global:
+    - CI=true
     - PORT=3000
+    - SERVER=localhost
+    - USERNAME=SA
+    - PASSWORD=SQLServer2019_password
+    - DATABASE=master
+    - MSSQL_SA_PASSWORD=SQLServer2019_password
+    - SQL_ENABLE_AGENT=y
+    - ACCEPT_EULA=y
+    - TEST_USERID=0000000000000000
 
 jobs:
   include:
@@ -13,6 +22,12 @@ jobs:
     node_js: 10
   - name: "Node.js 12.x"
     node_js: 12
+
+before_script:
+  - bash ./setup/ci/pre-script.sh
+
+after_script:
+  - bash ./setup/ci/post-script.sh
 
 git:
   quiet: true

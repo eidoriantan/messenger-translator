@@ -29,21 +29,6 @@ BEGIN
     language NVARCHAR(16) NOT NULL,
     locale NVARCHAR(16) NOT NULL,
     menu NVARCHAR(255) NOT NULL,
-    CONSTRAINT pk_psid_prod PRIMARY KEY (psid)
-  )
-END
-
-/**
- *  Setting up a table for testing
- */
-IF OBJECT_ID(N'dbo.users_test', N'U') IS NULL
-BEGIN
-  CREATE TABLE users_test (
-    psid NVARCHAR(16) NOT NULL,
-    name NVARCHAR(255) NOT NULL,
-    language NVARCHAR(16) NOT NULL,
-    locale NVARCHAR(16) NOT NULL,
-    menu NVARCHAR(255) NOT NULL,
     CONSTRAINT pk_psid PRIMARY KEY (psid)
   )
 END

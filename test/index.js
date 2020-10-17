@@ -22,8 +22,6 @@ const request = require('../src/utils/request.js')
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const APP_SECRET = process.env.APP_SECRET
 
-process.env.DEVELOPMENT = true
-
 describe('Facebook', () => {
   it('Debug ACCESS_TOKEN', async () => {
     const endpoint = 'https://graph.facebook.com/v8.0/debug_token'
