@@ -16,18 +16,6 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**
- *  Create new database for newly created SQL Server
- */
-IF ('$(CI)' = 'true')
-BEGIN
-  CREATE DATABASE '$(DATABASE)'
-  GO
-
-  USE '$(DATABASE)'
-  GO
-END
-
 BEGIN TRANSACTION Tables
 
 /**

@@ -10,7 +10,7 @@ env:
     - SERVER=localhost
     - USERNAME=SA
     - PASSWORD=SQLServer2019_password
-    - DATABASE=TestDB
+    - DATABASE=master
     - MSSQL_SA_PASSWORD=SQLServer2019_password
     - SQL_ENABLE_AGENT=y
     - ACCEPT_EULA=y
