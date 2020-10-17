@@ -29,8 +29,6 @@ const ORIGIN = process.env.ORIGIN
 const DEBUG = process.env.DEBUG || false
 const requests = {}
 
-if (!PROXIES) throw new Error('Proxies are not defined')
-
 /**
  *  Translates the text.
  *
@@ -42,13 +40,17 @@ if (!PROXIES) throw new Error('Proxies are not defined')
 module.exports = async function (text, user) {
   let proxies = PROXIES.split(',')
   let result = null
+  let last = false
 
   if (DEBUG) console.log('Calling Google Translate to translate the text')
   while (result === null) {
-    if (proxies.length === 0) break
+    if (proxies.length === 0) {
+      if (last) break
+      else last = true
+    }
 
     const random = Math.floor(Math.random() * proxies.length)
-    const proxy = proxies[random]
+    const proxy = proxies.length === 0 ? null : proxies[random]
     proxies = proxies.filter(element => proxy !== element)
 
     if (DEBUG) console.log(`Trying proxy server: ${proxy}`)
@@ -57,7 +59,7 @@ module.exports = async function (text, user) {
     if (user.language === 'zh') user.language = 'zh-CN'
     try {
       result = await translate(text, { to: user.language, client: 'gtx' }, {
-        request: (options, callback) => {
+        request: proxy === null ? undefined : (options, callback) => {
           /**
            *  Wrapper for proxying using `cors-anywhere`
            *  @see https://github.com/Rob--W/cors-anywhere
