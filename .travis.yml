@@ -24,10 +24,10 @@ jobs:
     node_js: 12
 
 before_script:
-  - bash ./setup/ci.sh
+  - bash ./setup/ci/pre-script.sh
 
 after_script:
-  - sudo systemctl stop mssql-server
+  - bash ./setup/ci/post-script.sh
 
 git:
   quiet: true
