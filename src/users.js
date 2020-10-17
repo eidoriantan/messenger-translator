@@ -20,7 +20,6 @@ const sql = require('mssql')
 const logger = require('./utils/log.js')
 const database = require('./database.js')
 
-const table = process.env.DEVELOPMENT ? 'users_test' : 'users'
 const types = [
   { name: 'psid', type: sql.NVarChar(16) },
   { name: 'name', type: sql.NVarChar(255) },
@@ -48,7 +47,7 @@ async function addUser (psid, profile) {
     menu: ['en', 'ja', '_help']
   }
 
-  const query = `INSERT INTO ${table} (psid, name, language, locale, menu)` +
+  const query = 'INSERT INTO users (psid, name, language, locale, menu)' +
     'VALUES (@psid, @name, @language, @locale, @menu)'
 
   try {
@@ -74,7 +73,7 @@ async function addUser (psid, profile) {
 async function getUser (psid) {
   await sql.connect()
 
-  const query = `SELECT * FROM ${table} WHERE psid=@psid`
+  const query = 'SELECT * FROM users WHERE psid=@psid'
   try {
     const result = await database.prepareExec(query, types, { psid })
     const parseUser = user => {
@@ -99,7 +98,7 @@ async function getUser (psid) {
 async function setUser (user) {
   await sql.connect()
 
-  const query = `UPDATE ${table} SET name=@name, language=@language, ` +
+  const query = 'UPDATE users SET name=@name, language=@language, ' +
     'locale=@locale, menu=@menu WHERE psid=@psid'
 
   try {
@@ -118,7 +117,7 @@ async function setUser (user) {
  */
 async function deleteUser (psid) {
   try {
-    await database.query(`DELETE FROM ${table} WHERE psid=@psid`, {
+    await database.query('DELETE FROM users WHERE psid=@psid', {
       psid: {
         type: types.psid,
         value: psid
