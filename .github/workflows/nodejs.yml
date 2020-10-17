@@ -11,7 +11,7 @@ env:
   CI: true
   PORT: 3000
   SERVER: localhost
-  USERNAME: eidoriantan
+  USERNAME: SA
   PASSWORD: SQLServer2019-password
   DATABASE: sqlserver-database
   MSSQL_SA_PASSWORD: SQLServer2019-password
