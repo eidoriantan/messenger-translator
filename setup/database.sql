@@ -16,23 +16,19 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-DECLARE @ci NVARCHAR(5)
-SET @ci = $(CI)
-
 /**
  *  Create new database for newly created SQL Server
  */
-IF @ci = 'true'
-  DECLARE @database NVARCHAR(255)
-  SET @database = $(DATABASE)
-  DECLARE @username NVARCHAR(255)
-  SET @username = $(USERNAME)
-  DECLARE @password NVARCHAR(255)
-  SET @password = $(PASSWORD)
+IF $(CI) = 'true'
+BEGIN
+  CREATE DATABASE $(DATABASE);
+  GO
 
-  CREATE DATABASE @database
-  CREATE LOGIN @username WITH PASSWORD=@password
-  USE @database
+  CREATE LOGIN $(USERNAME) WITH PASSWORD=$(PASSWORD);
+  GO
+
+  USE $(DATABASE)
+END
 
 BEGIN TRANSACTION Tables
 
