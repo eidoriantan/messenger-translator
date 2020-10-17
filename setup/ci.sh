@@ -23,11 +23,11 @@ export PATH="$PATH:/opt/mssql-tools/bin"
 query="
 CREATE DATABASE $DATABASE
 CREATE LOGIN $USERNAME
-  WITH PASSWORD = '$PASSWORD';
+  WITH PASSWORD = N'$PASSWORD';
 GO
 "
 
 echo "$script_id: Connecting to MSSQL Server..."
-sqlcmd -S $SERVER -U $USERNAME -xP $PASSWORD -Q $query
-sqlcmd -S $SERVER -U $USERNAME -P $PASSWORD -i ./setup/database.sql
-systemctl status mssql-server --no-pager
+sqlcmd -S $SERVER -U SA -P $PASSWORD -Q $query
+sqlcmd -S $SERVER -U SA -P $PASSWORD -i ./setup/database.sql
+sudo systemctl status mssql-server --no-pager
