@@ -5,6 +5,7 @@ branches:
 
 env:
   global:
+    - CI=true
     - PORT=3000
     - SERVER=localhost
     - USERNAME=eidoriantan

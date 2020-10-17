@@ -23,18 +23,6 @@ sudo ufw allow 1433/tcp
 sudo ufw reload
 
 # Connect to MSSQL Server
-query="
-CREATE DATABASE $DATABASE;
-GO
-
-CREATE LOGIN $USERNAME WITH PASSWORD = N'$PASSWORD';
-GO
-
-CREATE USER $USERNAME FOR LOGIN $USERNAME;
-GO
-"
-
 echo "$script_id: Connecting to MSSQL Server..."
-sqlcmd -S $SERVER -U SA -P $PASSWORD -Q "$query"
 sqlcmd -S $SERVER -U SA -P $PASSWORD -i ./setup/database.sql
 systemctl status mssql-server --no-pager
