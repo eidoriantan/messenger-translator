@@ -19,9 +19,9 @@
 /**
  *  Create new database for newly created SQL Server
  */
-IF $(CI) = 'true'
+IF ('$(CI)' = 'true')
 BEGIN
-  CREATE DATABASE $(DATABASE);
+  CREATE DATABASE $(DATABASE)
   GO
 
   USE $(DATABASE)
@@ -41,7 +41,7 @@ BEGIN
     language NVARCHAR(16) NOT NULL,
     locale NVARCHAR(16) NOT NULL,
     menu NVARCHAR(255) NOT NULL,
-    CONSTRAINT pk_psid_prod PRIMARY KEY (psid)
+    CONSTRAINT pk_psid PRIMARY KEY (psid)
   )
 END
 
