@@ -21,20 +21,19 @@ const database = require('../src/database.js')
 const users = require('../src/users.js')
 const feedbacks = require('../src/feedbacks.js')
 
-const TEST_USERID = process.env.TEST_USERID
-if (!TEST_USERID) throw new Error('Test user ID was not defined')
+const userId = '0000000000000000'
 
 describe('User Database', () => {
   let testUser = null
 
   it('Adds user', async () => {
-    const userData = await users.addUser(TEST_USERID, {
-      psid: TEST_USERID,
+    const userData = await users.addUser(userId, {
+      psid: userId,
       name: 'Test Name',
       locale: 'en_US'
     })
 
-    userData.should.containEql({ psid: TEST_USERID })
+    userData.should.containEql({ psid: userId })
     userData.should.containEql({ name: 'Test Name' })
     userData.should.containEql({ language: 'en' })
     userData.should.containEql({ locale: 'en_US' })
@@ -56,7 +55,7 @@ describe('User Database', () => {
   })
 
   it('Logs messages', async () => {
-    await feedbacks.logFeedback(TEST_USERID, 'test', 'DELETE THIS')
+    await feedbacks.logFeedback(userId, 'test', 'DELETE THIS')
   })
 
   after(async () => {
