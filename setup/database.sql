@@ -21,10 +21,10 @@
  */
 IF ('$(CI)' = 'true')
 BEGIN
-  CREATE DATABASE $(DATABASE)
+  CREATE DATABASE '$(DATABASE)'
   GO
 
-  USE $(DATABASE)
+  USE '$(DATABASE)'
   GO
 END
 
