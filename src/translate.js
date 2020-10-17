@@ -24,8 +24,8 @@ const logger = require('./utils/log.js')
 const replacer = require('./utils/replacer.js')
 const languages = require('./languages.js')
 
-const PROXIES = process.env.PROXIES
-const ORIGIN = process.env.ORIGIN
+const PROXIES = process.env.PROXIES || ''
+const ORIGIN = process.env.ORIGIN || ''
 const DEBUG = process.env.DEBUG || false
 const requests = {}
 
