@@ -43,4 +43,4 @@ jobs:
     - run: bash ./setup/ci.sh
     - run: npm ci
     - run: npm test
-    - run: systemctl stop mssql-server
+    - run: sudo systemctl stop mssql-server

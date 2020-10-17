@@ -26,7 +26,7 @@ before_script:
   - bash ./setup/ci.sh
 
 after_script:
-  - systemctl stop mssql-server
+  - sudo systemctl stop mssql-server
 
 git:
   quiet: true
