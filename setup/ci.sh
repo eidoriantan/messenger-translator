@@ -21,6 +21,7 @@ export PATH="$PATH:/opt/mssql-tools/bin"
 
 sudo ufw allow 1433/tcp
 sudo ufw reload
+sudo systemctl restart mssql-server
 
 # Connect to MSSQL Server
 echo "$script_id: Connecting to MSSQL Server..."
