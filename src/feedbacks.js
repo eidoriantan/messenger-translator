@@ -51,11 +51,11 @@ async function getFeedbacks () {
 async function logFeedback (psid, name, message) {
   await sql.connect()
 
-  const query = 'INSERT INTO feedbacks (psid, name, message) ' +
-    'VALUES (@psid, @name, @message)'
+  const query = 'INSERT INTO feedbacks (psid, name, feedback) ' +
+    'VALUES (@psid, @name, @feedback)'
 
   try {
-    await database.prepareExec(query, types, { psid, name, message })
+    await database.prepareExec(query, types, { psid, name, feedback: message })
   } catch (error) {
     logger.write(`Unable to log feedback: ${psid}: ${message}`, 1)
     logger.write(error, 1)
