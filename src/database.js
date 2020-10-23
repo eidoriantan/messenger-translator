@@ -52,27 +52,21 @@ sql.connect(config).then(() => {
  *
  *  @return {object}
  */
-async function query (query, inputs = {}) {
+async function query (query, inputs = []) {
   await sql.connect()
 
   const request = new sql.Request()
-  let result = null
-
-  for (const name in inputs) {
-    if (!Object.hasOwnProperty.call(inputs, name)) continue
-
-    const input = inputs[name]
-    request.input(name, input.type, input.value)
-  }
+  inputs.forEach(input => {
+    request.input(input.name, input.type, input.value)
+  })
 
   try {
-    result = await request.query(query)
+    return await request.query(query)
   } catch (error) {
     logger.write(`Unable to execute query: ${query}`, 1)
     logger.write(error, 1)
+    return null
   }
-
-  return result
 }
 
 /**

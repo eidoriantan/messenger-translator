@@ -36,6 +36,7 @@ async function getFeedbacks () {
   } catch (error) {
     logger.write('Unable to get all feedbacks', 1)
     logger.write(error, 1)
+    return null
   }
 }
 
@@ -55,11 +56,11 @@ async function logFeedback (psid, name, message) {
     'VALUES (@psid, @name, @message)'
 
   try {
-    await database.query(query, {
-      psid: { type: types.psid, value: psid },
-      name: { type: types.name, value: name },
-      message: { type: types.message, value: message }
-    })
+    await database.query(query, [
+      { name: 'psid', type: types.psid, value: psid },
+      { name: 'name', type: types.name, value: name },
+      { name: 'message', type: types.message, value: message }
+    ])
   } catch (error) {
     logger.write(`Unable to log feedback: ${psid}: ${message}`, 1)
     logger.write(error, 1)
@@ -74,9 +75,9 @@ async function logFeedback (psid, name, message) {
  */
 async function deleteFeedback (psid) {
   try {
-    await database.query('DELETE FROM feedbacks WHERE psid=@psid', {
-      psid: { type: types.psid, value: psid }
-    })
+    await database.query('DELETE FROM feedbacks WHERE psid=@psid', [
+      { name: 'psid', type: types.psid, value: psid }
+    ])
   } catch (error) {
     logger.write(`Unable to delete feedbacks with PSID: ${psid}`, 1)
     logger.write(error, 1)
