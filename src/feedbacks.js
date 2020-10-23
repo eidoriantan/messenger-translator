@@ -23,7 +23,7 @@ const users = require('./users.js')
 
 const types = {
   ...users.types,
-  feedback: sql.NVarChar(sql.MAX)
+  message: sql.NVarChar(sql.MAX)
 }
 
 /**
@@ -51,14 +51,14 @@ async function getFeedbacks () {
 async function logFeedback (psid, name, message) {
   await sql.connect()
 
-  const query = 'INSERT INTO feedbacks (psid, name, feedback) ' +
-    'VALUES (@psid, @name, @feedback)'
+  const query = 'INSERT INTO feedbacks (psid, name, message) ' +
+    'VALUES (@psid, @name, @message)'
 
   try {
     await database.query(query, {
       psid: { type: types.psid, value: psid },
       name: { type: types.name, value: name },
-      feedback: { type: types.feedback, value: message }
+      message: { type: types.message, value: message }
     })
   } catch (error) {
     logger.write(`Unable to log feedback: ${psid}: ${message}`, 1)
