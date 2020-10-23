@@ -76,36 +76,6 @@ async function query (query, inputs = {}) {
 }
 
 /**
- *  Prepares then execute a statement
- *
- *  @param {string} query       Query string
- *  @param {object[]} inputs    Array of input object
- *  @param {object} values      Values object
- *
- *  @return {object}
- */
-async function prepareExec (query, inputs = [], values = {}) {
-  const ps = new sql.PreparedStatement()
-  inputs.forEach(input => {
-    const { name, type } = input
-    ps.input(name, type)
-  })
-
-  return new Promise((resolve, reject) => {
-    ps.prepare(query, error => {
-      if (error) return reject(error)
-
-      ps.execute(values, (error, result) => {
-        if (error) reject(error)
-
-        ps.unprepare()
-        resolve(result)
-      })
-    })
-  })
-}
-
-/**
  *  Closes the SQL pool connection
  *  @return void
  */
@@ -114,4 +84,4 @@ function close () {
   sql.close()
 }
 
-module.exports = { query, prepareExec, close }
+module.exports = { query, close }

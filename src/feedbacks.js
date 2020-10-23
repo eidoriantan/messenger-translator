@@ -21,10 +21,10 @@ const logger = require('./utils/log.js')
 const database = require('./database.js')
 const users = require('./users.js')
 
-const types = [
+const types = {
   ...users.types,
-  { name: 'feedback', type: sql.NVarChar(sql.MAX) }
-]
+  feedback: sql.NVarChar(sql.MAX)
+}
 
 /**
  *  Returns all recorded feedbacks
@@ -55,7 +55,11 @@ async function logFeedback (psid, name, message) {
     'VALUES (@psid, @name, @feedback)'
 
   try {
-    await database.prepareExec(query, types, { psid, name, feedback: message })
+    await database.query(query, {
+      psid: { type: types.psid, value: psid },
+      name: { type: types.name, value: name },
+      feedback: { type: types.feedback, value: message }
+    })
   } catch (error) {
     logger.write(`Unable to log feedback: ${psid}: ${message}`, 1)
     logger.write(error, 1)
@@ -71,10 +75,7 @@ async function logFeedback (psid, name, message) {
 async function deleteFeedback (psid) {
   try {
     await database.query('DELETE FROM feedbacks WHERE psid=@psid', {
-      psid: {
-        type: types.psid,
-        value: psid
-      }
+      psid: { type: types.psid, value: psid }
     })
   } catch (error) {
     logger.write(`Unable to delete feedbacks with PSID: ${psid}`, 1)

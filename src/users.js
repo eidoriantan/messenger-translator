@@ -20,13 +20,13 @@ const sql = require('mssql')
 const logger = require('./utils/log.js')
 const database = require('./database.js')
 
-const types = [
-  { name: 'psid', type: sql.NVarChar(16) },
-  { name: 'name', type: sql.NVarChar(255) },
-  { name: 'language', type: sql.NVarChar(16) },
-  { name: 'locale', type: sql.NVarChar(16) },
-  { name: 'menu', type: sql.NVarChar(255) }
-]
+const types = {
+  psid: sql.NVarChar(16),
+  name: sql.NVarChar(255),
+  language: sql.NVarChar(16),
+  locale: sql.NVarChar(16),
+  menu: sql.NVarChar(255)
+}
 
 /**
  *  Adds a user
@@ -51,7 +51,13 @@ async function addUser (psid, profile) {
     'VALUES (@psid, @name, @language, @locale, @menu)'
 
   try {
-    await database.prepareExec(query, types, userData)
+    await database.query(query, {
+      psid: { type: types.psid, value: userData.psid },
+      name: { type: types.name, value: userData.name },
+      language: { type: types.language, value: userData.language },
+      locale: { type: types.locale, value: userData.locale },
+      menu: { type: types.menu, value: userData.menu }
+    })
   } catch (error) {
     logger.write(`Unable to add user to database: ${psid}`, 1)
     logger.write(error, 1)
@@ -75,7 +81,9 @@ async function getUser (psid) {
 
   const query = 'SELECT * FROM users WHERE psid=@psid'
   try {
-    const result = await database.prepareExec(query, types, { psid })
+    const result = await database.query(query, {
+      psid: { type: types.psid, value: psid }
+    })
     const parseUser = user => {
       user.menu = user.menu.split(',')
       return user
@@ -102,7 +110,13 @@ async function setUser (user) {
     'locale=@locale, menu=@menu WHERE psid=@psid'
 
   try {
-    await database.prepareExec(query, types, user)
+    await database.query(query, {
+      psid: { type: types.psid, value: user.psid },
+      name: { type: types.name, value: user.name },
+      language: { type: types.language, value: user.language },
+      locale: { type: types.locale, value: user.locale },
+      menu: { type: types.menu, value: user.menu }
+    })
   } catch (error) {
     logger.write(`Unable to update user information: ${user.psid}`, 1)
     logger.write(error, 1)
@@ -118,10 +132,7 @@ async function setUser (user) {
 async function deleteUser (psid) {
   try {
     await database.query('DELETE FROM users WHERE psid=@psid', {
-      psid: {
-        type: types.psid,
-        value: psid
-      }
+      psid: { type: types.psid, value: psid }
     })
   } catch (error) {
     logger.write(`Unable to delete user from database: ${psid}`, 1)
