@@ -58,8 +58,11 @@ module.exports = async function (text, user) {
 
     if (user.language === 'zh') user.language = 'zh-CN'
     try {
-      result = await translate(text, { to: user.language, client: 'gtx' }, {
-        request: proxy === null ? undefined : (options, callback) => {
+      const options = { to: user.language, client: 'gtx' }
+      let request
+
+      if (proxy !== null) {
+        request = (options, callback) => {
           /**
            *  Wrapper for proxying using `cors-anywhere`
            *  @see https://github.com/Rob--W/cors-anywhere
@@ -77,8 +80,9 @@ module.exports = async function (text, user) {
 
           return https.request(url, opt, callback)
         }
-      })
+      }
 
+      result = await translate(text, options, { request })
       if (result !== null) requests[proxy].success++
     } catch (e) {
       if (result) return result
@@ -103,7 +107,8 @@ module.exports = async function (text, user) {
 
   const language = languages[user.language].name
   const from = languages[result.from.language.iso]
-    ? languages[result.from.language.iso].name : 'Unknown'
+    ? languages[result.from.language.iso].name
+    : 'Unknown'
   const template = localeStrings(user.locale, 'body')
   const replace = {
     TO: language,
