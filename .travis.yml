@@ -21,6 +21,8 @@ jobs:
     node_js: 10
   - name: "Node.js 12.x"
     node_js: 12
+  - name: "Node.js 14.x"
+    node_js: 14
 
 before_script:
   - bash ./setup/ci/pre-script.sh
