@@ -33,7 +33,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "lint": "eslint . --ext .js",
+    "lint": "eslint .",
     "postlint": "git log -1 --format=%B | commitlint",
     "pretest": "npm run lint",
     "test": "mocha test/index.js"
