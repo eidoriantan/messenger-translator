@@ -3,6 +3,7 @@
 
 # Ignore Node-generated files
 node_modules/
+debug.log
 
 # App-generated files
 logs/
