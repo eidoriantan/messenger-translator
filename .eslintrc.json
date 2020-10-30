@@ -10,7 +10,9 @@
     "node": true
   },
   "extends": "standard",
-  "rules": { "max-len": ["error", 80] },
-  "noInlineConfig": true,
-  "ignorePatterns": ["node_modules"]
+  "rules": {
+    "import/no-duplicates": "off",
+    "max-len": ["error", 80]
+  },
+  "noInlineConfig": true
 }
