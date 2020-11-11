@@ -16,6 +16,8 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/* eslint-env mocha */
+
 require('should')
 const database = require('../src/database.js')
 const users = require('../src/users.js')

@@ -1,4 +1,3 @@
-
 /**
  *  Messenger Translator
  *  Copyright (C) 2020 Adriane Justine Tan
@@ -16,6 +15,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+/* eslint-env mocha */
 
 require('should')
 const translate = require('../src/translate.js')
