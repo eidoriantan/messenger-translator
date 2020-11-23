@@ -10,10 +10,10 @@ An open-sourced Translator bot app built for Facebook's [Messenger], powered by
 a like and review.
 
 ## Features
- * Interactive messaging
- * Auto-language detection
- * Auto-correct spelling
- * Character romanization
+* Interactive messaging
+* Auto-language detection
+* Auto-correct spelling
+* Character romanization
 
 ### Support
 You can show your support on this project by liking the page and giving it a
