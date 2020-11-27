@@ -21,7 +21,6 @@ Make sure that you are following the guidelines when coding.
 #### Guidelines
 * When editting JavaScript (`*.js`, `*.mjs`) files, please follow the
 [standard.js styleguide];
-* Extending the styleguide, please limit the rowlength to 80 characters;
 * When committing, the commit message should follow the [Conventional Commits].
 You can run `npm run commitlint` to test the latest commit message.
 
