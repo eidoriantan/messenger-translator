@@ -76,7 +76,10 @@ module.exports = {
   kk: { name: 'Kazakh', regex: /^(kk|Kazakh)$/i },
   km: { name: 'Khmer', regex: /^(km|Khmer)$/i },
   ko: { name: 'Korean', regex: /^(ko|Korean)$/i },
-  ku: { name: 'Kurdish (Kurmanji)', regex: /^(ku|Kurdish \(Kurmanji\))$/i },
+  ku: {
+    name: 'Kurdish (Kurmanji)',
+    regex: /^(ku|Kurdish \(Kurmanji\)|Kurdish|Kurmanji)$/i
+  },
   ky: { name: 'Kyrgyz', regex: /^(ky|Kyrgyz)$/i },
   lo: { name: 'Lao', regex: /^(lo|Lao)$/i },
   la: { name: 'Latin', regex: /^(la|Latin)$/i },
@@ -91,7 +94,10 @@ module.exports = {
   mi: { name: 'Maori', regex: /^(mi|Maori)$/i },
   mr: { name: 'Marathi', regex: /^(mr|Marathi)$/i },
   mn: { name: 'Mongolian', regex: /^(mn|Mongolian)$/i },
-  my: { name: 'Myanmar (Burmese)', regex: /^(my|Myanmar \(Burmese\))$/i },
+  my: {
+    name: 'Myanmar (Burmese)',
+    regex: /^(my|Myanmar \(Burmese\)|Myanmar|Burmese)$/i
+  },
   ne: { name: 'Nepali', regex: /^(ne|Nepali)$/i },
   no: { name: 'Norwegian', regex: /^(no|Norwegian)$/i },
   ps: { name: 'Pashto', regex: /^(ps|Pashto)$/i },
