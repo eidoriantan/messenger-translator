@@ -26,7 +26,7 @@ const types = {
   language: sql.NVarChar(16),
   locale: sql.NVarChar(16),
   menu: sql.NVarChar(255),
-  message: sql.Int(1)
+  message: sql.TinyInt
 }
 
 /**

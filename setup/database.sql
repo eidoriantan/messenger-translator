@@ -29,7 +29,7 @@ BEGIN
     language NVARCHAR(16) NOT NULL,
     locale NVARCHAR(16) NOT NULL,
     menu NVARCHAR(255) NOT NULL,
-    message INT(1) NOT NULL,
+    message TINYINT NOT NULL,
     CONSTRAINT pk_psid PRIMARY KEY (psid)
   )
 END
