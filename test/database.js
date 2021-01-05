@@ -40,6 +40,7 @@ describe('User Database', () => {
     userData.should.containEql({ language: 'en' })
     userData.should.containEql({ locale: 'en_US' })
     userData.should.containEql({ menu: ['en', 'ja', '_help'] })
+    userData.should.containEql({ message: 0 })
     testUser = userData
   })
 

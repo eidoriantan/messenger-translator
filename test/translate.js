@@ -18,7 +18,7 @@
 
 /* eslint-env mocha */
 
-require('should')
+const should = require('should')
 const translate = require('../src/translate.js')
 
 describe('Translator', () => {
@@ -29,6 +29,16 @@ describe('Translator', () => {
     })
 
     result.includes('こんにちは').should.be.true()
+  })
+
+  it('Message only', async () => {
+    const message = 'こんにちは\r\n*pronunciation*: Kon\'nichiwa'
+    const result = await translate('hello', {
+      language: 'ja',
+      message: 1
+    })
+
+    should.strictEqual(result, message)
   })
 
   it('Change locale', async () => {

@@ -222,6 +222,7 @@ async function receivedMessage (event) {
 
   const langRegex = /^(-?-?lang(uage)? (.+))$/i
   const feedback = /^(-?-?(feedback|fb) (.+))$/i
+  const messageOnly = /^(-?-?message-only)$/i
   let response = ''
 
   if (DEBUG) {
@@ -239,8 +240,12 @@ async function receivedMessage (event) {
   } else if (text.match(feedback) !== null) {
     const message = feedback.exec(text)[3]
     await feedbacks.logFeedback(user.psid, user.name, message)
-
     response = localeStrings(user.locale, 'feedback_confirmation')
+  } else if (text.match(messageOnly)) {
+    user.message = user.message === 0 ? 1 : 0
+    await users.setUser(user)
+    const id = 'message_only_' + (user.message === 1 ? 'enabled' : 'disabled')
+    response = localeStrings(user.locale, id)
   } else response = await translate(text, user)
 
   const result = await send(user.psid, response)
