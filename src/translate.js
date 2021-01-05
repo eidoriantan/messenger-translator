@@ -105,18 +105,22 @@ module.exports = async function (text, user) {
     result.text += `\r\n*pronunciation*: ${pronunciation}`
   }
 
-  const language = languages[user.language].name
-  const from = languages[result.from.language.iso]
-    ? languages[result.from.language.iso].name
-    : 'Unknown'
-  const template = localeStrings(user.locale, 'body')
-  const replace = {
-    TO: language,
-    FROM: from,
-    TEXT: result.text
-  }
+  if (user.message === 1) {
+    return result.text
+  } else {
+    const language = languages[user.language].name
+    const from = languages[result.from.language.iso]
+      ? languages[result.from.language.iso].name
+      : 'Unknown'
+    const template = localeStrings(user.locale, 'body')
+    const replace = {
+      TO: language,
+      FROM: from,
+      TEXT: result.text
+    }
 
-  return replacer(template, replace).trim()
+    return replacer(template, replace).trim()
+  }
 }
 
 /**

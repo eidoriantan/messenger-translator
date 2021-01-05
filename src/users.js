@@ -25,7 +25,8 @@ const types = {
   name: sql.NVarChar(255),
   language: sql.NVarChar(16),
   locale: sql.NVarChar(16),
-  menu: sql.NVarChar(255)
+  menu: sql.NVarChar(255),
+  message: sql.TinyInt
 }
 
 /**
@@ -44,11 +45,13 @@ async function addUser (psid, profile) {
     name: profile.name,
     language: 'en',
     locale: profile.locale,
-    menu: ['en', 'ja', '_help']
+    menu: ['en', 'ja', '_help'],
+    message: 0
   }
 
-  const query = 'INSERT INTO users (psid, name, language, locale, menu)' +
-    'VALUES (@psid, @name, @language, @locale, @menu)'
+  const query = 'INSERT INTO users ' +
+    '(psid, name, language, locale, menu, message) VALUES ' +
+    '(@psid, @name, @language, @locale, @menu, @message)'
 
   try {
     await database.query(query, [
@@ -56,7 +59,8 @@ async function addUser (psid, profile) {
       { name: 'name', type: types.name, value: userData.name },
       { name: 'language', type: types.language, value: userData.language },
       { name: 'locale', type: types.locale, value: userData.locale },
-      { name: 'menu', type: types.menu, value: userData.menu }
+      { name: 'menu', type: types.menu, value: userData.menu },
+      { name: 'message', type: types.message, value: userData.message }
     ])
   } catch (error) {
     logger.write(`Unable to add user to database: ${psid}`, 1)
@@ -107,7 +111,7 @@ async function setUser (user) {
   await sql.connect()
 
   const query = 'UPDATE users SET name=@name, language=@language, ' +
-    'locale=@locale, menu=@menu WHERE psid=@psid'
+    'locale=@locale, menu=@menu, message=@message WHERE psid=@psid'
 
   try {
     await database.query(query, [
@@ -115,7 +119,8 @@ async function setUser (user) {
       { name: 'name', type: types.name, value: user.name },
       { name: 'language', type: types.language, value: user.language },
       { name: 'locale', type: types.locale, value: user.locale },
-      { name: 'menu', type: types.menu, value: user.menu }
+      { name: 'menu', type: types.menu, value: user.menu },
+      { name: 'message', type: types.message, value: user.message }
     ])
   } catch (error) {
     logger.write(`Unable to update user information: ${user.psid}`, 1)
