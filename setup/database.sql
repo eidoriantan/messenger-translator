@@ -40,7 +40,7 @@ END
 IF OBJECT_ID(N'dbo.feedbacks', N'U') IS NULL
 BEGIN
   CREATE TABLE feedbacks (
-    psid NVARCHAR(15) NOT NULL,
+    psid NVARCHAR(16) NOT NULL,
     name NVARCHAR(255) NOT NULL,
     message NVARCHAR(MAX) NOT NULL
   )
