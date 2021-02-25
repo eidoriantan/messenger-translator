@@ -84,21 +84,18 @@ async function getUser (psid) {
   await sql.connect()
 
   const query = 'SELECT * FROM users WHERE psid=@psid'
-  try {
-    const result = await database.query(query, [
-      { name: 'psid', type: types.psid, value: psid }
-    ])
-    const parseUser = user => {
-      user.menu = user.menu.split(',')
-      return user
-    }
-
-    return result.recordset.length > 0 ? parseUser(result.recordset[0]) : null
-  } catch (error) {
-    logger.write(`Unable to get user information: ${psid}`, 1)
-    logger.write(error, 1)
-    return null
+  const parseUser = user => {
+    user.menu = user.menu.split(',')
+    return user
   }
+
+  const result = await database.query(query, [
+    { name: 'psid', type: types.psid, value: psid }
+  ])
+
+  return result !== null && result.recordset.length > 0
+    ? parseUser(result.recordset[0])
+    : null
 }
 
 /**
