@@ -25,7 +25,7 @@ const PASSWORD = process.env.PASSWORD
 const DATABASE = process.env.DATABASE
 
 if (!SERVER || !USERNAME || !PASSWORD || !DATABASE) {
-  throw new Error('Server connection configuration was not defined')
+  throw new Error('SQL Server connection configuration was not defined')
 }
 
 console.log('Connecting to SQL server...')
