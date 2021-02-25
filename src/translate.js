@@ -42,6 +42,11 @@ module.exports = async function (text, user) {
   let result = null
   let last = false
 
+  if (text.length > 750) {
+    result = localeStrings(user.locale, 'long_message')
+    return result
+  }
+
   if (DEBUG) console.log('Calling Google Translate to translate the text')
   while (result === null) {
     if (proxies.length === 0) {
@@ -73,11 +78,7 @@ module.exports = async function (text, user) {
             timeout: 20000
           }
 
-          if (url.length > 2000) {
-            result = localeStrings(user.locale, 'long_message')
-            throw new Error('URI is too long')
-          } else requests[proxy].total++
-
+          requests[proxy].total++
           return https.request(url, opt, callback)
         }
       }
@@ -85,8 +86,6 @@ module.exports = async function (text, user) {
       result = await translate(text, options, { request })
       if (result !== null) requests[proxy].success++
     } catch (e) {
-      if (result) return result
-
       logger.write(`Proxy server (${proxy}) is not working`, 1)
       logger.write(e, 1)
     }
