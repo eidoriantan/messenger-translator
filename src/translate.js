@@ -17,15 +17,13 @@
  */
 
 const translate = require('@vitalets/google-translate-api')
-const https = require('https')
-
 const localeStrings = require('./locale/')
 const logger = require('./utils/log.js')
 const replacer = require('./utils/replacer.js')
+const request = require('./utils/request.js')
 const languages = require('./languages.js')
 
 const PROXIES = process.env.PROXIES || ''
-const ORIGIN = process.env.ORIGIN || ''
 const DEBUG = process.env.DEBUG || false
 const requests = {}
 
@@ -63,28 +61,20 @@ module.exports = async function (text, user) {
 
     if (user.language === 'zh') user.language = 'zh-CN'
     try {
-      const options = { to: user.language, client: 'gtx' }
-      let request
-
-      if (proxy !== null) {
-        request = (options, callback) => {
-          /**
-           *  Wrapper for proxying using `cors-anywhere`
-           *  @see https://github.com/Rob--W/cors-anywhere
-           */
-          const url = `https://${proxy}/${options.href}`
-          const opt = {
-            headers: { origin: ORIGIN },
-            timeout: 20000
-          }
-
-          requests[proxy].total++
-          return https.request(url, opt, callback)
-        }
+      if (proxy === null) {
+        const options = { to: user.language, client: 'gtx' }
+        result = await translate(text, options)
+      } else {
+        /**
+         *  Proxy must run Messenger Translator API Proxy server
+         *  @see https://github.com/eidoriantan/messenger-translator-api-proxy
+         */
+        requests[proxy].total++
+        const url = `https://${proxy}`
+        const response = await request('POST', url, {}, { text, to: user.language })
+        result = response.body
+        if (result !== null) requests[proxy].success++
       }
-
-      result = await translate(text, options, { request })
-      if (result !== null) requests[proxy].success++
     } catch (e) {
       logger.write(`Proxy server (${proxy}) is not working`, 1)
       logger.write(e, 1)
