@@ -16,7 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const { Translate } = require('@google-cloud/translate').v2
+const { TranslationServiceClient } = require('@google-cloud/translate')
 
 const localeStrings = require('./locale/')
 const logger = require('./utils/log.js')
@@ -28,7 +28,7 @@ const DEBUG = process.env.DEBUG || false
 const requests = {}
 
 const credentials = JSON.parse(CREDENTIALS)
-const translate = new Translate({ credentials })
+const translate = new TranslationServiceClient({ credentials })
 
 /**
  *  Translates the text.
@@ -39,7 +39,7 @@ const translate = new Translate({ credentials })
  *  @return {string} translated text
  */
 module.exports = async function (text, user) {
-  if (text.length > 750) return localeStrings(user.locale, 'long_message')
+  if (text.length > 280) return localeStrings(user.locale, 'long_message')
 
   if (DEBUG) console.log('Calling Google Translate to translate the text')
   const translated = await translate.translate(text, user.language)
