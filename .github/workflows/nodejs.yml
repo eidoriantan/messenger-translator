@@ -38,6 +38,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: bash setup/ci/pre-script.sh
     - run: npm ci
-    - run: npm run build
     - run: npm test
     - run: bash setup/ci/post-script.sh
