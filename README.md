@@ -1,7 +1,7 @@
 
 # Messenger Translator
 
-![Node.js CI](https://github.com/eidoriantan/messenger-translator/actions/workflows/nodejs.yml/badge.svg)]
+![Node.js CI](https://github.com/eidoriantan/messenger-translator/actions/workflows/nodejs.yml/badge.svg)
 ![LIC](https://img.shields.io/github/license/eidoriantan/messenger-translator)
 
 An open-sourced Translator bot app built for Facebook's [Messenger], powered by
