@@ -35,10 +35,6 @@ jobs:
 
     - name: Install MSSQL Server
       run: bash setup/ci/pre-script.sh
-      env:
-        MSSQL_SA_PASSWORD: SQLServer2019_password
-        SQL_ENABLE_AGENT: y
-        ACCEPT_EULA: y
 
     - run: npm ci
     - run: npm test
