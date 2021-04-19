@@ -16,18 +16,19 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const translate = require('@vitalets/google-translate-api')
-const https = require('https')
+const { Translate } = require('@google-cloud/translate').v2
 
 const localeStrings = require('./locale/')
 const logger = require('./utils/log.js')
 const replacer = require('./utils/replacer.js')
 const languages = require('./languages.js')
 
-const PROXIES = process.env.PROXIES || ''
-const ORIGIN = process.env.ORIGIN || ''
+const CREDENTIALS = process.env.CREDENTIALS
 const DEBUG = process.env.DEBUG || false
 const requests = {}
+
+const credentials = JSON.parse(CREDENTIALS)
+const translate = new Translate({ credentials })
 
 /**
  *  Translates the text.
@@ -40,54 +41,9 @@ const requests = {}
 module.exports = async function (text, user) {
   if (text.length > 750) return localeStrings(user.locale, 'long_message')
 
-  let proxies = PROXIES.split(',')
-  let result = null
-  let last = false
-
   if (DEBUG) console.log('Calling Google Translate to translate the text')
-  while (result === null) {
-    if (proxies.length === 0) {
-      if (last) break
-      else last = true
-    }
-
-    const random = Math.floor(Math.random() * proxies.length)
-    const proxy = proxies.length === 0 ? null : proxies[random]
-    proxies = proxies.filter(element => proxy !== element)
-
-    if (DEBUG) console.log(`Trying proxy server: ${proxy}`)
-    requests[proxy] = requests[proxy] || { success: 0, total: 0 }
-
-    if (user.language === 'zh') user.language = 'zh-CN'
-    try {
-      const options = { to: user.language, client: 'gtx' }
-      let request
-
-      if (proxy !== null) {
-        request = (options, callback) => {
-          /**
-           *  Wrapper for proxying using `cors-anywhere`
-           *  @see https://github.com/Rob--W/cors-anywhere
-           */
-          const url = `https://${proxy}/${options.href}`
-          const opt = {
-            method: options.method,
-            headers: { origin: ORIGIN },
-            timeout: 20000
-          }
-
-          requests[proxy].total++
-          return https.request(url, opt, callback)
-        }
-      }
-
-      result = await translate(text, options, { request })
-      if (result !== null) requests[proxy].success++
-    } catch (e) {
-      logger.write(`Proxy server (${proxy}) is not working`, 1)
-      logger.write(e, 1)
-    }
-  }
+  const translated = await translate.translate(text, user.language)
+  const result = translated ? translated[1].data.translations[0] : null
 
   if (result === null) {
     if (DEBUG) console.log('Unable to translate the text')
@@ -97,26 +53,21 @@ module.exports = async function (text, user) {
     return message
   }
 
-  if (result.pronunciation) {
-    const pronunciation = result.pronunciation
-    result.text += `\r\n*pronunciation*: ${pronunciation}`
-  }
-
-  if (user.message === 1) {
-    return result.text
-  } else {
+  if (user.message !== 1) {
     const language = languages[user.language].name
-    const from = languages[result.from.language.iso]
-      ? languages[result.from.language.iso].name
+    const from = languages[result.detectedSourceLanguage]
+      ? languages[result.detectedSourceLanguage].name
       : 'Unknown'
     const template = localeStrings(user.locale, 'body')
     const replace = {
       TO: language,
       FROM: from,
-      TEXT: result.text
+      TEXT: result.translatedText
     }
 
     return replacer(template, replace).trim()
+  } else {
+    return result.translatedText
   }
 }
 

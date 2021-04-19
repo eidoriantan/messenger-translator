@@ -1,6 +1,6 @@
 {
   "name": "messenger-translator",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "Webhook server for Messenger translator",
   "keywords": [
     "node",
@@ -39,7 +39,7 @@
     "test": "mocha test/index.js"
   },
   "dependencies": {
-    "@vitalets/google-translate-api": "^7.0.0",
+    "@google-cloud/translate": "^6.2.0",
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",
     "fuzzyset.js": "^1.0.6",

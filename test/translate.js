@@ -32,7 +32,7 @@ describe('Translator', () => {
   })
 
   it('Message only', async () => {
-    const message = 'こんにちは\r\n*pronunciation*: Kon\'nichiwa'
+    const message = 'こんにちは'
     const result = await translate('hello', {
       language: 'ja',
       message: 1
