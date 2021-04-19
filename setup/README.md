@@ -3,14 +3,12 @@
 
 ### Prerequisites:
 * Server that can run Node.js applications
-* Proxy server(s) that runs [cors-anywhere]
+* Google Cloud console account
 * Microsoft SQL Server
 * [Facebook] account
 * [Facebook page]
 
-This project uses the public [Google Translate](https://translate.google.com)
-for the translations. It detects multiple requests from a server, so the proxy
-servers are used to bypass this.
+This project uses the official [Google Cloud Translation API] for translations.
 
 ### Installation
 Firstly, when hosting your own Messenger Translator bot application, you'll need
@@ -23,6 +21,12 @@ an app
 * Set up the Messenger product for your app then add your created page
 * Save your **page access token** and **app secret** from
 [Facebook for Developers] dashboard
+
+##### Setting up Google Cloud
+* You can follow how to set up Google Cloud from their
+[documentations](https://cloud.google.com/translate/docs/setup)
+* By follow their documentations, you should be able to have a service account's
+JSON key file
 
 ##### Setting up SQL Server and running the Webhook Server
 * When setting up your SQL Server, run `database.sql` to initialize the SQL
@@ -52,8 +56,7 @@ couple of days before other users can access the app.
  | ACCESS_TOKEN     | Page access token                           |
  | APP_SECRET       | App secret                                  |
  | VALIDATION_TOKEN | Verify token when connecting the webhook    |
- | PROXIES          | Comma-seprated hostnames of proxy server(s) |
- | ORIGIN           | Origin server (eg. https://yourhost.com)    |
+ | CREDENTIALS      | Service account JSON file key downloaded    |
  | SERVER           | SQL Server hostname                         |
  | USERNAME         | SQL Server username                         |
  | PASSWORD         | SQL Server password                         |
@@ -69,8 +72,8 @@ the [original page][Messenger Translator] and/or donate through
 [PayPal](https://paypal.me/adrianejustine) or
 [Patreon](https://www.patreon.com/eidoriantan).
 
+[Google Cloud Translation API]: https://cloud.google.com/translate/
 [Facebook]: https://www.facebook.com
 [Facebook for Developers]: https://developers.facebook.com
 [Facebook page]: https://www.facebook.com/pages/create/
 [Messenger Translator]: https://www.facebook.com/msgr.translator
-[cors-anywhere]: https://github.com/Rob--W/cors-anywhere
