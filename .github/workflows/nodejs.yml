@@ -10,21 +10,17 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  tests:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
 
     runs-on: ubuntu-latest
 
     env:
-      CI: true
       PORT: 3000
       SERVER: localhost
       USERNAME: SA
       PASSWORD: SQLServer2019_password
       DATABASE: master
-      MSSQL_SA_PASSWORD: SQLServer2019_password
-      SQL_ENABLE_AGENT: y
-      ACCEPT_EULA: y
 
     strategy:
       matrix:
@@ -36,9 +32,17 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: bash setup/ci/pre-script.sh
+
+    - name: Install MSSQL Server
+      run: bash setup/ci/pre-script.sh
+      env:
+        MSSQL_SA_PASSWORD: SQLServer2019_password
+        SQL_ENABLE_AGENT: y
+        ACCEPT_EULA: y
+
     - run: npm ci
     - run: npm test
       env:
         CREDENTIALS: ${{ secrets.CREDENTIALS }}
+
     - run: bash setup/ci/post-script.sh
