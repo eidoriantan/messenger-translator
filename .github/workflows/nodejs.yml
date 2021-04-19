@@ -34,7 +34,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
 
     - name: Install MSSQL Server
-      run: bash -e setup/ci/pre-script.sh
+      run: bash setup/ci/pre-script.sh
 
     - run: npm ci
     - run: npm test

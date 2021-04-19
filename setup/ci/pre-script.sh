@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 # Messenger Translator
 # Copyright (C) 2020 - 2021, Adriane Justine Tan
