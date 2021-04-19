@@ -32,7 +32,7 @@ wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
 sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2019.list)"
 sudo apt-get update
 sudo apt-get install -y mssql-server
-sudo /opt/mssql/bin/mssql-conf -n setup accept-eula
+sudo MSSQL_SA_PASSWORD=$MSSQL_SA_PASSWORD && /opt/mssql/bin/mssql-conf -n setup accept-eula
 systemctl status mssql-server --no-pager
 
 # Install MSSQL Server CMD Tools
@@ -42,10 +42,6 @@ curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /et
 sudo apt-get update
 sudo apt-get install mssql-tools unixodbc-dev
 export PATH="$PATH:/opt/mssql-tools/bin"
-
-sudo ufw allow 1433/tcp
-sudo ufw reload
-sudo systemctl restart mssql-server
 
 # Connect to MSSQL Server
 echo "Connecting to MSSQL Server..."
