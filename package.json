@@ -39,7 +39,7 @@
     "test": "mocha test/index.js"
   },
   "dependencies": {
-    "@vitalets/google-translate-api": "^5.1.0",
+    "@vitalets/google-translate-api": "^7.0.0",
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",
     "fuzzyset.js": "^1.0.6",
