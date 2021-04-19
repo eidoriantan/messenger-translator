@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Messenger Translator
 # Copyright (C) 2020 - 2021, Adriane Justine Tan
@@ -20,19 +20,15 @@ export MSSQL_SA_PASSWORD=$PASSWORD
 export SQL_ENABLE_AGENT=y
 export ACCEPT_EULA=y
 
-echo "Setting up MSSQL Server"
-echo "Server: $SERVER"
-echo "Username: $USERNAME"
-echo "Password: $PASSWORD"
-echo "Database: $DATABASE"
-
 # Install MSSQL Server
 echo "Installing MSSQL Server..."
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
 sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2019.list)"
 sudo apt-get update
 sudo apt-get install -y mssql-server
-sudo MSSQL_SA_PASSWORD=$MSSQL_SA_PASSWORD && /opt/mssql/bin/mssql-conf -n setup accept-eula
+sudo MSSQL_SA_PASSWORD=$MSSQL_SA_PASSWORD \
+     /opt/mssql/bin/mssql-conf -n setup accept-eula
+
 systemctl status mssql-server --no-pager
 
 # Install MSSQL Server CMD Tools
@@ -40,7 +36,9 @@ echo "Installing MSSQL Server CMD Tools..."
 curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
 curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
 sudo apt-get update
-sudo apt-get install mssql-tools unixodbc-dev
+sudo ACCEPT_EULA=$ACCEPT_EULA \
+     apt-get install mssql-tools unixodbc-dev
+
 export PATH="$PATH:/opt/mssql-tools/bin"
 
 # Connect to MSSQL Server
