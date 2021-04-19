@@ -39,4 +39,6 @@ jobs:
     - run: bash setup/ci/pre-script.sh
     - run: npm ci
     - run: npm test
+      env:
+        CREDENTIALS: ${{ secrets.CREDENTIALS }}
     - run: bash setup/ci/post-script.sh
