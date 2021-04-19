@@ -41,6 +41,10 @@ sudo ACCEPT_EULA=$ACCEPT_EULA \
 
 export PATH="$PATH:/opt/mssql-tools/bin"
 
+sudo ufw allow 1433/tcp
+sudo ufw reload
+sudo systemctl restart mssql-server
+
 # Connect to MSSQL Server
 echo "Connecting to MSSQL Server..."
 sqlcmd -S $SERVER -U $USERNAME -P $PASSWORD -d $DATABASE -i setup/database.sql
