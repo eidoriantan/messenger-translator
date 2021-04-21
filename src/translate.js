@@ -40,7 +40,7 @@ const kuroshiroOptions = {
   mode: 'spaced'
 }
 
-const pronunciations = ['ja']
+const pronunciations = ['ja', 'ko']
 
 /**
  *  Returns how the sentence is pronunciated
