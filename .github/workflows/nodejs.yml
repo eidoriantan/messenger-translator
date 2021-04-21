@@ -18,7 +18,7 @@ jobs:
     env:
       SERVER: localhost
       USERNAME: sa
-      PASSWORD: @StrongPassword
+      PASSWORD: '@StrongPassword123'
       DATABASE: master
 
     strategy:
@@ -30,7 +30,7 @@ jobs:
         image: microsoft/mssql-server-linux
         env:
           ACCEPT_EULA: y
-          SA_PASSWORD: @StrongPassword
+          SA_PASSWORD: '@StrongPassword123'
           MSSQL_PID: Express
         ports:
           - 1433:1433
