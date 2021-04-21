@@ -20,6 +20,7 @@ const { Translate } = require('@google-cloud/translate').v2
 const Kuroshiro = require('kuroshiro')
 const Kuromoji = require('kuroshiro-analyzer-kuromoji')
 const hangul = require('hangul-romanization')
+const pinyin = require('chinese-to-pinyin')
 
 const localeStrings = require('./locale/')
 const logger = require('./utils/log.js')
@@ -40,7 +41,7 @@ const kuroshiroOptions = {
   mode: 'spaced'
 }
 
-const pronunciations = ['ja', 'ko']
+const pronunciations = ['ja', 'ko', 'zh', 'zh-CN', 'zh-TW']
 
 /**
  *  Returns how the sentence is pronunciated
@@ -60,6 +61,12 @@ async function pronounce (text, language) {
 
     case 'ko':
       pronunciation = hangul.convert(text)
+      break
+
+    case 'zh':
+    case 'zh-CN':
+    case 'zh-TW':
+      pronunciation = pinyin(text)
       break
   }
 
