@@ -27,7 +27,6 @@ const languages = require('./languages.js')
 
 const CREDENTIALS = process.env.CREDENTIALS
 const DEBUG = process.env.DEBUG || false
-const requests = {}
 
 const credentials = JSON.parse(CREDENTIALS)
 const translate = new Translate({ credentials })
@@ -78,7 +77,7 @@ module.exports = async function (text, user) {
 
   if (result === null) {
     if (DEBUG) console.log('Unable to translate the text')
-    logger.write('Unable to translate text! Please check proxy servers', 1)
+    logger.write('Unable to translate text! Please Google Cloud console', 1)
 
     const message = localeStrings(user.locale, 'requests_limit')
     return message
@@ -104,24 +103,5 @@ module.exports = async function (text, user) {
     return replacer(template, replace).trim()
   } else {
     return result.translatedText
-  }
-}
-
-/**
- *  Returns the proxy servers requests status
- *  @return {object}
- */
-module.exports.requests = () => {
-  let success = 0
-  let total = 0
-
-  for (const key in requests) {
-    success += requests[key].success
-    total += requests[key].total
-  }
-
-  return {
-    total: { success, total },
-    requests
   }
 }

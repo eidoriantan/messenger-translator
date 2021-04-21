@@ -129,17 +129,6 @@ app.post('/webhook', (req, res) => {
   })
 })
 
-app.get('/requests', auth, (req, res) => {
-  const requests = translate.requests()
-  const date = Date.now()
-
-  requests.started = started
-  requests.requested = date
-
-  res.set('Content-Type', 'application/json')
-  res.status(200).json(requests)
-})
-
 app.get('/feedbacks', auth, (req, res) => {
   feedbacks.getFeedbacks().then(feedbacks => {
     res.set('Content-Type', 'application/json')
