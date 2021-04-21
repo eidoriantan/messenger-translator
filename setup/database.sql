@@ -18,6 +18,8 @@
 
 BEGIN TRANSACTION Tables
 
+CREATE DATABASE master;
+
 /**
  *  Setting up the users table in a database
  */

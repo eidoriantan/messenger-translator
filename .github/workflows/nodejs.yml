@@ -16,17 +16,24 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      PORT: 3000
       SERVER: localhost
-      USERNAME: SA
-      PASSWORD: SQLServer2019_password
+      USERNAME: sa
+      PASSWORD: @StrongPassword
       DATABASE: master
-      MSSQL_SA_PASSWORD: SQLServer2019_password
-      ACCEPT_EULA: y
 
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [10.x, 12.x, 14.x]
+
+    services:
+      mssql:
+        image: microsoft/mssql-server-linux
+        env:
+          ACCEPT_EULA: y
+          SA_PASSWORD: @StrongPassword
+          MSSQL_PID: Express
+        ports:
+          - 1433:1433
 
     steps:
     - uses: actions/checkout@v2
@@ -43,33 +50,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-node-
 
-    - name: Install MSSQL Server
-      run: |
-        wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-        sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2019.list)"
-        sudo apt-get update
-        sudo apt-get install -y mssql-server
-        sudo MSSQL_SA_PASSWORD=$MSSQL_SA_PASSWORD \
-             /opt/mssql/bin/mssql-conf -n setup accept-eula
-        systemctl status mssql-server --no-pager
-
-    - name: Install MSSQL Server CMD Tools
-      run: |
-        curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-        curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
-        sudo apt-get update
-        sudo ACCEPT_EULA=$ACCEPT_EULA \
-             apt-get install mssql-tools unixodbc-dev
-        export PATH="$PATH:/opt/mssql-tools/bin"
-
-    - name: Connect to MSSQL Server
-      run: |
-        sudo ufw allow 1433/tcp
-        sudo ufw reload
-        sudo systemctl restart mssql-server
-
-        sqlcmd -S $SERVER -U $USERNAME -P $PASSWORD -d $DATABASE -i setup/database.sql
-        systemctl status mssql-server --no-pager
+    - name: Setup SQL Server
+      run: sqlcmd -S $SERVER -U $USERNAME -P $PASSWORD -i setup/database.sql
 
     - run: npm ci
     - run: npm test
