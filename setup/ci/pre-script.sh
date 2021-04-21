@@ -17,7 +17,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 export MSSQL_SA_PASSWORD=$PASSWORD
-export SQL_ENABLE_AGENT=y
 export ACCEPT_EULA=y
 
 # Install MSSQL Server
