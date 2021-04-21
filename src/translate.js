@@ -19,6 +19,7 @@
 const { Translate } = require('@google-cloud/translate').v2
 const Kuroshiro = require('kuroshiro')
 const Kuromoji = require('kuroshiro-analyzer-kuromoji')
+const hangul = require('hangul-romanization')
 
 const localeStrings = require('./locale/')
 const logger = require('./utils/log.js')
@@ -55,6 +56,9 @@ async function pronounce (text, language) {
     case 'ja':
       await kuroshiroLoaded
       pronunciation = await kuroshiro.convert(text, kuroshiroOptions)
+
+    case 'ko':
+      pronunciation = hangul.convert(text)
   }
 
   return pronunciation
