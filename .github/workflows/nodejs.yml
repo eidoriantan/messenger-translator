@@ -43,69 +43,31 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-node-
 
-    - name: Cache MSSQL Server
-      id: cache-mssql
-      uses: actions/cache@v2
-      with:
-        path: ~/mssql
-        key: ${{ runner.os }}-mssql
-        restore-keys: |
-          ${{ runner.os }}-mssql
-
-    - name: Cache MSSQL Server CMD Tools
-      id: cache-mssql-cmd
-      uses: actions/cache@v2
-      with:
-        path: ~/mssql-cmd
-        key: ${{ runner.os }}-mssql-cmd
-        restore-keys: |
-          ${{ runner.os }}-mssql-cmd
-
     - name: Install MSSQL Server
-      env:
-        CACHE_HIT: ${{ steps.cache-mssql.outputs.cache-hit }}
       run: |
-        if [[ "$CACHE_HIT" == 'true' ]]; then
-          sudo cp --verbose --force --recursive ~/mssql/* /
-        else
-          wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-          sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2019.list)"
-          sudo apt-get update
-          sudo apt-get install -y mssql-server
-
-          mkdir -p ~/mssql
-          sudo dpkg -L mssql-server | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/mssql/
-        fi
-
+        wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+        sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2019.list)"
+        sudo apt-get update
+        sudo apt-get install -y mssql-server
         sudo MSSQL_SA_PASSWORD=$MSSQL_SA_PASSWORD \
              /opt/mssql/bin/mssql-conf -n setup accept-eula
         systemctl status mssql-server --no-pager
 
     - name: Install MSSQL Server CMD Tools
-      env:
-        CACHE_HIT: ${{ steps.cache-mssql-cmd.outputs.cache-hit }}
       run: |
-        if [[ "$CACHE_HIT" == 'true' ]]; then
-          sudo cp --verbose --force --recursive ~/mssql-cmd/* /
-        else
-          curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-          curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
-          sudo apt-get update
-          sudo ACCEPT_EULA=$ACCEPT_EULA \
-               apt-get install mssql-tools unixodbc-dev
-
-          mkdir -p ~/mssql-cmd
-          sudo dpkg -L mssql-tools | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/mssql-cmd/
-          sudo dpkg -L unixodbc-dev | while IFS= read -r f; do if test -f $f; then echo $f; fi; done | xargs cp --parents --target-directory ~/mssql-cmd/
-        fi
-
+        curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+        curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | sudo tee /etc/apt/sources.list.d/msprod.list
+        sudo apt-get update
+        sudo ACCEPT_EULA=$ACCEPT_EULA \
+             apt-get install mssql-tools unixodbc-dev
         export PATH="$PATH:/opt/mssql-tools/bin"
+
+    - name: Connect to MSSQL Server
+      run: |
         sudo ufw allow 1433/tcp
         sudo ufw reload
         sudo systemctl restart mssql-server
 
-    - name: Connect to MSSQL Server
-      run: |
         sqlcmd -S $SERVER -U $USERNAME -P $PASSWORD -d $DATABASE -i setup/database.sql
         systemctl status mssql-server --no-pager
 
