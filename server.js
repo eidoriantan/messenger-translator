@@ -42,7 +42,6 @@ if (!ACCESS_TOKEN || !VALIDATION_TOKEN || !APP_SECRET) {
   throw new Error('Access, App Secret and/or validation token is not defined')
 }
 
-let started = 0
 const authUsers = {}
 authUsers[USERNAME] = PASSWORD
 

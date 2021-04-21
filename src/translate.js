@@ -56,9 +56,11 @@ async function pronounce (text, language) {
     case 'ja':
       await kuroshiroLoaded
       pronunciation = await kuroshiro.convert(text, kuroshiroOptions)
+      break
 
     case 'ko':
       pronunciation = hangul.convert(text)
+      break
   }
 
   return pronunciation
