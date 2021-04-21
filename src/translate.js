@@ -17,6 +17,8 @@
  */
 
 const { Translate } = require('@google-cloud/translate').v2
+const Kuroshiro = require('kuroshiro')
+const Kuromoji = require('kuroshiro-analyzer-kuromoji')
 
 const localeStrings = require('./locale/')
 const logger = require('./utils/log.js')
@@ -29,6 +31,35 @@ const requests = {}
 
 const credentials = JSON.parse(CREDENTIALS)
 const translate = new Translate({ credentials })
+
+const kuroshiro = new Kuroshiro()
+const kuromoji = new Kuromoji()
+const kuroshiroLoaded = kuroshiro.init(kuromoji)
+const kuroshiroOptions = {
+  to: 'romaji',
+  mode: 'spaced'
+}
+
+const pronunciations = ['ja']
+
+/**
+ *  Returns how the sentence is pronunciated
+ *
+ *  @param {string} text        Sentence to be converted
+ *  @param {string} language    Which language from
+ *
+ *  @return {string} pronunciation
+ */
+async function pronounce (text, language) {
+  let pronunciation = ''
+  switch (language) {
+    case 'ja':
+      await kuroshiroLoaded
+      pronunciation = await kuroshiro.convert(text, kuroshiroOptions)
+  }
+
+  return pronunciation
+}
 
 /**
  *  Translates the text.
@@ -51,6 +82,11 @@ module.exports = async function (text, user) {
 
     const message = localeStrings(user.locale, 'requests_limit')
     return message
+  }
+
+  if (pronunciations.includes(user.language)) {
+    const pronunciation = await pronounce(result.translatedText, user.language)
+    result.translatedText += `\n**pronunciation**: ${pronunciation}`
   }
 
   if (user.message !== 1) {
