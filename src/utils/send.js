@@ -20,7 +20,7 @@ const hash = require('./hash.js')
 const logger = require('./log.js')
 const request = require('./request.js')
 
-const ME_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
+const ME_ENDPOINT = 'https://graph.facebook.com/v10.0/me'
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const APP_SECRET = process.env.APP_SECRET
 const DEBUG = process.env.DEBUG

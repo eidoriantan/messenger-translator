@@ -26,7 +26,7 @@ const request = require('./utils/request.js')
 const users = require('./users.js')
 const languages = require('./languages.js')
 
-const ME_ENDPOINT = 'https://graph.facebook.com/v7.0/me'
+const ME_ENDPOINT = 'https://graph.facebook.com/v10.0/me'
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN
 const APP_SECRET = process.env.APP_SECRET
 const DEBUG = process.env.DEBUG
@@ -125,7 +125,7 @@ async function getProfile (psid) {
 
   const params = new URLSearchParams()
   const proof = hash('sha256', ACCESS_TOKEN, APP_SECRET)
-  params.set('fields', 'name,locale')
+  params.set('fields', 'locale')
   params.set('access_token', ACCESS_TOKEN)
   params.set('appsecret_proof', proof)
 
