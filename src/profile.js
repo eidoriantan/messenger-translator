@@ -136,7 +136,7 @@ async function getProfile (psid) {
   if (profile.error) {
     profile = {
       psid,
-      name: '[NO NAME]',
+      name: 'UNAVAILABLE',
       locale: 'en_US'
     }
   }
