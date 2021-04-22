@@ -98,7 +98,7 @@ module.exports = async function (text, user) {
 
   if (pronunciations.includes(user.language)) {
     const pronunciation = await pronounce(result.translatedText, user.language)
-    result.translatedText += `\npronunciation*: ${pronunciation}`
+    result.translatedText += `\npronunciation: ${pronunciation}`
   }
 
   if (user.message !== 1) {
