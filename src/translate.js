@@ -21,6 +21,7 @@ const Kuroshiro = require('kuroshiro')
 const Kuromoji = require('kuroshiro-analyzer-kuromoji')
 const hangul = require('hangul-romanization')
 const pinyin = require('chinese-to-pinyin')
+const grc = require('greek-transliteration')
 
 const localeStrings = require('./locale/')
 const logger = require('./utils/log.js')
@@ -41,7 +42,7 @@ const kuroshiroOptions = {
   mode: 'spaced'
 }
 
-const pronunciations = ['ja', 'ko', 'zh', 'zh-CN', 'zh-TW']
+const pronunciations = ['el', 'ja', 'ko', 'zh', 'zh-CN', 'zh-TW']
 
 /**
  *  Returns how the sentence is pronunciated
@@ -54,6 +55,10 @@ const pronunciations = ['ja', 'ko', 'zh', 'zh-CN', 'zh-TW']
 async function pronounce (text, language) {
   let pronunciation = ''
   switch (language) {
+    case 'el':
+      pronunciation = grc.transliterate(text)
+      break
+
     case 'ja':
       await kuroshiroLoaded
       pronunciation = await kuroshiro.convert(text, kuroshiroOptions)
