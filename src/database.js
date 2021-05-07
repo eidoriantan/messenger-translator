@@ -37,7 +37,7 @@ const config = {
   options: {
     enableArithAbort: true,
     encrypt: true,
-    trustServerCertificate: global.test ? true : false
+    trustServerCertificate: global.test
   }
 }
 
