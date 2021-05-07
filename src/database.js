@@ -36,7 +36,8 @@ const config = {
   database: DATABASE,
   options: {
     enableArithAbort: true,
-    encrypt: true
+    encrypt: true,
+    trustServerCertificate: global.test ? true : false
   }
 }
 

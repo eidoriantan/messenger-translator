@@ -16,5 +16,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+global.test = true
+
 require('./database.js')
 require('./translate.js')
