@@ -1,8 +1,10 @@
 
 # Messenger Translator
-
 ![Node.js CI](https://github.com/eidoriantan/messenger-translator/actions/workflows/nodejs.yml/badge.svg)
 ![LIC](https://img.shields.io/github/license/eidoriantan/messenger-translator)
+
+## DISCONTINUED!
+This project was already discontinued and not maintained by owner anymore.
 
 An open-sourced Translator bot app built for Facebook's [Messenger], powered by
 [Google Translate]. Visit the [Facebook page] and send a message through the
