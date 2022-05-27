@@ -12,13 +12,13 @@
     "translate",
     "translator"
   ],
-  "homepage": "https://translator.eidoriantan.tech",
+  "homepage": "https://translator.eidoriantan.tk",
   "bugs": "https://github.com/eidoriantan/messenger-translator/issues",
   "license": "GPL-3.0-only",
   "author": {
     "name": "Adriane Justine Tan",
     "email": "eidoriantan@gmail.com",
-    "url": "https://eidoriantan.github.io"
+    "url": "https://eidoriantan.tk"
   },
   "contributors": [],
   "funding": {
