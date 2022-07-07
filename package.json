@@ -50,7 +50,7 @@
     "ini": "^2.0.0",
     "kuroshiro": "^1.1.2",
     "kuroshiro-analyzer-kuromoji": "^1.1.0",
-    "mssql": "^7.0.0"
+    "mssql": "^8.1.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.1.4",
